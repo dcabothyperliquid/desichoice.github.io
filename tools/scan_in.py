@@ -40,7 +40,7 @@ def _int(name, default):
         return default
 
 
-TAG = (os.environ.get("AMAZON_IN_TAG") or "").strip()
+TAG = (os.environ.get("AMAZON_IN_TAG") or "desichoice06-21").strip()    # Amazon India Store ID (env var overrides)
 BUDGET_MIN = _int("BUDGET_MIN", 40)
 PAGES = _int("PAGES", 2)
 MIN_PCT = _int("MIN_PCT", 25)                 # "xx% off or more" filter used for category sweeps / top offers

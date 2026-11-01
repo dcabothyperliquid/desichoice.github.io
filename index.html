@@ -121,7 +121,8 @@ h2{font-size:26px;letter-spacing:-.02em;margin:34px 2px 14px;display:flex;align-
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function num(v){var n=parseFloat(String(v==null?'':v).replace(/,/g,''));return isFinite(n)?n:0}
   function rs(v){var n=num(v);return n?'₹'+Math.round(n).toLocaleString('en-IN'):''}
-  function link(u){return /^https:\/\/www\.amazon\.in\//.test(u||'')?u:'#'}
+  var TAG='desichoice06-21';
+  function link(u){if(!/^https:\/\/www\.amazon\.in\//.test(u||''))return'#';return /[?&]tag=/.test(u)?u:u+(u.indexOf('?')<0?'?':'&')+'tag='+TAG}
   function k(n){n=num(n);return n>=1000?(n>=10000?Math.round(n/1000):(n/1000).toFixed(1).replace('.0',''))+'K':(n?String(n):'')}
   function rate(i){return i.rating?'★ '+Number(i.rating).toFixed(1)+(i.reviews?' ('+k(i.reviews)+')':''):''}
   function pct(i){var p=num(i.pct);return p>0?p:0}
