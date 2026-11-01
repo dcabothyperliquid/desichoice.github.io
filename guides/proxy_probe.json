@@ -1,0 +1,19 @@
+{
+ "time": "2026-11-01T07:36:36Z",
+ "sources": {
+  "proxifly_IN": 235,
+  "proxyscrape_IN": 20,
+  "geonode_IN": 45,
+  "proxylistdownload_IN": 0
+ },
+ "tested": 225,
+ "reachable": 31,
+ "amazon_200_with_results": 0,
+ "status_counts": {
+  "202": 23,
+  "503": 1,
+  "200": 7
+ },
+ "good": [],
+ "secs": 41
+}
