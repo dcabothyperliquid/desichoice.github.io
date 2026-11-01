@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'auto | feed | offers | selftest | probe'
+        description: 'auto | feed | offers | selftest | probe | proxyhunt'
         default: 'auto'
       only:
         description: 'offers mode: only this category key (e.g. mobiles) - leave empty for all'
@@ -57,12 +57,16 @@ jobs:
         if: github.event.inputs.mode == 'probe'
         run: python tools/probe.py
 
+      - name: Hunt free Indian proxies (writes guides/proxy_probe.json)
+        if: github.event.inputs.mode == 'proxyhunt'
+        run: pip install requests && python tools/proxy_hunt.py
+
       - name: Logic tests
-        if: github.event.inputs.mode != 'probe'
+        if: ${{ !contains(fromJSON('["probe","proxyhunt"]'), github.event.inputs.mode) }}
         run: python -m unittest discover -s tests -v
 
       - name: Scan Amazon India
-        if: github.event.inputs.mode != 'probe'
+        if: ${{ !contains(fromJSON('["probe","proxyhunt"]'), github.event.inputs.mode) }}
         env:
           AMAZON_IN_TAG: ${{ vars.AMAZON_IN_TAG }}
           SCAN_PROXY: ${{ secrets.SCAN_PROXY }}
