@@ -1,0 +1,113 @@
+{
+ "time": "2026-11-01T08:13:36Z",
+ "results": [
+  {
+   "test": "direct_search",
+   "http": 503,
+   "len": 1283,
+   "products": 0,
+   "rupee": false,
+   "blocked": true,
+   "sample": "<html> <head> <title>503 - Service Unavailable Error</title> </head> <body bgcolor=\"#FFFFFF\" text=\"#000000\"> <!-- To discuss automa"
+  },
+  {
+   "test": "direct_dp",
+   "http": 200,
+   "len": 3793,
+   "products": 0,
+   "rupee": false,
+   "blocked": true,
+   "sample": "<!DOCTYPE html> <!--[if lt IE 7]> <html lang=\"en-us\" class=\"a-no-js a-lt-ie9 a-lt-ie8 a-lt-ie7\"> <![endif]--> <!--[if IE 7]> <html lang=\""
+  },
+  {
+   "test": "direct_bestsellers",
+   "http": 200,
+   "len": 459632,
+   "products": 30,
+   "rupee": true,
+   "blocked": false,
+   "sample": "<!doctype html><html lang=\"en-in\" class=\"a-no-js\" data-19ax5a9jf=\"dingo\"><!-- sp:feature:head-start --> <head><script>var aPageStart = (new "
+  },
+  {
+   "test": "direct_goldbox",
+   "http": 200,
+   "len": 2026586,
+   "products": 316,
+   "rupee": true,
+   "blocked": false,
+   "sample": "<!doctype html><html lang=\"en-in\" class=\"a-no-js\" data-19ax5a9jf=\"dingo\"><!-- sp:feature:head-start --> <head><script>var aPageStart = (new "
+  },
+  {
+   "test": "direct_mobile_site",
+   "http": 503,
+   "len": 1283,
+   "products": 0,
+   "rupee": false,
+   "blocked": true,
+   "sample": "<html> <head> <title>503 - Service Unavailable Error</title> </head> <body bgcolor=\"#FFFFFF\" text=\"#000000\"> <!-- To discuss automa"
+  },
+  {
+   "test": "jina_reader",
+   "http": 200,
+   "len": 1304,
+   "products": 0,
+   "rupee": false,
+   "blocked": true,
+   "sample": "<html> <head> <title>503 - Service Unavailable Error</title> </head> <body bgcolor=\"#FFFFFF\" text=\"#000000\"> <!-- To discuss automa"
+  },
+  {
+   "test": "jina_reader_text",
+   "http": 200,
+   "len": 711,
+   "products": 0,
+   "rupee": false,
+   "blocked": false,
+   "sample": "Title: 503 - Service Unavailable Error URL Source: https://www.amazon.in/s?k=power+bank Warning: Target URL returned error 503: Service Un"
+  },
+  {
+   "test": "google_translate_proxy",
+   "http": 200,
+   "len": 1242720,
+   "products": 26,
+   "rupee": true,
+   "blocked": false,
+   "sample": "<!doctype html> <html lang=\"en-in\" class=\"a-no-js\" data-19ax5a9jf=\"dingo\"> <!-- sp:feature:head-start --> <head> <base href=\"https://www"
+  },
+  {
+   "test": "allorigins",
+   "http": 500,
+   "len": 579,
+   "products": 0,
+   "rupee": false,
+   "blocked": false,
+   "sample": "<html> <head><title>500 Internal Server Error</title></head> <body> <center><h1>500 Internal Server Error</h1></center> <hr><center>ngin"
+  },
+  {
+   "test": "corsproxy",
+   "http": 403,
+   "len": 322,
+   "products": 0,
+   "rupee": false,
+   "blocked": false,
+   "sample": "{\"success\":false,\"status\":403,\"error\":\"keyless_legacy_url\",\"message\":\"Anonymous legacy proxy URLs are no longer supported. Use the CORSPROXY"
+  },
+  {
+   "test": "codetabs",
+   "http": 522,
+   "len": 7247,
+   "products": 0,
+   "rupee": false,
+   "blocked": false,
+   "sample": "<!DOCTYPE html> <!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]--> <!--[if IE 7]> <html class=\"no-js ie7 oldie\" l"
+  },
+  {
+   "test": "wayback_latest",
+   "http": 429,
+   "len": 620,
+   "products": 0,
+   "rupee": false,
+   "blocked": false,
+   "sample": "Your request is being blocked because our system has flagged it as suspected abusive bot traffic that is degrading the performance of the Wa"
+  }
+ ]
+}
