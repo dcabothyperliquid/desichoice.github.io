@@ -1,0 +1,30 @@
+{
+ "time": "2026-11-01T07:27:32Z",
+ "mode": "feed",
+ "captcha_streak": 2,
+ "pages_loaded": 2,
+ "pages": [
+  {
+   "url": "https://www.amazon.in/s?k=diwali+gift+hamper&rh=p_8%3A20-",
+   "http": 503,
+   "title": "503 - Service Unavailable Error",
+   "html_len": 1348,
+   "has_results": false,
+   "marks": [
+    "To discuss automated access",
+    "api-services-support@amazon.com"
+   ]
+  },
+  {
+   "url": "https://www.amazon.in/s?k=diwali+gift+hamper",
+   "http": 503,
+   "title": "503 - Service Unavailable Error",
+   "html_len": 1348,
+   "has_results": false,
+   "marks": [
+    "To discuss automated access",
+    "api-services-support@amazon.com"
+   ]
+  }
+ ]
+}
