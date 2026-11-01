@@ -1,0 +1,70 @@
+{
+ "time": "2026-11-01T07:32:48Z",
+ "results": [
+  {
+   "url": "https://www.amazon.in/s?k=power+bank",
+   "http": 503,
+   "title": "503 - Service Unavailable Error",
+   "html_len": 1348,
+   "cards": 0,
+   "blocked_mark": true,
+   "variant": "in_plain",
+   "secs": 11.1
+  },
+  {
+   "url": "https://www.amazon.in/s?k=power+bank",
+   "http": 503,
+   "title": "503 - Service Unavailable Error",
+   "html_len": 1348,
+   "cards": 0,
+   "blocked_mark": true,
+   "variant": "in_flag",
+   "secs": 10.8
+  },
+  {
+   "url": "https://www.amazon.in/s?k=power+bank",
+   "http": 503,
+   "title": "503 - Service Unavailable Error",
+   "html_len": 1348,
+   "cards": 0,
+   "blocked_mark": true,
+   "home": {
+    "http": 200,
+    "title": "Amazon.in",
+    "html_len": 3506
+   },
+   "variant": "in_home_first",
+   "secs": 22.0
+  },
+  {
+   "url": "https://www.amazon.in/s?k=power+bank",
+   "http": 503,
+   "title": "503 - Service Unavailable Error",
+   "html_len": 1348,
+   "cards": 0,
+   "blocked_mark": true,
+   "variant": "in_mobile_pixel7",
+   "secs": 10.8
+  },
+  {
+   "url": "https://www.amazon.in/s?k=power+bank",
+   "http": 503,
+   "title": "503 - Service Unavailable Error",
+   "html_len": 1348,
+   "cards": 0,
+   "blocked_mark": true,
+   "variant": "in_new_headless",
+   "secs": 11.1
+  },
+  {
+   "url": "https://www.amazon.com/s?k=power+bank",
+   "http": 200,
+   "title": "Amazon.com : power bank",
+   "html_len": 1536450,
+   "cards": 16,
+   "blocked_mark": false,
+   "variant": "com_control",
+   "secs": 4.1
+  }
+ ]
+}
