@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'auto | feed | offers | selftest'
+        description: 'auto | feed | offers | selftest | probe'
         default: 'auto'
       only:
         description: 'offers mode: only this category key (e.g. mobiles) - leave empty for all'
@@ -53,10 +53,16 @@ jobs:
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
 
+      - name: Probe browser setups (writes guides/probe.json)
+        if: github.event.inputs.mode == 'probe'
+        run: python tools/probe.py
+
       - name: Logic tests
+        if: github.event.inputs.mode != 'probe'
         run: python -m unittest discover -s tests -v
 
       - name: Scan Amazon India
+        if: github.event.inputs.mode != 'probe'
         env:
           AMAZON_IN_TAG: ${{ vars.AMAZON_IN_TAG }}
           SCAN_PROXY: ${{ secrets.SCAN_PROXY }}
