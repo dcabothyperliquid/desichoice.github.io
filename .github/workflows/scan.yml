@@ -6,19 +6,17 @@ name: India Deal Scan
 # Optional (Settings -> Secrets and variables -> Actions -> Variables):  AMAZON_IN_TAG = your Amazon India associate id, e.g. yourid-21
 # First time: Actions -> India Deal Scan -> Run workflow -> mode = selftest (prints cards per department, writes nothing).
 #
-# Each run only does what is DUE (hot.json older than 11 h, categories not swept for 11 h), so a run with nothing due ends in seconds.
-# India morning window starts 06:00 IST (00:30 UTC); a second identical window runs 12 h later.
+# Each run only does what is DUE (hot.json / a category older than 20 h), so a retry after a good run ends in seconds.
+# One night window, 02:07-~05:00 IST, so everything is fresh before 06:00 IST.
 
 on:
   schedule:
-    - cron: '30 0 * * *'
-    - cron: '15 1 * * *'
-    - cron: '0 2 * * *'
-    - cron: '45 2 * * *'
-    - cron: '30 12 * * *'
-    - cron: '15 13 * * *'
-    - cron: '0 14 * * *'
-    - cron: '45 14 * * *'
+    # Once a day, at night India time (IST = UTC+5:30): 02:07, 02:52, 03:37, 04:22 IST.
+    # First run does the work; later ones only retry if something failed (nothing is "due" after a good run).
+    - cron: '37 20 * * *'
+    - cron: '22 21 * * *'
+    - cron: '7 22 * * *'
+    - cron: '52 22 * * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -60,6 +58,9 @@ jobs:
           SCAN_MODE: ${{ github.event.inputs.mode || 'auto' }}
           SCAN_ONLY: ${{ github.event.inputs.only || '' }}
           BUDGET_MIN: '40'
+          FEED_EVERY_H: '20'
+          SWEEP_EVERY_H: '20'
+          FRESH_H: '48'
         run: python tools/scan_in.py
 
       - name: Commit feed files
