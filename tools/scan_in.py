@@ -354,6 +354,7 @@ class Amazon:
                                        extra_http_headers={"Accept-Language": "en-IN,en;q=0.9"})
         self.page = ctx.new_page()
         self.captcha_streak = 0
+        self.trace = []          # per-page diagnostics -> guides/scan_status.json
         self.pages_loaded = 0
         self.t0 = time.time()
 
@@ -389,7 +390,7 @@ class Amazon:
         url = f"{BASE}/s?" + "&".join(q)
         self.pages_loaded += 1
         try:
-            self.page.goto(url, timeout=45000, wait_until="domcontentloaded")
+            _resp = self.page.goto(url, timeout=45000, wait_until="domcontentloaded")
             try:
                 self.page.wait_for_selector('div[data-component-type="s-search-result"]', timeout=9000)
             except Exception:
@@ -397,16 +398,27 @@ class Amazon:
             html = self.page.content()
         except Exception as e:
             log("  page error:", str(e)[:100])
+            self.trace.append({"url": url, "error": str(e)[:160]})
             return []
+        try:
+            _title = (self.page.title() or "")[:80]
+        except Exception:
+            _title = ""
+        _rec = {"url": url, "http": _resp.status if _resp else None, "title": _title, "html_len": len(html),
+                "has_results": "s-search-result" in html, "marks": [m for m in _MARKS if m in html]}
+        self.trace.append(_rec)
         if any(m in html for m in _MARKS) and 's-search-result' not in html:
             self.captcha_streak += 1
             log("  CAPTCHA / block (streak %d)" % self.captcha_streak)
             return []
         self.captcha_streak = 0
         try:
-            return self.page.evaluate(_JS_CARDS) or []
+            _cards = self.page.evaluate(_JS_CARDS) or []
+            _rec["cards"] = len(_cards)
+            return _cards
         except Exception as e:
             log("  extract error:", str(e)[:100])
+            _rec["extract_error"] = str(e)[:120]
             return []
 
     def items(self, kw=None, alias=None, pages=1, pct=MIN_PCT, min_price=MIN_PRICE_OFFER):
@@ -576,6 +588,12 @@ def main():
         if offers_due and not am.blocked() and not am.out_of_time():
             run_offers(am, force=(mode == "offers"))
     finally:
+        try:   # always leave a small status file so a run can be diagnosed without opening Actions logs
+            write_json(os.path.join(os.path.dirname(HOT_PATH), "scan_status.json"),
+                       {"time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "mode": mode,
+                        "captcha_streak": am.captcha_streak, "pages_loaded": am.pages_loaded, "pages": am.trace[:40]})
+        except Exception as e:
+            log("status write failed:", str(e)[:80])
         am.close()
     return 0
 
