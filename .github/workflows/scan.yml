@@ -69,5 +69,9 @@ jobs:
           git add -A guides
           if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git commit -m "feed: India deals updated by bot"
-          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-          git push
+          for i in 1 2 3 4 5; do
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep 6
+          done
+          echo "push failed after retries"; exit 1
