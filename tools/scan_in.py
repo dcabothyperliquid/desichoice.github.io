@@ -229,6 +229,8 @@ def card_to_item(c, now=None):
     if not price or price <= 0:
         return None
     pct = 0
+    if was and was <= price * 1.01:
+        was = 0                      # not a real MRP (e.g. a per-unit price) -> derive from the "xx% off" text below
     if was and was > price * 1.01:
         pct = int(round((was - price) / was * 100))
     else:
@@ -357,7 +359,7 @@ def parse_cards(html):
         title = (txt(h) or (h.get("aria-label") or "").strip()) if h else ""
         im = c.select_one("img.s-image")
         pe = c.select_one(".a-price:not(.a-text-price) .a-offscreen")
-        we = c.select_one('.a-price.a-text-price .a-offscreen, [data-a-strike="true"] .a-offscreen')
+        we = c.select_one('[data-a-strike="true"] .a-offscreen')      # ONLY the struck-through MRP (unit prices like Rs36.9/count are .a-text-price too)
         ra = c.select_one("span.a-icon-alt")
         rv = c.select_one('span.s-underline-text, a[href*="customerReviews"] span, span[aria-label*="ratings"]')
         out.append({"asin": c.get("data-asin") or "", "title": title, "img": (im.get("src") if im else "") or "",
