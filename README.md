@@ -26,7 +26,8 @@ Item: `asin, name, pct, rating, t, img, link, now, was, deal, cat, label, icon, 
 - If Amazon shows a captcha twice in a row the run stops cleanly and keeps the old feed (never writes an empty one).
 - Local test of the logic (no browser): `python -m unittest discover -s tests -v`
 
-## If the Actions run ends "success" but guides/hot.json never appears
-Amazon shows a captcha to GitHub's datacenter IPs and the bot stops on purpose (keeps old feed). Two fixes:
-1. **Proxy (stays fully automatic):** Settings -> Secrets and variables -> Actions -> **Secrets** -> `SCAN_PROXY` = `http://user:pass@host:port` (an India proxy).
-2. **Local run (free):** on a PC/VPS with an Indian IP run `python tools/local_scan.py` - scans and pushes `guides/` itself.
+## How the Amazon.in fetch works (important)
+amazon.in answers HTTP 503 to GitHub runner IPs (checked from the runner), so Playwright from Actions can never load it.
+Fix: pages are fetched through Google's website-translate proxy (`www-amazon-in.translate.goog`), which returns the full
+Amazon HTML; `tools/scan_in.py` parses it with BeautifulSoup. No browser, no proxy, no key, free.
+Every run writes `guides/scan_status.json` (http codes per page) - open it to see what happened.

@@ -335,24 +335,44 @@ def age_h(s):
 # =====================================================================================================================
 # browser
 # =====================================================================================================================
+# Amazon.in answers 503 ("automated access") to GitHub runner IPs, but the same page fetched through Google's website-translate
+# proxy (<host with dots as dashes>.translate.goog) comes back complete (verified from the runner, see guides/probe2.json).
+# So: plain HTTP fetch through translate.goog + HTML parsing - no browser needed.
+TRANSLATE_HOST = "https://www-amazon-in.translate.goog"
+_TR = "_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en"
+
+
+def parse_cards(html):
+    """Same fields as the old in-browser extractor: asin,title,img,price,was,rating,reviews,text."""
+    from bs4 import BeautifulSoup
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
+    out = []
+    for c in soup.select('div[data-component-type="s-search-result"]'):
+        def txt(el):
+            return el.get_text(" ", strip=True) if el else ""
+        h = c.find("h2")
+        title = (txt(h) or (h.get("aria-label") or "").strip()) if h else ""
+        im = c.select_one("img.s-image")
+        pe = c.select_one(".a-price:not(.a-text-price) .a-offscreen")
+        we = c.select_one('.a-price.a-text-price .a-offscreen, [data-a-strike="true"] .a-offscreen')
+        ra = c.select_one("span.a-icon-alt")
+        rv = c.select_one('span.s-underline-text, a[href*="customerReviews"] span, span[aria-label*="ratings"]')
+        out.append({"asin": c.get("data-asin") or "", "title": title, "img": (im.get("src") if im else "") or "",
+                    "price": txt(pe), "was": txt(we), "rating": txt(ra),
+                    "reviews": ((rv.get("aria-label") if rv else "") or txt(rv)),
+                    "text": txt(c)[:900]})
+    return out
+
+
 class Amazon:
     def __init__(self):
-        from playwright.sync_api import sync_playwright
-        self.pw = sync_playwright().start()
-        # optional Indian proxy (GitHub datacenter IPs get captchas): SCAN_PROXY = http://user:pass@host:port
-        _px = (os.environ.get("SCAN_PROXY") or "").strip()
-        _kw = {}
-        if _px:
-            from urllib.parse import urlparse
-            _u = urlparse(_px)
-            _kw["proxy"] = {"server": "%s://%s:%s" % (_u.scheme or "http", _u.hostname, _u.port or 80),
-                            **({"username": _u.username, "password": _u.password or ""} if _u.username else {})}
-            log("proxy: on (%s)" % _u.hostname)
-        self.browser = self.pw.chromium.launch(headless=True, **_kw)
-        ctx = self.browser.new_context(user_agent=_UA, locale="en-IN", timezone_id="Asia/Kolkata",
-                                       viewport={"width": 1366, "height": 900},
-                                       extra_http_headers={"Accept-Language": "en-IN,en;q=0.9"})
-        self.page = ctx.new_page()
+        import requests
+        self.s = requests.Session()
+        self.s.headers.update({"User-Agent": _UA, "Accept-Language": "en-IN,en;q=0.9",
+                               "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"})
         self.captcha_streak = 0
         self.trace = []          # per-page diagnostics -> guides/scan_status.json
         self.pages_loaded = 0
@@ -360,11 +380,7 @@ class Amazon:
 
     def close(self):
         try:
-            self.browser.close()
-        except Exception:
-            pass
-        try:
-            self.pw.stop()
+            self.s.close()
         except Exception:
             pass
 
@@ -387,33 +403,32 @@ class Amazon:
             q.append("rh=" + urllib.parse.quote(f"p_8:{pct}-"))
         if page_no > 1:
             q.append(f"page={page_no}")
-        url = f"{BASE}/s?" + "&".join(q)
+        url = f"{TRANSLATE_HOST}/s?" + "&".join(q + [_TR])
         self.pages_loaded += 1
-        try:
-            _resp = self.page.goto(url, timeout=45000, wait_until="domcontentloaded")
+        html, status = "", None
+        for attempt in (1, 2):
             try:
-                self.page.wait_for_selector('div[data-component-type="s-search-result"]', timeout=9000)
-            except Exception:
-                pass
-            html = self.page.content()
-        except Exception as e:
-            log("  page error:", str(e)[:100])
-            self.trace.append({"url": url, "error": str(e)[:160]})
-            return []
-        try:
-            _title = (self.page.title() or "")[:80]
-        except Exception:
-            _title = ""
-        _rec = {"url": url, "http": _resp.status if _resp else None, "title": _title, "html_len": len(html),
+                r = self.s.get(url, timeout=45)
+                html, status = r.text, r.status_code
+            except Exception as e:
+                log("  page error:", str(e)[:100])
+                self.trace.append({"url": url, "error": str(e)[:160]})
+                return []
+            if status in (429, 500, 502, 503, 504) and attempt == 1:
+                time.sleep(random.uniform(15, 25))
+                continue
+            break
+        _rec = {"url": url, "http": status, "html_len": len(html),
                 "has_results": "s-search-result" in html, "marks": [m for m in _MARKS if m in html]}
         self.trace.append(_rec)
-        if any(m in html for m in _MARKS) and 's-search-result' not in html:
+        if 's-search-result' not in html and (status in (429, 503) or any(m in html for m in _MARKS)
+                                              or "unusual traffic" in html):
             self.captcha_streak += 1
             log("  CAPTCHA / block (streak %d)" % self.captcha_streak)
             return []
         self.captcha_streak = 0
         try:
-            _cards = self.page.evaluate(_JS_CARDS) or []
+            _cards = parse_cards(html)
             _rec["cards"] = len(_cards)
             return _cards
         except Exception as e:
