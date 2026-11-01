@@ -339,7 +339,16 @@ class Amazon:
     def __init__(self):
         from playwright.sync_api import sync_playwright
         self.pw = sync_playwright().start()
-        self.browser = self.pw.chromium.launch(headless=True)
+        # optional Indian proxy (GitHub datacenter IPs get captchas): SCAN_PROXY = http://user:pass@host:port
+        _px = (os.environ.get("SCAN_PROXY") or "").strip()
+        _kw = {}
+        if _px:
+            from urllib.parse import urlparse
+            _u = urlparse(_px)
+            _kw["proxy"] = {"server": "%s://%s:%s" % (_u.scheme or "http", _u.hostname, _u.port or 80),
+                            **({"username": _u.username, "password": _u.password or ""} if _u.username else {})}
+            log("proxy: on (%s)" % _u.hostname)
+        self.browser = self.pw.chromium.launch(headless=True, **_kw)
         ctx = self.browser.new_context(user_agent=_UA, locale="en-IN", timezone_id="Asia/Kolkata",
                                        viewport={"width": 1366, "height": 900},
                                        extra_http_headers={"Accept-Language": "en-IN,en;q=0.9"})

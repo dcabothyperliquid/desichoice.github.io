@@ -59,6 +59,7 @@ jobs:
       - name: Scan Amazon India
         env:
           AMAZON_IN_TAG: ${{ vars.AMAZON_IN_TAG }}
+          SCAN_PROXY: ${{ secrets.SCAN_PROXY }}
           SCAN_MODE: ${{ github.event.inputs.mode || 'auto' }}
           SCAN_ONLY: ${{ github.event.inputs.only || '' }}
           BUDGET_MIN: '40'
