@@ -1,0 +1,53 @@
+name: Render Deal Reel
+
+# Xbot (Render) dispatches this workflow with a JSON payload; the job renders a 1080x1920 reel (photos + prices + Hinglish voice)
+# and publishes it as a GitHub Release asset (tag reel-<job_id>) so Xbot / Facebook can fetch it from a public URL.
+# Public repo = free Actions minutes. No secrets needed (built-in GITHUB_TOKEN publishes the release).
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: 'unique job id (tag will be reel-<job_id>)'
+        required: true
+      payload:
+        description: 'JSON: {"label": "...", "items": [{"title","price","list_price","pct","image"}]}'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render-reel-${{ github.event.inputs.job_id }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install ffmpeg, fonts, python deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          pip install -q pillow requests edge-tts
+
+      - name: Render reel
+        env:
+          JOB_ID: ${{ github.event.inputs.job_id }}
+          PAYLOAD: ${{ github.event.inputs.payload }}
+        run: python tools/render_reel.py
+
+      - name: Publish release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_ID: ${{ github.event.inputs.job_id }}
+        run: |
+          gh release create "reel-${JOB_ID}" "out/reel.mp4#reel.mp4" "out/meta.json#meta.json" \
+            --title "reel-${JOB_ID}" --notes "auto-rendered deal reel" --repo "${GITHUB_REPOSITORY}"
