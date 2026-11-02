@@ -55,12 +55,18 @@ def rs(v):
     return f"Rs {float(v):,.0f}"
 
 
+def fit(draw, text, size, maxw):
+    while size > 30 and draw.textlength(text, font=font(size)) > maxw:
+        size -= 4
+    return font(size)
+
+
 def slide_title(label, n, best):
     im = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(im)
     d.rounded_rectangle((90, 560, W - 90, 1360), 48, fill="white", outline="#fdba74", width=6)
     d.text((W // 2, 700), "DESI CHOICE", fill="#f97316", font=font(64), anchor="mm")
-    d.text((W // 2, 860), f"{label}", fill="#111111", font=font(110), anchor="mm")
+    d.text((W // 2, 860), f"{label}", fill="#111111", font=fit(d, label, 110, W - 260), anchor="mm")
     d.text((W // 2, 1020), f"{n} DEALS", fill="#111111", font=font(84), anchor="mm")
     if best:
         d.rounded_rectangle((250, 1130, W - 250, 1260), 36, fill=ACCENT)
@@ -151,7 +157,7 @@ def dur(path):
 
 
 def clip(png, seconds, audio, out):
-    vf = f"scale={W}:{H},zoompan=z='min(zoom+0.0006,1.06)':d={int(seconds*25)}:s={W}x{H}:fps=25,format=yuv420p"
+    vf = f"scale={W}:{H},zoompan=z='min(zoom+0.0004,1.03)':d={int(seconds*25)}:s={W}x{H}:fps=25,format=yuv420p"
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-t", f"{seconds:.2f}", "-i", png]
     if audio:
         cmd += ["-i", audio]
