@@ -49,9 +49,10 @@ def parse(html):
                 imgs += sorted(d, key=lambda k: -(d[k][0] if d[k] else 0))[:1]
             except Exception:
                 pass
-    # 2) videos: "videos":[{"url":"https://...mp4", ...}]  or any m.media-amazon vse mp4
-    for m in re.finditer(r'https:\\?/\\?/m\.media-amazon\.com/images/S/vse-vms-transcoding-artifact-[A-Za-z0-9\-_/\\.]+?\.mp4', html):
+    # 2) videos: Amazon serves HLS (.m3u8) from vse-vms-transcoding-artifact; ".vertical." = 9:16 version (best for reels)
+    for m in re.finditer(r'https:\\?/\\?/m\.media-amazon\.com/images/S/vse-vms-transcoding-artifact-[A-Za-z0-9\-_/\\.]+?\.m3u8', html):
         vids.append(m.group(0).replace("\\/", "/"))
+    vids.sort(key=lambda u: (0 if ".vertical." in u else 1))
     # 3) feature bullets
     try:
         from bs4 import BeautifulSoup

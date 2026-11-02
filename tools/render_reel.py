@@ -269,14 +269,16 @@ def load_photos(it, media):
 
 
 def load_video(media):
+    """HLS (.m3u8) from Amazon -> first ~7s as local mp4 (ffmpeg pulls the playlist itself)."""
     for u in media.get("videos", []):
-        try:
-            p = f"{TMP}/pv.mp4"
-            open(p, "wb").write(fetch(u, 60))
-            if dur(p) >= 1.5:
-                return p
-        except Exception as e:
-            print("video failed:", str(e)[:80], file=sys.stderr)
+        p = f"{TMP}/pv.mp4"
+        r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-user_agent", "Mozilla/5.0", "-i", u, "-t", "7", "-an",
+                            "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p", p],
+                           capture_output=True, text=True, timeout=120)
+        if r.returncode == 0 and os.path.exists(p) and dur(p) >= 1.5:
+            print("video ok:", u[-60:], round(dur(p), 1), "s")
+            return p
+        print("video failed:", u[-50:], r.stderr[-160:], file=sys.stderr)
     return None
 
 
