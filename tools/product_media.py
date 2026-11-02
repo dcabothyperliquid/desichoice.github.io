@@ -85,7 +85,23 @@ def media(asin, session=None):
         return {"images": [], "videos": [], "bullets": []}
 
 
+def debug(asin):
+    import requests
+    html = fetch_dp(asin)
+    urls = sorted(set(u.replace("\\/", "/") for u in re.findall(r'https:\\?/\\?/[^"\'\s<>]*vse-vms[^"\'\s<>]*', html)))
+    print("found", len(urls), "vse-vms urls")
+    for u in urls[:25]:
+        u = re.split(r'&quot;|\\u0026|"', u)[0]
+        try:
+            r = requests.get(u, headers={"User-Agent": _UA, "Range": "bytes=0-1"}, timeout=20)
+            print(r.status_code, r.headers.get("content-type"), u)
+        except Exception as e:
+            print("ERR", type(e).__name__, u)
+
+
 if __name__ == "__main__":
+    if len(sys.argv) > 2 and sys.argv[1] == "--debug":
+        debug(sys.argv[2]); sys.exit(0)
     for a in sys.argv[1:]:
         r = media(a)
         print(a, json.dumps({k: (v if k != "bullets" else v[:3]) for k, v in r.items()}, indent=1))

@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 W, H = 1080, 1920
 OUT, TMP = "out", "tmp"
 VOICE = os.environ.get("REEL_VOICE", "hi-IN-SwaraNeural")
-RATE = os.environ.get("REEL_RATE", "+6%")
+RATE = os.environ.get("REEL_RATE", "+14%")
 PITCH = os.environ.get("REEL_PITCH", "+2Hz")
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
 ACCENT = "#e53935"
@@ -103,14 +103,14 @@ def price_strip(d, it, pct_badge=True):
     d.text((W - 100, 1605), "DESI CHOICE", font=font(36), fill="#f97316", anchor="rm")
 
 
-def photo_frame(photo, it, caption=None, counter=None):
+def photo_frame(photo, it, caption=None, counter=None, top=250, height=980):
     """Blurred full-bleed bg + white product card + caption + price strip. Returns RGB image."""
     im = blurred_bg(photo).convert("RGBA")
     d = ImageDraw.Draw(im, "RGBA")
-    d.rounded_rectangle((50, 250, W - 50, 1230), 48, fill=(255, 255, 255, 255))
+    d.rounded_rectangle((50, top, W - 50, top + height), 48, fill=(255, 255, 255, 255))
     ph = photo.copy()
-    ph.thumbnail((940, 940))
-    im.paste(ph, ((W - ph.width) // 2, 250 + (980 - ph.height) // 2))
+    ph.thumbnail((940, height - 40))
+    im.paste(ph, ((W - ph.width) // 2, top + (height - ph.height) // 2))
     if counter:
         d.rounded_rectangle((W - 230, 190, W - 60, 270), 30, fill=(0, 0, 0, 170))
         d.text((W - 145, 230), counter, font=font(44), fill="white", anchor="mm")
@@ -126,9 +126,9 @@ def hook_overlay(head, sub, it):
     """Transparent overlay for the hook shot (drawn over blurred video / photo)."""
     ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(ov, "RGBA")
-    d.rounded_rectangle((50, 170, W - 50, 520), 46, fill=(0, 0, 0, 150))
-    text_outline(d, (W // 2, 290), head, fit(d, head, 120, W - 160, 60), fill="#ffeb3b", sw=7)
-    text_outline(d, (W // 2, 440), sub, fit(d, sub, 62, W - 160, 36), sw=5)
+    d.rounded_rectangle((50, 90, W - 50, 380), 46, fill=(0, 0, 0, 160))
+    text_outline(d, (W // 2, 200), head, fit(d, head, 120, W - 160, 60), fill="#ffeb3b", sw=7)
+    text_outline(d, (W // 2, 320), sub, fit(d, sub, 58, W - 160, 34), sw=5)
     price_strip(d, it)
     return ov
 
@@ -318,7 +318,7 @@ def main():
             ov.save(ovp)
             shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": sc["hook"], "min": 3.6})
         else:
-            f = photo_frame(photos[0], it, None, None).convert("RGBA")
+            f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA")
             f.alpha_composite(ov)
             p = f"{TMP}/h{idx}.png"
             f.convert("RGB").save(p)
@@ -326,23 +326,19 @@ def main():
         # feature shots: one distinct photo per line (gallery order), counter 2/5 ...
         gal = photos[1:] if len(photos) > 1 else photos
         total = len(gal)
-        for j, ph in enumerate(gal[:4]):
+        for j, ph in enumerate(gal[:3]):
             ln = lines[j] if j < len(lines) else None
             cap = ln["text"] if ln else None
             voice = ln["voice"] if ln else None
             p = f"{TMP}/p{idx}_{j}.png"
-            photo_frame(ph, it, cap, f"{j + 1}/{min(total, 4)}").save(p)
-            shots.append({"kind": "still", "png": p, "voice": voice, "min": 2.6})
-        # price + CTA
+            photo_frame(ph, it, cap, f"{j + 1}/{min(total, 3)}").save(p)
+            shots.append({"kind": "still", "png": p, "voice": voice, "min": 2.2})
+        # price + CTA (last shot of the product, hero photo again)
         p = f"{TMP}/pr{idx}.png"
-        photo_frame(photos[0], it, "Aaj ka price check karo", None).save(p)
-        shots.append({"kind": "still", "png": p, "voice": sc["price_voice"], "min": 3.0})
+        photo_frame(photos[0], it, "LINK: COMMENTS me hai", None).save(p)
+        shots.append({"kind": "still", "png": p, "voice": sc["price_voice"] + " " + sc["outro"], "min": 3.4})
     if not shots:
         sys.exit("no media at all")
-    shots.append({"kind": "still", "png": f"{TMP}/outro.png", "voice": (items[0].get("script") or {}).get("outro") or "लिंक कमेंट्स में है। रोज़ ऐसी डील के लिए फ़ॉलो करो।", "min": 3.0})
-    outro_photo = Image.open(io.BytesIO(fetch(items[0]["image"]))).convert("RGB") if items[0].get("image") else Image.new("RGB", (W, H), "#fff7ed")
-    outro_frame(outro_photo, items[0]).save(f"{TMP}/outro.png")
-
     clips, voiced = [], 0
     for k, s in enumerate(shots):
         a = tts_one(s["voice"], f"{TMP}/v{k}.mp3") if s.get("voice") else None

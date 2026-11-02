@@ -17,6 +17,8 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
           pip install -q pillow requests edge-tts beautifulsoup4 lxml
+      - name: Debug video urls
+        run: python tools/product_media.py --debug B0D78YCR1K > samples/media_debug.txt 2>&1 || true
       - name: Render
         env:
           JOB_ID: sample
@@ -28,5 +30,5 @@ jobs:
       - name: Save
         run: |
           git config user.name sample; git config user.email sample@users.noreply.github.com
-          git add samples/render.log samples/reel.mp4 samples/meta.json || true
+          git add samples/media_debug.txt samples/render.log samples/reel.mp4 samples/meta.json || true
           git commit -m "sample reel result" && git push

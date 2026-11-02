@@ -1,18 +1,34 @@
-{"label": "Electronics", "items": [{
- "asin": "B0D78YCR1K",
- "title": "pTron Bassbuds Astra in-Ear TWS Earbuds w/Stereo Sound, 50Hrs",
- "price": 599, "list_price": 2899, "pct": 79,
- "image": "https://m.media-amazon.com/images/I/41TdDa7cmvL.jpg",
- "script": {
-  "head": "₹2,899 → ₹599?!",
-  "sub": "79% OFF · pTron Bassbuds Astra",
-  "hook": "रुको! दो हज़ार आठ सौ निन्यानवे रुपये वाले ईयरबड्स, अभी सिर्फ़ पाँच सौ निन्यानवे में? पहले ये देख लो।",
-  "lines": [
-   {"text": "50 Ghante Playtime", "voice": "एक बार चार्ज करो, और पचास घंटे तक गाने चलते रहेंगे।"},
-   {"text": "13mm Dynamic Driver", "voice": "तेरह मिलीमीटर का ड्राइवर, यानी बास और साउंड दोनों दमदार।"},
-   {"text": "IPX4 Sweatproof", "voice": "पसीना या पानी के छींटे, कोई दिक्कत नहीं। जिम के लिए बढ़िया।"},
-   {"text": "Touch Controls", "voice": "गाना और कॉल, सब कुछ बस एक टच से।"}
-  ],
-  "price_voice": "और कीमत? सिर्फ़ पाँच सौ निन्यानवे रुपये। पूरे दो हज़ार तीन सौ रुपये की बचत।",
-  "outro": "लिंक कमेंट्स में है। रोज़ ऐसी डील के लिए फ़ॉलो करो।"
- }}]}
+{
+ "label": "Electronics",
+ "items": [
+  {
+   "asin": "B0D78YCR1K",
+   "title": "pTron Bassbuds Astra in-Ear TWS Earbuds w/Stereo Sound, 50Hrs",
+   "price": 599,
+   "list_price": 2899,
+   "pct": 79,
+   "image": "https://m.media-amazon.com/images/I/41TdDa7cmvL.jpg",
+   "script": {
+    "head": "₹2,899 → ₹599?!",
+    "sub": "79% OFF · pTron Bassbuds Astra",
+    "hook": "रुको! दो हज़ार आठ सौ निन्यानवे रुपये वाले ईयरबड्स, अभी सिर्फ़ पाँच सौ निन्यानवे में?",
+    "lines": [
+     {
+      "text": "Bluetooth 5.3 Quick Pair",
+      "voice": "ब्लूटूथ पाँच दशमलव तीन, फ़ोन से तुरंत कनेक्ट।"
+     },
+     {
+      "text": "50 Ghante Playtime",
+      "voice": "एक बार चार्ज करो, पचास घंटे गाने चलते रहेंगे।"
+     },
+     {
+      "text": "Sound App + EQ",
+      "voice": "और ऐप से अपनी पसंद का साउंड भी सेट करो।"
+     }
+    ],
+    "price_voice": "कीमत? सिर्फ़ पाँच सौ निन्यानवे रुपये। पूरे दो हज़ार तीन सौ की बचत।",
+    "outro": "लिंक कमेंट्स में है।"
+   }
+  }
+ ]
+}
