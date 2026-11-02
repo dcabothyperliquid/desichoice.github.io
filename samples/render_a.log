@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/home/runner/work/desichoice.github.io/desichoice.github.io/tools/render_reel.py", line 440, in <module>
+    main()
+  File "/home/runner/work/desichoice.github.io/desichoice.github.io/tools/render_reel.py", line 412, in main
+    (build_multi if len(items) > 1 else build_single)(payload, items, shots, meta_items)
+  File "/home/runner/work/desichoice.github.io/desichoice.github.io/tools/render_reel.py", line 316, in build_multi
+    media = product_media.media(it["asin"]) if (product_media and it.get("asin")) else {"images": [], "videos": [], "bullets": []}
+                                                ^^^^^^^^^^^^^
+NameError: name 'product_media' is not defined
