@@ -1,9 +1,4 @@
-Traceback (most recent call last):
-  File "/home/runner/work/desichoice.github.io/desichoice.github.io/tools/render_reel.py", line 440, in <module>
-    main()
-  File "/home/runner/work/desichoice.github.io/desichoice.github.io/tools/render_reel.py", line 412, in main
-    (build_multi if len(items) > 1 else build_single)(payload, items, shots, meta_items)
-  File "/home/runner/work/desichoice.github.io/desichoice.github.io/tools/render_reel.py", line 316, in build_multi
-    media = product_media.media(it["asin"]) if (product_media and it.get("asin")) else {"images": [], "videos": [], "bullets": []}
-                                                ^^^^^^^^^^^^^
-NameError: name 'product_media' is not defined
+video ok: 4650-b78d-c249e5729d08/default.vertical.jobtemplate.hls.m3u8 5.0 s
+video ok: 424c-b2fd-23371e8bb76d/default.vertical.jobtemplate.hls.m3u8 5.0 s
+video ok: 416d-9011-9e6074d6bae1/default.vertical.jobtemplate.hls.m3u8 5.0 s
+done 42.4 s, shots 11 voice shots 11 [{'asin': 'B0D78YCR1K', 'photos': 5, 'video': True}, {'asin': 'B0B5LVS732', 'photos': 5, 'video': True}, {'asin': 'B0F1N79TYM', 'photos': 5, 'video': True}] en-US-AvaMultilingualNeural
