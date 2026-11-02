@@ -318,6 +318,34 @@ def item_media(it):
     return {"images": [], "videos": [], "bullets": []}
 
 
+def inr_screen(v):
+    return inr(v)
+
+
+def fill(text, items):
+    """Groq script ke placeholders -> asli numbers. Capital = bola hua (Hindi words), small = screen ({P1} {p1} {L1} {S1} {D1} {PMIN} {DMAX})."""
+    if not text or "{" not in text:
+        return text
+
+    def val(m):
+        key, idx = m.group(1), m.group(2)
+        try:
+            if key.upper() == "PMIN":
+                it, ch = min(items, key=lambda i: float(i["price"])), key[0]
+            elif key.upper() == "DMAX":
+                it, ch = max(items, key=lambda i: int(i.get("pct") or 0)), key[0]
+            else:
+                it, ch = items[int(idx) - 1], key
+            price, lp, pct = float(it["price"]), float(it.get("list_price") or 0), int(it.get("pct") or 0)
+            save = int(lp - price) if lp > price else 0
+            return {"P": rs_voice(price), "p": inr(price), "L": rs_voice(lp or price), "l": inr(lp or price),
+                    "S": rs_voice(save or price), "s": inr(save or price), "D": hindi_num(pct) + " परसेंट", "d": f"{pct}%"}[ch]
+        except Exception:
+            return ""
+    out = re.sub(r"\{(PMIN|pmin|DMAX|dmax|[PLSDplsd])(\d?)\}", val, text)
+    return re.sub(r"\{[^}]*\}", "", out).strip()
+
+
 def load_photos(it, media):
     urls = list(dict.fromkeys(([it.get("image")] if it.get("image") else []) + [u for u in media.get("images", [])]))
     # gallery first (hi-res, different angles); feed photo is a low-res search thumbnail
@@ -367,9 +395,10 @@ def build_multi(payload, items, shots, meta_items):
     n = len(items)
     top = max(items, key=lambda i: int(i.get("pct") or 0))
     hk = payload.get("hook") or {}
-    head = hk.get("head") or f"{n} DEALS · {int(top.get('pct') or 0)}% tak OFF"
+    head = hk.get("head") or f"ABHI LO! {int(top.get('pct') or 0)}% tak OFF"
     sub = hk.get("sub") or payload.get("label") or "Top Deals"
-    hvoice = hk.get("voice") or f"रुको! आज की {hindi_num(n)} सबसे बढ़िया डील्स, एक तो सिर्फ़ {rs_voice(top['price'])} की।"
+    low_p = min(float(i["price"]) for i in items)
+    hvoice = hk.get("voice") or f"रुको! {hindi_num(n)} ऐसी डील्स, एक तो सिर्फ़ {rs_voice(low_p)} की। ये दाम कब तक रहेगा, पता नहीं, इसलिए पूरा देखो।"
     first_media = None
     for k, it in enumerate(items):
         media = item_media(it)
@@ -464,6 +493,19 @@ def main():
     items = [i for i in payload.get("items", []) if i.get("price")][:3]
     if not items:
         sys.exit("need >= 1 item")
+    try:
+        payload["hook"] = {k: fill(v, items) for k, v in (payload.get("hook") or {}).items()}
+        if payload.get("outro"):
+            payload["outro"] = fill(payload["outro"], items)
+        for it_ in items:
+            sc_ = it_.get("script") or {}
+            for k_ in ("intro", "tag"):
+                if sc_.get(k_):
+                    sc_[k_] = fill(sc_[k_], items)
+            for ln_ in sc_.get("lines") or []:
+                ln_["text"], ln_["voice"] = fill(ln_.get("text"), items), fill(ln_.get("voice"), items)
+    except Exception as e:
+        print("script fill failed:", e, file=sys.stderr)
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(TMP, exist_ok=True)
     shots, meta_items = [], []
@@ -474,7 +516,7 @@ def main():
     for k, s in enumerate(shots):
         a = tts_one(s["voice"], f"{TMP}/v{k}.mp3") if s.get("voice") else None
         voiced += 1 if a else 0
-        secs = (dur(a) + 0.05) if a else s["min"]
+        secs = (dur(a) + 0.15) if a else s["min"]
         if a and s["kind"] == "video":
             secs = max(secs, 2.5)
         if s["kind"] == "video":
