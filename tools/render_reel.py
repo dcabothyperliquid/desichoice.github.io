@@ -352,27 +352,26 @@ def build_multi(payload, items, shots, meta_items):
         gal = photos[1:] if len(photos) > 1 else photos
         # product shot A: video (5s max) or hero photo, name tag + intro voice
         cap = sc["tag"]
-        if k == 0:
-            ov = hook_overlay(head, sub, it)
-            if vid:
-                ovp = f"{TMP}/hov.png"; ov.save(ovp)
-                shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": hvoice, "min": 3.4})
-            else:
-                f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(ov)
-                p = f"{TMP}/hs.png"; f.convert("RGB").save(p)
-                shots.append({"kind": "still", "png": p, "voice": hvoice, "min": 3.0})
+        voice_a = (hvoice + " " + sc["intro"]) if k == 0 else sc["intro"]
         if vid:
-            ov = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ov, "RGBA")
-            d.rounded_rectangle((50, 110, W - 50, 250), 40, fill=(0, 0, 0, 165))
-            text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
-            price_strip(d, it)
+            if k == 0:
+                ov = hook_overlay(head, sub, it)
+            else:
+                ov = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ov, "RGBA")
+                d.rounded_rectangle((50, 110, W - 50, 250), 40, fill=(0, 0, 0, 165))
+                text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
+                price_strip(d, it)
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": sc["intro"], "min": 3.0})
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": voice_a, "min": 3.0})
         else:
-            p = f"{TMP}/a{k}.png"; photo_frame(photos[0], it, cap, None).save(p)
-            shots.append({"kind": "still", "png": p, "voice": sc["intro"], "min": 2.6})
+            if k == 0:
+                f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
+                p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
+            else:
+                p = f"{TMP}/a{k}.png"; photo_frame(photos[0], it, cap, None).save(p)
+            shots.append({"kind": "still", "png": p, "voice": voice_a, "min": 2.6})
         # product shot B..: gallery photos with feature captions (voice: the line itself)
-        for j, ph in enumerate(gal[:2]):
+        for j, ph in enumerate(gal[:(1 if n >= 3 else 2)]):
             ln = sc["lines"][j] if j < len(sc["lines"]) else None
             p = f"{TMP}/b{k}_{j}.png"
             photo_frame(ph, it, ln["text"] if ln else None, None).save(p)
