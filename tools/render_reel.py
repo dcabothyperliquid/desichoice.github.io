@@ -444,6 +444,45 @@ def item_script(it, k, n):
     return sc
 
 
+BEN_VOICE_LINES = int(os.environ.get("REEL_BEN_VOICE", "1"))    # har product par kitni benefit lines BOLNI hain (screen par hamesha 2 tak)
+
+
+def item_benefits(it, sc):
+    """Product ki benefit lines -> [(screen_text, voice), ...] max 2. Pehle Groq script lines, phir payload benefits / Amazon bullets."""
+    out = []
+    for ln in sc.get("lines") or []:
+        if isinstance(ln, dict) and san(ln.get("text")):
+            t = san(ln.get("text"))[:30]
+            out.append((t, str(ln.get("voice") or "").strip() or t))
+    if not out:
+        for b in (it.get("benefits") or []):
+            t = san(clean_bullet(b))[:30]
+            if t:
+                out.append((t, t))
+    return out[:2]
+
+
+def band_overlay(texts):
+    """Transparent overlay: benefit lines in a dark pill just above the price strip (video/photo ke upar)."""
+    ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    texts = [t for t in texts if t][:2]
+    if not texts:
+        return ov
+    d = ImageDraw.Draw(ov, "RGBA")
+    bottom, row = 1375, 62
+    top = bottom - (22 + row * len(texts))
+    d.rounded_rectangle((50, top, W - 50, bottom), 36, fill=(0, 0, 0, 175))
+    for i, t in enumerate(texts):
+        t = "• " + t
+        text_outline(d, (W // 2, top + 11 + row // 2 + i * row), t, fit(d, t, 50, W - 150, 32), fill="white", sw=4)
+    return ov
+
+
+def with_stop(v):
+    v = (v or "").strip()
+    return v if not v or v[-1] in "।.!?" else v + "।"
+
+
 def build_multi(payload, items, shots, meta_items):
     n = len(items)
     top = max(items, key=lambda i: int(i.get("pct") or 0))
@@ -471,9 +510,12 @@ def build_multi(payload, items, shots, meta_items):
         sc = item_script(it, k, n)
         meta_items.append({"asin": it.get("asin"), "photos": len(photos), "video": bool(vid)})
         gal = photos[1:] if len(photos) > 1 else photos
-        # product shot A: video (5s max) or hero photo, name tag + intro voice
+        # product shot A: video (5s max) or hero photo, name tag + intro voice + benefit lines (screen + spoken)
         cap = sc["tag"]
-        voice_a = price_first(it) if k == 0 else f"{ORD[k]} है {spoken_name(it.get('title'))}, सिर्फ़ {rs_short(it['price'])} में।"
+        bens = item_benefits(it, sc)
+        band = band_overlay([t for t, _ in bens])
+        base_voice = price_first(it) if k == 0 else f"{ORD[k]} है {spoken_name(it.get('title'))}, सिर्फ़ {rs_short(it['price'])} में।"
+        voice_a = " ".join([base_voice] + [with_stop(v) for _, v in bens[:BEN_VOICE_LINES]])
         if vid:
             if k == 0:
                 ov = hook_overlay(head, sub, it)
@@ -482,22 +524,27 @@ def build_multi(payload, items, shots, meta_items):
                 d.rounded_rectangle((50, 110, W - 50, 250), 40, fill=(0, 0, 0, 165))
                 text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
                 price_strip(d, it)
+            ov.alpha_composite(band)
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": voice_a, "min": 3.0, "cap": 5.5 if k == 0 else 4.0})
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": voice_a, "min": 3.4})
         else:
             if k == 0:
                 f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
-                p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
             else:
-                p = f"{TMP}/a{k}.png"; photo_frame(photos[0], it, cap, None).save(p)
-            shots.append({"kind": "still", "png": p, "voice": voice_a, "min": 2.6, "cap": 5.5 if k == 0 else 4.0})
-        # gallery shots hata diye: har product ~4 sec, ek hi shot (reel 12-15 sec)
+                f = photo_frame(photos[0], it, None, None).convert("RGBA")
+                d = ImageDraw.Draw(f, "RGBA")
+                d.rounded_rectangle((50, 110, W - 50, 235), 40, fill=(0, 0, 0, 165))
+                text_outline(d, (W // 2, 172), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
+            f.alpha_composite(band)
+            p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
+            shots.append({"kind": "still", "png": p, "voice": voice_a, "min": 3.4})
+        # gallery shots nahi: har product ka ek hi shot, par benefit lines us par screen + awaaz dono me
         if first_media is None:
             first_media = photos[0]
     outro = "लिंक कमेंट्स में हैं। फ़ॉलो करो।"
     p = f"{TMP}/outro.png"
     outro_frame(first_media or Image.new("RGB", (W, H), "#fff7ed"), items[0]).save(p)
-    shots.append({"kind": "still", "png": p, "voice": outro, "min": 2.4, "cap": 2.8})
+    shots.append({"kind": "still", "png": p, "voice": outro, "min": 2.4})
 
 
 def build_single(payload, items, shots, meta_items):
@@ -576,13 +623,10 @@ def main():
     for k, s in enumerate(shots):
         a = tts_one(s["voice"], f"{TMP}/v{k}.mp3") if s.get("voice") else None
         voiced += 1 if a else 0
-        secs = (dur(a) + 0.15) if a else s["min"]
-        if a and s["kind"] == "video":
-            secs = max(secs, 2.5)
+        # shot ki lambai = poori awaaz + chhota tail. Awaaz kabhi kaati nahi jaati (pehle cap se beech me kat jaati thi).
+        secs = max(dur(a) + 0.3, 2.5) if a else s["min"]
         if s["kind"] == "video" and not a:
             secs = min(secs, 7.0)
-        if s.get("cap"):
-            secs = min(secs, s["cap"])          # multi-product reel: har shot ~4 sec, total 12-15 sec
         c = f"{TMP}/c{k}.mp4"
         if s["kind"] == "video":
             video_clip(s["mp4"], s["png"], secs, a, c)
