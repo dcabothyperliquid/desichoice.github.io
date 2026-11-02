@@ -264,6 +264,20 @@ def video_clip(mp4, overlay_png, secs, audio, out):
 
 
 # ───────────────────────── main ─────────────────────────
+BAD_WORDS = ("support", "helpline", "toll free", "whatsapp", "contact us", "scan &", "scan and", "qr", "app store", "google play", "customer care")
+
+
+def is_junk(im):
+    """OCR the gallery photo; support / QR / app-download pages make bad reel shots. No tesseract -> keep everything."""
+    try:
+        import pytesseract
+        small = im.copy(); small.thumbnail((900, 900))
+        txt = pytesseract.image_to_string(small).lower()
+        return any(w in txt for w in BAD_WORDS)
+    except Exception:
+        return False
+
+
 def load_photos(it, media):
     urls = list(dict.fromkeys(([it.get("image")] if it.get("image") else []) + [u for u in media.get("images", [])]))
     # gallery first (hi-res, different angles); feed photo is a low-res search thumbnail
@@ -272,7 +286,7 @@ def load_photos(it, media):
     for u in dict.fromkeys(urls):
         try:
             im = Image.open(io.BytesIO(fetch(u))).convert("RGB")
-            if min(im.size) >= 300:
+            if min(im.size) >= 300 and not (out and is_junk(im)):
                 out.append(im)
         except Exception as e:
             print("photo failed:", u[-30:], str(e)[:60], file=sys.stderr)
