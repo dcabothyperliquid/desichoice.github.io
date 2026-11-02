@@ -279,6 +279,45 @@ def is_junk(im):
         return False
 
 
+def _xget(url, tries=4):
+    """Xbot (Render free) so raha ho to pehli request jagati hai: retry."""
+    import time as _t
+    for i in range(tries):
+        try:
+            return fetch(url, timeout=90)
+        except Exception as e:
+            print("xbot media retry", i + 1, str(e)[:60], file=sys.stderr)
+            _t.sleep(8)
+    return None
+
+
+def item_media(it):
+    """Xbot ne Turso me pehle se saved photos + <=7s clip payload me bheje -> Amazon scrape nahi. Na mile to purana tareeka."""
+    m = it.get("media") or {}
+    if m.get("photos"):
+        os.makedirs(TMP, exist_ok=True)
+        imgs, vids = [], []
+        for j, u in enumerate(m["photos"]):
+            b = _xget(u)
+            if b:
+                p = os.path.abspath(f"{TMP}/xm_{it.get('asin')}_{j}.jpg")
+                open(p, "wb").write(b)
+                imgs.append("file://" + p)
+        if m.get("clip"):
+            b = _xget(m["clip"])
+            if b:
+                p = os.path.abspath(f"{TMP}/xm_{it.get('asin')}.mp4")
+                open(p, "wb").write(b)
+                vids.append(p)
+        if imgs:
+            print("xbot media ok:", it.get("asin"), len(imgs), "photos", len(vids), "clip")
+            return {"images": imgs, "videos": vids, "bullets": m.get("bullets") or []}
+        print("xbot media failed, Amazon fallback:", it.get("asin"), file=sys.stderr)
+    if product_media and it.get("asin"):
+        return product_media.media(it["asin"])
+    return {"images": [], "videos": [], "bullets": []}
+
+
 def load_photos(it, media):
     urls = list(dict.fromkeys(([it.get("image")] if it.get("image") else []) + [u for u in media.get("images", [])]))
     # gallery first (hi-res, different angles); feed photo is a low-res search thumbnail
@@ -300,7 +339,7 @@ def load_video(media, path=None, secs=7):
     """HLS (.m3u8) from Amazon -> first `secs` seconds as local mp4 (ffmpeg pulls the playlist itself)."""
     path = path or f"{TMP}/pv.mp4"
     for u in media.get("videos", []):
-        r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-user_agent", "Mozilla/5.0", "-i", u, "-t", str(secs), "-an",
+        r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error"] + (["-user_agent", "Mozilla/5.0"] if u.startswith("http") else []) + ["-i", u, "-t", str(secs), "-an",
                             "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p", path],
                            capture_output=True, text=True, timeout=120)
         if r.returncode == 0 and os.path.exists(path) and dur(path) >= 1.5:
@@ -333,7 +372,7 @@ def build_multi(payload, items, shots, meta_items):
     hvoice = hk.get("voice") or f"रुको! आज की {hindi_num(n)} सबसे बढ़िया डील्स, एक तो सिर्फ़ {rs_voice(top['price'])} की।"
     first_media = None
     for k, it in enumerate(items):
-        media = product_media.media(it["asin"]) if (product_media and it.get("asin")) else {"images": [], "videos": [], "bullets": []}
+        media = item_media(it)
         if not it.get("benefits") and media.get("bullets"):
             it["benefits"] = [clean_bullet(b) for b in media["bullets"][:2]]
         photos = load_photos(it, media)
@@ -387,7 +426,7 @@ def build_multi(payload, items, shots, meta_items):
 
 def build_single(payload, items, shots, meta_items):
     idx, it = 0, items[0]
-    media = product_media.media(it["asin"]) if (product_media and it.get("asin")) else {"images": [], "videos": [], "bullets": []}
+    media = item_media(it)
     if not it.get("benefits") and media.get("bullets"):
         it["benefits"] = [clean_bullet(b) for b in media["bullets"][:3]]
     photos = load_photos(it, media)
