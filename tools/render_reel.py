@@ -252,11 +252,23 @@ async def _tts(text, path):
     raise last or RuntimeError("tts failed")
 
 
+def flow(text):
+    """TTS ko bhejne se pehle: vakya ke beech ke comma/hyphen/colon hatao (neural voice har comma par ruk jaati hai -> tuk-tuk bolna).
+    Sirf vakya ke ant ka viram (। ? !) rehta hai. Content/shabd same rehte hain; screen text par asar nahi."""
+    t = str(text or "")
+    t = re.sub(r"[,;:،、\u2013\u2014\u2012]+", " ", t)
+    t = re.sub(r"(?<=\S)-(?=\S)", " ", t)
+    t = re.sub(r"\s*\.\.\.+\s*", " ", t)
+    t = re.sub(r"[!?](?=\s*\S)", "।", t)           # vakya ke beech ka ! ya ? -> chhota viram; aakhri wala intonation ke liye rehta hai
+    t = re.sub(r"\s{2,}", " ", t).strip()
+    return t
+
+
 def tts_one(text, path):
     """One sentence -> mp3 with leading/trailing silence removed (edge-tts pads ~0.3s each side = the 'ruk ruk ke' feel)."""
     raw = path + ".raw.mp3"
     try:
-        asyncio.run(_tts(text, raw))
+        asyncio.run(_tts(flow(text), raw))
         if os.path.getsize(raw) < 500:
             return None
         # sirf shuru/ant ki khamoshi hatao; beech ke natural pauses (comma/purn viram) rehne do, bahut lambe (>0.5s) hi chhote karo
@@ -610,7 +622,7 @@ def main():
         voiced += 1 if a else 0
         s_["audio"] = a
         # shot ki lambai = poori awaaz + chhota tail (awaaz kabhi kaati nahi jaati)
-        secs = max(dur(a) + 0.35, s_["min"]) if a else s_["min"]
+        secs = max(dur(a) + 0.25, s_["min"]) if a else s_["min"]
         s_["secs"] = secs
     # har product kam se kam PRODUCT_MIN sec: kami ho to us product ke shots me barabar baant do
     by = {}
