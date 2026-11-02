@@ -1,0 +1,17 @@
+name: Probe product media
+on:
+  workflow_dispatch:
+    inputs:
+      asins:
+        description: 'space separated ASINs'
+        required: true
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - run: pip install -q requests beautifulsoup4 lxml
+      - run: python tools/product_media.py ${{ github.event.inputs.asins }}
