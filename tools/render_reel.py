@@ -20,9 +20,10 @@ except Exception as _e:
     product_media = None
 W, H = 1080, 1920
 OUT, TMP = os.environ.get("REEL_OUT", "out"), os.environ.get("REEL_TMP", "tmp")
-VOICE = os.environ.get("REEL_VOICE", "en-US-AvaMultilingualNeural")
-RATE = os.environ.get("REEL_RATE", "+10%")
-PITCH = os.environ.get("REEL_PITCH", "+2Hz")
+VOICE = os.environ.get("REEL_VOICE", "hi-IN-MadhurNeural")      # natural Hindi (dukaan wala) -- Ava English voice Hindi padhke robot lagti thi
+RATE = os.environ.get("REEL_RATE", "+14%")                       # thodi tez = energy, slow/ek-jaisi awaaz skip hoti hai
+PITCH = os.environ.get("REEL_PITCH", "+0Hz")
+FALLBACK_VOICES = ["hi-IN-SwaraNeural", "en-US-AvaMultilingualNeural"]
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
 ACCENT = "#e53935"
 MAX_VIDEO_S = 4.5
@@ -203,6 +204,21 @@ def rs_voice(v):
     return hindi_num(v) + " रुपये"
 
 
+def rs_short(v):
+    """Bolne ke liye gol amount: 15998 -> 'सोलह हज़ार रुपये', 2629 -> 'दो हज़ार छह सौ रुपये' (screen par exact price rehta hai)."""
+    v = float(v)
+    return rs_voice(int(round(v / 100.0) * 100) if v >= 1000 else int(round(v)))
+
+
+def price_first(it, tail=""):
+    """Pehli line me hi price: 'सोलह हज़ार वाला सूटकेस, सिर्फ़ दो हज़ार छह सौ रुपये में मिल रहा है!'"""
+    price, lp = float(it["price"]), float(it.get("list_price") or 0)
+    name = " ".join(spoken_name(it.get("title")).split()[:2])
+    if lp > price:
+        return f"{rs_short(lp).replace(' रुपये', '')} वाला {name}, सिर्फ़ {rs_short(price)} में मिल रहा है!{tail}"
+    return f"{name}, सिर्फ़ {rs_short(price)} में मिल रहा है!{tail}"
+
+
 def default_script(it, n_items):
     """Fallback when Groq script is not in the payload. Spoken text in Devanagari so the Hindi voice sounds natural."""
     price, lp, pct = float(it["price"]), float(it.get("list_price") or 0), int(it.get("pct") or 0)
@@ -221,7 +237,16 @@ def default_script(it, n_items):
 # ───────────────────────── tts / ffmpeg ─────────────────────────
 async def _tts(text, path):
     import edge_tts
-    await edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH).save(path)
+    last = None
+    for v in [VOICE] + [x for x in FALLBACK_VOICES if x != VOICE]:
+        try:
+            await edge_tts.Communicate(text, v, rate=RATE, pitch=PITCH if v == VOICE else "+0Hz").save(path)
+            if os.path.exists(path) and os.path.getsize(path) > 500:
+                return
+        except Exception as e:
+            last = e
+            print("TTS voice", v, "failed:", str(e)[:80], file=sys.stderr)
+    raise last or RuntimeError("tts failed")
 
 
 def tts_one(text, path):
@@ -448,8 +473,7 @@ def build_multi(payload, items, shots, meta_items):
         gal = photos[1:] if len(photos) > 1 else photos
         # product shot A: video (5s max) or hero photo, name tag + intro voice
         cap = sc["tag"]
-        short_intro = f"{ORD[k]} है {spoken_name(it.get('title'))}, सिर्फ़ {rs_voice(float(it['price']))} में।"
-        voice_a = (hvoice + " " + short_intro) if k == 0 else short_intro
+        voice_a = price_first(it) if k == 0 else f"{ORD[k]} है {spoken_name(it.get('title'))}, सिर्फ़ {rs_short(it['price'])} में।"
         if vid:
             if k == 0:
                 ov = hook_overlay(head, sub, it)
@@ -459,14 +483,14 @@ def build_multi(payload, items, shots, meta_items):
                 text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
                 price_strip(d, it)
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": voice_a, "min": 3.0, "cap": 5.0 if k == 0 else 4.0})
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": voice_a, "min": 3.0, "cap": 5.5 if k == 0 else 4.0})
         else:
             if k == 0:
                 f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
                 p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
             else:
                 p = f"{TMP}/a{k}.png"; photo_frame(photos[0], it, cap, None).save(p)
-            shots.append({"kind": "still", "png": p, "voice": voice_a, "min": 2.6, "cap": 5.0 if k == 0 else 4.0})
+            shots.append({"kind": "still", "png": p, "voice": voice_a, "min": 2.6, "cap": 5.5 if k == 0 else 4.0})
         # gallery shots hata diye: har product ~4 sec, ek hi shot (reel 12-15 sec)
         if first_media is None:
             first_media = photos[0]
@@ -492,6 +516,7 @@ def build_single(payload, items, shots, meta_items):
     lines = sc.get("lines") or base["lines"]
     meta_items.append({"asin": it.get("asin"), "photos": len(photos), "video": bool(vid)})
     sc["head"], sc["sub"] = deal_head(it)
+    sc["hook"] = price_first(it, " पहले ये देख लो।")
     ov = hook_overlay(sc["head"], sc["sub"], it)
     if vid:
         ovp = f"{TMP}/ov0.png"; ov.save(ovp)
