@@ -35,6 +35,22 @@ def font(size):
     return ImageFont.load_default()
 
 
+# DejaVu me emoji/symbol glyph nahi -> '⬛⬛⬛' boxes. AI script ke head/caption se saare emoji hata do (arrows ₹ rehne do).
+_NOGLYPH = re.compile("[\U0001F000-\U0001FFFF\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF\uFE00-\uFE0F\u200d\u20e3]")
+
+
+def san(t):
+    return re.sub(r"\s{2,}", " ", _NOGLYPH.sub("", str(t or ""))).strip()
+
+
+def deal_head(it):
+    """Hook ka top text seedha deal: ('₹15,998 → ₹2,629', '84% OFF'). list_price na ho to sirf % OFF."""
+    price, lp, pct = float(it["price"]), float(it.get("list_price") or 0), int(it.get("pct") or 0)
+    if lp > price:
+        return f"{inr(lp)} → {inr(price)}", f"{pct or round((1 - price / lp) * 100)}% OFF"
+    return f"{pct}% OFF" if pct else inr(price), "Top Deal"
+
+
 def fetch(url, timeout=30):
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
@@ -56,7 +72,7 @@ def inr(v):
 
 
 def text_outline(d, xy, text, fnt, fill="white", stroke="#000000", sw=6, anchor="mm"):
-    d.text(xy, text, font=fnt, fill=fill, anchor=anchor, stroke_width=sw, stroke_fill=stroke)
+    d.text(xy, san(text), font=fnt, fill=fill, anchor=anchor, stroke_width=sw, stroke_fill=stroke)
 
 
 def fit(d, text, size, maxw, lo=34):
@@ -255,9 +271,9 @@ def still_clip(png, secs, audio, out, k):
 
 def video_clip(mp4, overlay_png, secs, audio, out):
     """Product video: blurred cover bg + video fit-to-width in the middle + overlay (hook text, price). Video muted, voice on top."""
-    fc = (f"[0:v]split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=30:6,eq=brightness=-0.18[bg];"
+    fc = (f"[0:v]tpad=stop_mode=clone:stop_duration=8,split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=30:6,eq=brightness=-0.18[bg];"
           f"[b]scale={W}:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[m];[m][1:v]overlay=0:0,format=yuv420p[v]")
-    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1", "-i", mp4, "-loop", "1", "-i", overlay_png]
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", mp4, "-loop", "1", "-i", overlay_png]
     cmd += ["-i", audio] if audio else ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono"]
     cmd += ["-filter_complex", fc, "-map", "[v]", "-map", "2:a", "-r", "25", "-c:v", "libx264", "-preset", "veryfast",
             "-crf", "22", "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "1", "-af", "apad", "-t", f"{secs:.2f}", out]
@@ -407,10 +423,9 @@ def build_multi(payload, items, shots, meta_items):
     n = len(items)
     top = max(items, key=lambda i: int(i.get("pct") or 0))
     hk = payload.get("hook") or {}
-    head = hk.get("head") or f"ABHI LO! {int(top.get('pct') or 0)}% tak OFF"
-    sub = hk.get("sub") or payload.get("label") or "Top Deals"
+    head, sub = deal_head(items[0])          # pehle frame me hi deal: ₹15,998 → ₹2,629 / 84% OFF
     low_p = min(float(i["price"]) for i in items)
-    hvoice = hk.get("voice") or f"रुको! {hindi_num(n)} ऐसी डील्स, एक तो सिर्फ़ {rs_voice(low_p)} की। ये दाम कब तक रहेगा, पता नहीं, इसलिए पूरा देखो।"
+    hvoice = f"रुको! {hindi_num(n)} डील्स।"      # chhota hook: reel 12-15 sec rakhni hai
     first_media = None
     for k, it in enumerate(items):
         media = item_media(it)
@@ -433,7 +448,8 @@ def build_multi(payload, items, shots, meta_items):
         gal = photos[1:] if len(photos) > 1 else photos
         # product shot A: video (5s max) or hero photo, name tag + intro voice
         cap = sc["tag"]
-        voice_a = (hvoice + " " + sc["intro"]) if k == 0 else sc["intro"]
+        short_intro = f"{ORD[k]} है {spoken_name(it.get('title'))}, सिर्फ़ {rs_voice(float(it['price']))} में।"
+        voice_a = (hvoice + " " + short_intro) if k == 0 else short_intro
         if vid:
             if k == 0:
                 ov = hook_overlay(head, sub, it)
@@ -443,26 +459,21 @@ def build_multi(payload, items, shots, meta_items):
                 text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
                 price_strip(d, it)
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": voice_a, "min": 3.0})
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": voice_a, "min": 3.0, "cap": 5.0 if k == 0 else 4.0})
         else:
             if k == 0:
                 f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
                 p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
             else:
                 p = f"{TMP}/a{k}.png"; photo_frame(photos[0], it, cap, None).save(p)
-            shots.append({"kind": "still", "png": p, "voice": voice_a, "min": 2.6})
-        # product shot B..: gallery photos with feature captions (voice: the line itself)
-        for j, ph in enumerate(gal[:(1 if n >= 3 else 2)]):
-            ln = sc["lines"][j] if j < len(sc["lines"]) else None
-            p = f"{TMP}/b{k}_{j}.png"
-            photo_frame(ph, it, ln["text"] if ln else None, None).save(p)
-            shots.append({"kind": "still", "png": p, "voice": ln["voice"] if ln else None, "min": 2.0})
+            shots.append({"kind": "still", "png": p, "voice": voice_a, "min": 2.6, "cap": 5.0 if k == 0 else 4.0})
+        # gallery shots hata diye: har product ~4 sec, ek hi shot (reel 12-15 sec)
         if first_media is None:
             first_media = photos[0]
-    outro = payload.get("outro") or "सारे लिंक कमेंट्स में हैं। रोज़ ऐसी डील्स के लिए फ़ॉलो करो।"
+    outro = "लिंक कमेंट्स में हैं। फ़ॉलो करो।"
     p = f"{TMP}/outro.png"
     outro_frame(first_media or Image.new("RGB", (W, H), "#fff7ed"), items[0]).save(p)
-    shots.append({"kind": "still", "png": p, "voice": outro, "min": 2.8})
+    shots.append({"kind": "still", "png": p, "voice": outro, "min": 2.4, "cap": 2.8})
 
 
 def build_single(payload, items, shots, meta_items):
@@ -480,6 +491,7 @@ def build_single(payload, items, shots, meta_items):
         sc.setdefault(k_, base[k_])
     lines = sc.get("lines") or base["lines"]
     meta_items.append({"asin": it.get("asin"), "photos": len(photos), "video": bool(vid)})
+    sc["head"], sc["sub"] = deal_head(it)
     ov = hook_overlay(sc["head"], sc["sub"], it)
     if vid:
         ovp = f"{TMP}/ov0.png"; ov.save(ovp)
@@ -542,8 +554,10 @@ def main():
         secs = (dur(a) + 0.15) if a else s["min"]
         if a and s["kind"] == "video":
             secs = max(secs, 2.5)
-        if s["kind"] == "video" and not a:      # awaaz ho to poori bolne do (clip loop hota hai); cap sirf bina awaaz ke
+        if s["kind"] == "video" and not a:
             secs = min(secs, 7.0)
+        if s.get("cap"):
+            secs = min(secs, s["cap"])          # multi-product reel: har shot ~4 sec, total 12-15 sec
         c = f"{TMP}/c{k}.mp4"
         if s["kind"] == "video":
             video_clip(s["mp4"], s["png"], secs, a, c)
