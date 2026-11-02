@@ -1,10 +1,8 @@
 name: Probe product media
 on:
-  workflow_dispatch:
-    inputs:
-      asins:
-        description: 'space separated ASINs'
-        required: true
+  push:
+    branches: [reel-v2]
+    paths: ['.github/workflows/probe-media.yml', 'tools/product_media.py']
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -14,4 +12,4 @@ jobs:
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
       - run: pip install -q requests beautifulsoup4 lxml
-      - run: python tools/product_media.py ${{ github.event.inputs.asins }}
+      - run: python tools/product_media.py B0D78YCR1K B0B5LVS732 B0F1N79TYM B0GVYJ9G96 B0CV5MR8BH
