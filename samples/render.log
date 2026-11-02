@@ -1,4 +1,2 @@
-video failed: HTTP Error 404: Not Found
-video failed: HTTP Error 404: Not Found
-video failed: HTTP Error 404: Not Found
-done 31.1 s, shots 5 voice shots 5 [{'asin': 'B0D78YCR1K', 'photos': 5, 'video': False}]
+video ok: 4650-b78d-c249e5729d08/default.vertical.jobtemplate.hls.m3u8 7.0 s
+done 30.3 s, shots 5 voice shots 5 [{'asin': 'B0D78YCR1K', 'photos': 5, 'video': True}]
