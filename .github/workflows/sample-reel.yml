@@ -22,15 +22,15 @@ jobs:
           JOB_ID: sample
         run: |
           export PAYLOAD="$(cat samples/sample_multi.json)"
-          mkdir -p samples/out
+          mkdir -p samples/res
           REEL_VOICE=hi-IN-MadhurNeural REEL_OUT=out_a REEL_TMP=tmp_a DEBUG_MONTAGE=1 python tools/render_reel.py > samples/render_a.log 2>&1 || true
           REEL_VOICE=en-US-AvaMultilingualNeural REEL_OUT=out_b REEL_TMP=tmp_b python tools/render_reel.py > samples/render_b.log 2>&1 || true
-          cp out_a/reel.mp4 samples/out/reel_a.mp4 2>/dev/null || true
-          cp out_b/reel.mp4 samples/out/reel_b.mp4 2>/dev/null || true
-          cp out_a/gallery_*.jpg samples/out/ 2>/dev/null || true
-          cp out_a/meta.json samples/out/meta_a.json 2>/dev/null || true
+          cp out_a/reel.mp4 samples/res/reel_a.mp4 2>/dev/null || true
+          cp out_b/reel.mp4 samples/res/reel_b.mp4 2>/dev/null || true
+          cp out_a/gallery_*.jpg samples/res/ 2>/dev/null || true
+          cp out_a/meta.json samples/res/meta_a.json 2>/dev/null || true
       - name: Save
         run: |
           git config user.name sample; git config user.email sample@users.noreply.github.com
-          git add samples/out samples/render_a.log samples/render_b.log || true
+          git add samples/res samples/render_a.log samples/render_b.log || true
           git commit -m "multi sample result" && git push
