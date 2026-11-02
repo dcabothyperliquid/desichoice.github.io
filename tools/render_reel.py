@@ -20,8 +20,8 @@ except Exception as _e:
     product_media = None
 W, H = 1080, 1920
 OUT, TMP = os.environ.get("REEL_OUT", "out"), os.environ.get("REEL_TMP", "tmp")
-VOICE = os.environ.get("REEL_VOICE", "hi-IN-SwaraNeural")
-RATE = os.environ.get("REEL_RATE", "+8%")
+VOICE = os.environ.get("REEL_VOICE", "en-US-AvaMultilingualNeural")
+RATE = os.environ.get("REEL_RATE", "+10%")
 PITCH = os.environ.get("REEL_PITCH", "+2Hz")
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
 ACCENT = "#e53935"
@@ -215,8 +215,8 @@ def tts_one(text, path):
         asyncio.run(_tts(text, raw))
         if os.path.getsize(raw) < 500:
             return None
-        trim = ("silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.02,areverse,"
-                "silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.02,areverse")
+        trim = ("silenceremove=start_periods=1:start_threshold=-33dB:start_silence=0.01,areverse,"
+                "silenceremove=start_periods=1:start_threshold=-33dB:start_silence=0.01,areverse")
         r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw, "-af", trim, "-ar", "44100", "-ac", "1", path],
                            capture_output=True, text=True)
         return path if r.returncode == 0 and os.path.exists(path) and os.path.getsize(path) > 500 else raw
@@ -434,7 +434,9 @@ def main():
     for k, s in enumerate(shots):
         a = tts_one(s["voice"], f"{TMP}/v{k}.mp3") if s.get("voice") else None
         voiced += 1 if a else 0
-        secs = max(s["min"], (dur(a) + 0.15) if a else s["min"])
+        secs = (dur(a) + 0.05) if a else s["min"]
+        if a and s["kind"] == "video":
+            secs = max(secs, 2.5)
         if s["kind"] == "video":
             secs = min(secs, 7.0)
         c = f"{TMP}/c{k}.mp4"
