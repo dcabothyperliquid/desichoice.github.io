@@ -519,7 +519,7 @@ def main():
         secs = (dur(a) + 0.15) if a else s["min"]
         if a and s["kind"] == "video":
             secs = max(secs, 2.5)
-        if s["kind"] == "video":
+        if s["kind"] == "video" and not a:      # awaaz ho to poori bolne do (clip loop hota hai); cap sirf bina awaaz ke
             secs = min(secs, 7.0)
         c = f"{TMP}/c{k}.mp4"
         if s["kind"] == "video":
