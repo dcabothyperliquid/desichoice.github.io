@@ -1,0 +1,10 @@
+found 9 vse-vms urls
+206 image/jpeg https://m.media-amazon.com/images/I/71-sy-xnm6L._CR0,0,719,406_SR684,386_.jpg
+206 image/jpeg https://m.media-amazon.com/images/I/71N9H9KxDkL._CR0,0,720,406_SR684,386_.jpg
+206 image/jpeg https://m.media-amazon.com/images/I/81APlfZ+TVL._CR0,0,1080,609_SR684,386_.jpg
+206 image/jpeg https://m.media-amazon.com/images/I/91ewM2JUoKL._CR0,0,1080,609_SR684,386_.jpg
+200 application/octet-stream https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/23014b9b-7cda-41f7-920b-0f72d53c2a8e.vtt
+200 application/octet-stream https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/91dea8ab-f55f-483f-8abd-8876cb4dcbd1.vtt
+200 application/octet-stream https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/bb157cfc-be56-440c-9c16-f2df642f4253.vtt
+200 application/vnd.apple.mpegurl https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/3be7494e-cd8e-4650-b78d-c249e5729d08/default.vertical.jobtemplate.hls.m3u8
+404 text/plain https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/c7fa190c-5e01-439d-bf8e-73dac962a581/videopreview.jobtemplate.mp4.default.mp4,342X192P_20HZ_350KBPS_VER_1_0,video/mp4,https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/c7fa190c-5e01-439d-bf8e-73dac962a581/videopreview.jobtemplate.mp4.default.mp4,default,video/mp4
