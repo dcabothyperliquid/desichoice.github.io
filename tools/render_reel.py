@@ -216,7 +216,8 @@ def tts_one(text, path):
         if os.path.getsize(raw) < 500:
             return None
         trim = ("silenceremove=start_periods=1:start_threshold=-33dB:start_silence=0.01,areverse,"
-                "silenceremove=start_periods=1:start_threshold=-33dB:start_silence=0.01,areverse")
+                "silenceremove=start_periods=1:start_threshold=-33dB:start_silence=0.01,areverse,"
+                "silenceremove=stop_periods=-1:stop_duration=0.14:stop_threshold=-34dB:stop_silence=0.1")
         r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw, "-af", trim, "-ar", "44100", "-ac", "1", path],
                            capture_output=True, text=True)
         return path if r.returncode == 0 and os.path.exists(path) and os.path.getsize(path) > 500 else raw
