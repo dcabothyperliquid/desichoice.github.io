@@ -1,0 +1,94 @@
+B0D78YCR1K {
+ "images": [
+  "https://m.media-amazon.com/images/I/41TdDa7cmvL.jpg",
+  "https://m.media-amazon.com/images/I/71Y8Uh9+VUL.jpg",
+  "https://m.media-amazon.com/images/I/61Cu7AaAQvL.jpg",
+  "https://m.media-amazon.com/images/I/61JMGm8LHQL.jpg",
+  "https://m.media-amazon.com/images/I/61cM8UV6OaL.jpg",
+  "https://m.media-amazon.com/images/I/61xDx5lDdkL.jpg"
+ ],
+ "videos": [
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/23014b9b-7cda-41f7-920b-0f72d53c2a8e.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/577440df-a4f5-4656-b5b0-77936dbbfa6a/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/577440df-a4f5-4656-b5b0-77936dbbfa6a/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/bb157cfc-be56-440c-9c16-f2df642f4253.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/4c04477e-d1cc-4adc-b4db-c19067c2e639/videopreview.jobtemplate.mp4"
+ ],
+ "bullets": [
+  "TWS Earbuds with 13mm Dynamic Driver to produce Immersive Stereo Sound | Smart Touch Controls & 50 Hours of Non-stop Playtime with the Charging Case",
+  "Control Music/Call thru Touch Sensors | IPX4 Water/Sweatproof Earbuds | Instant Access to Device's Voice Assistant",
+  "6 months manufacturer warranty from the date of purchase on manufacturing defects only."
+ ]
+}
+B0B5LVS732 {
+ "images": [
+  "https://m.media-amazon.com/images/I/61akt30bJsL.jpg",
+  "https://m.media-amazon.com/images/I/61SvazFMS5L.jpg",
+  "https://m.media-amazon.com/images/I/61C7QxrH7NL.jpg",
+  "https://m.media-amazon.com/images/I/61T4r-idjnL.jpg",
+  "https://m.media-amazon.com/images/I/71xJDte4RJL.jpg",
+  "https://m.media-amazon.com/images/I/61R9qRjYSvL.jpg"
+ ],
+ "videos": [
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/ffb24159-f233-44fc-bb6c-46d16412f103.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/1931c395-7917-4f9d-aa0a-bfb572a387ba/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/1931c395-7917-4f9d-aa0a-bfb572a387ba/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/36dfe5f5-5aeb-4886-ac1b-ef3ae5f760bf.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/60fc95ee-f481-4676-af22-6703be3e52e8/videopreview.jobtemplate.mp4"
+ ],
+ "bullets": [
+  "Sharp and bright display: The 1.69\u2019\u2019 TFT display with 240*280px and 500 nits brightness ensures visual treat every time you look at the watch.",
+  "Tru Sync: Experience fast and stable connectivity with low power consumption.",
+  "BT calling: Stay in touch with your friends - right from your wrist."
+ ]
+}
+B0F1N79TYM {
+ "images": [
+  "https://m.media-amazon.com/images/I/61ZYIqoyMyL.jpg",
+  "https://m.media-amazon.com/images/I/713Pja+sMyL.jpg",
+  "https://m.media-amazon.com/images/I/61sm1niPYaL.jpg",
+  "https://m.media-amazon.com/images/I/618On8jriiL.jpg",
+  "https://m.media-amazon.com/images/I/81I2hT9lyNL.jpg",
+  "https://m.media-amazon.com/images/I/71EzwOwOM8L.jpg"
+ ],
+ "videos": [
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/0c6aa800-0527-4086-bb9e-87783742e655.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/b5ed12fd-d5f6-424f-89dd-7966a987cc3e/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/b5ed12fd-d5f6-424f-89dd-7966a987cc3e/videopreview.jobtemplate.mp4"
+ ],
+ "bullets": [
+  "High refresh rate:100Hz refresh rate delivers less flicker, more seamless scrolling and smoother motion",
+  "ComfortView Plus: Minimises harmful blue light exposure without sacrificing colour accuracy with Dell\u2019s always on, built-in ComfortView Plus",
+  "Wide viewing angle: Get consistent views across a wide 178\u00b0 /178\u00b0 viewing angle"
+ ]
+}
+B0GVYJ9G96 {
+ "images": [
+  "https://m.media-amazon.com/images/I/71wVRJc8ENL.jpg",
+  "https://m.media-amazon.com/images/I/71hO0daY1lL.jpg",
+  "https://m.media-amazon.com/images/I/71JYA5NIIwL.jpg",
+  "https://m.media-amazon.com/images/I/71adiqhwU5L.jpg",
+  "https://m.media-amazon.com/images/I/71ubwRfG4YL.jpg",
+  "https://m.media-amazon.com/images/I/91ZJHkvvdEL.jpg"
+ ],
+ "videos": [
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/8db90557-d9f4-40f6-8c6c-411616c0930f.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/941b9bf0-080a-4a27-8996-269e1a985e00/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/941b9bf0-080a-4a27-8996-269e1a985e00/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/fafb52d7-6527-44d2-85f5-940cfbe523fd.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/f65a5adb-4467-4296-b449-da70bbec5087/videopreview.jobtemplate.mp4"
+ ],
+ "bullets": [
+  "DEEP BASS PERFORMANCE: The 16.51cm wireless subwoofer produces strong and punchy bass, adding depth to music, movies, and gaming.",
+  "MULTIPLE CONNECTIVITY OPTIONS: Supports Bluetooth v5.3, HDMI ARC, Optical IN, USB, and AUX for easy connection with TVs, smartphones, and other devices."
+ ]
+}
+B0CV5MR8BH {
+ "images": [
+  "https://m.media-amazon.com/images/I/618MDa4NJoL.jpg",
+  "https://m.media-amazon.com/images/I/71Lfx8OlMgL.jpg",
+  "https://m.media-amazon.com/images/I/613f5QVLKFL.jpg",
+  "https://m.media-amazon.com/images/I/61I5PLfOOML.jpg",
+  "https://m.media-amazon.com/images/I/71nPPsgHpWL.jpg",
+  "https://m.media-amazon.com/images/I/71Jpw4VgotL.jpg"
+ ],
+ "videos": [
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/ca76e7f4-a747-4148-b48b-bb82b9b50d42.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/45fc355b-13dd-4155-8c9f-325b8267774b/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/45fc355b-13dd-4155-8c9f-325b8267774b/videopreview.jobtemplate.mp4",
+  "https://m.media-amazon.com/images/S/vse-vms-closed-captions-artifact-eu-west-1-prod/closedCaptions/8a6eba3a-8cff-44fd-9939-37f24190b691.vtt&quot;,&quot;groupType&quot;:&quot;G1&quot;,&quot;videoPreviewAssets&quot;:&quot;https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/7ff9f6ec-d94f-4ab4-b866-4020e324ecd4/videopreview.jobtemplate.mp4"
+ ],
+ "bullets": []
+}
