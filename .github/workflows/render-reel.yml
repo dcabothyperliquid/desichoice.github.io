@@ -36,7 +36,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
-          pip install -q pillow requests edge-tts
+          pip install -q pillow requests edge-tts beautifulsoup4 lxml
 
       - name: Render reel
         env:

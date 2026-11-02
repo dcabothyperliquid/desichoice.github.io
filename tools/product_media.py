@@ -50,7 +50,7 @@ def parse(html):
             except Exception:
                 pass
     # 2) videos: "videos":[{"url":"https://...mp4", ...}]  or any m.media-amazon vse mp4
-    for m in re.finditer(r'https:\\?/\\?/[^"\'\s\\]+?\.mp4', html):
+    for m in re.finditer(r'https:\\?/\\?/m\.media-amazon\.com/images/S/vse-vms-transcoding-artifact-[A-Za-z0-9\-_/\\.]+?\.mp4', html):
         vids.append(m.group(0).replace("\\/", "/"))
     # 3) feature bullets
     try:

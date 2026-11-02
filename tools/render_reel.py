@@ -1,18 +1,26 @@
-"""Render a vertical (1080x1920) Deal Reel from a JSON payload (env PAYLOAD). Output: out/reel.mp4 + out/meta.json.
+"""Deal Reel v2 (1080x1920). Env PAYLOAD = {"label", "items":[{asin,title,price,list_price,pct,image,benefits,script?}]}.
 
-payload = {"label": "Mobiles", "items": [{"title", "price", "list_price", "pct", "image"}, ...]}
-Voice: edge-tts (free). If TTS is unreachable the reel is rendered silent instead of failing.
+What changed vs v1 (reels looked like a slideshow of one photo each + robotic voice):
+  * every product gets its REAL Amazon gallery (3-4 photos) + the product video clip when Amazon has one
+    (tools/product_media.py, fetched through the same translate.goog proxy as the scanner)
+  * photos sit on a blurred full-bleed background (no empty beige card), price strip stays on screen
+  * hook = real price shock ("Rs 2,899 -> Rs 599?!") instead of "ITNA SASTA?!"
+  * voice = Hindi neural voice reading natural Hindi (Devanagari) lines, rate/pitch tuned, ONE short sentence per shot
+  * if the payload has item["script"] (written by Groq in Xbot) it is used, else a template script from title + bullets
+Output: out/reel.mp4 + out/meta.json. Voice failure -> silent reel, media failure -> falls back to the feed photo.
 """
 import asyncio, io, json, os, re, subprocess, sys, urllib.request
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
+sys.path.insert(0, os.path.dirname(__file__))
 W, H = 1080, 1920
-OUT = "out"
-TMP = "tmp"
-VOICE = os.environ.get("REEL_VOICE", "en-IN-NeerjaNeural")   # Indian English voice reads Hinglish naturally
+OUT, TMP = "out", "tmp"
+VOICE = os.environ.get("REEL_VOICE", "hi-IN-SwaraNeural")
+RATE = os.environ.get("REEL_RATE", "+6%")
+PITCH = os.environ.get("REEL_PITCH", "+2Hz")
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
-BG = "#fff7ed"
 ACCENT = "#e53935"
+MAX_VIDEO_S = 4.5
 
 
 def font(size):
@@ -22,244 +30,341 @@ def font(size):
     return ImageFont.load_default()
 
 
-def fetch(url):
+def fetch(url, timeout=30):
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urllib.request.urlopen(req, timeout=25) as r:
+    with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read()
 
 
 def short(title, n=60):
     t = (title or "").strip()
-    for sep in (" | ", " - ", " – ", ", "):
-        if sep in t:
-            t = t.split(sep)[0].strip()
+    t = re.split(r"\s[|\-–—]\s|,\s|\s\(", t)[0].strip() or (title or "").strip()
     return (t[:n].rstrip() + "…") if len(t) > n else t
 
 
-def wrap(draw, text, fnt, maxw):
+def spoken_name(title):
+    return " ".join(short(title, 60).split()[:3]).strip(" .,&")
+
+
+def inr(v):
+    return f"₹{float(v):,.0f}"
+
+
+def text_outline(d, xy, text, fnt, fill="white", stroke="#000000", sw=6, anchor="mm"):
+    d.text(xy, text, font=fnt, fill=fill, anchor=anchor, stroke_width=sw, stroke_fill=stroke)
+
+
+def fit(d, text, size, maxw, lo=34):
+    while size > lo and d.textlength(text, font=font(size)) > maxw:
+        size -= 4
+    return font(size)
+
+
+def wrap(d, text, fnt, maxw, maxlines=2):
     words, lines, cur = text.split(), [], ""
     for w in words:
-        test = (cur + " " + w).strip()
-        if draw.textlength(test, font=fnt) <= maxw:
-            cur = test
+        t = (cur + " " + w).strip()
+        if d.textlength(t, font=fnt) <= maxw:
+            cur = t
         else:
             if cur:
                 lines.append(cur)
             cur = w
     if cur:
         lines.append(cur)
-    return lines[:3]
+    return lines[:maxlines]
 
 
-def rs(v):
-    return f"Rs {float(v):,.0f}"
+# ───────────────────────── frames ─────────────────────────
+def blurred_bg(im):
+    bg = im.copy()
+    s = max(W / bg.width, H / bg.height)
+    bg = bg.resize((int(bg.width * s) + 1, int(bg.height * s) + 1))
+    l, t = (bg.width - W) // 2, (bg.height - H) // 2
+    bg = bg.crop((l, t, l + W, t + H)).filter(ImageFilter.GaussianBlur(38))
+    return ImageEnhance.Brightness(bg).enhance(0.62)
 
 
-def fit(draw, text, size, maxw):
-    while size > 30 and draw.textlength(text, font=font(size)) > maxw:
-        size -= 4
-    return font(size)
-
-
-HOOKS = [
-    # (headline on slide, voice template)  vars: name was price pct n label
-    ("ITNA SASTA?!", "Itna sasta? Rs {was} ka {name} ab sirf Rs {price}! Aise {n} deals dekho."),
-    ("RUKO! DEKHO", "Ruko, scroll mat karo! {name} pe {pct} percent off, sirf Rs {price}. Aise {n} deals ye rahe."),
-    ("PRICE GIRA!", "Rs {was} se seedha Rs {price}! {name}. Aise {n} sasti deals abhi dekho."),
-    ("LOOT DEAL", "Ye loot deal hai! {name} sirf Rs {price}, {pct} percent off. Baaki {m} deals bhi dekho."),
-]
-
-
-def pick_hook(items):
-    """Hook built from the best-discount product (real numbers), variant picked by job id so reels differ."""
-    top = max(items, key=lambda i: int(i.get("pct") or 0))
-    seed = sum(ord(c) for c in os.environ.get("JOB_ID", "x"))
-    head, tpl = HOOKS[seed % len(HOOKS)]
-    base = re.split(r"\s[|\-–—]\s|,\s", (top.get("title") or "").strip())[0]
-    spoken = " ".join(base.split()[:5]).strip(" .,&")
-    voice = tpl.format(name=spoken, was=f"{float(top.get('list_price') or top['price']):,.0f}",
-                       price=f"{float(top['price']):,.0f}", pct=int(top.get("pct") or 0), n=len(items), m=len(items) - 1)
-    return top, head, voice
-
-
-def slide_hook(top, head, label, n):
-    im = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(im)
-    d.rounded_rectangle((60, 110, W - 60, 1640), 48, fill="white", outline="#fdba74", width=6)
-    d.text((W // 2, 230), head, fill=ACCENT, font=fit(d, head, 110, W - 200), anchor="mm")
-    try:
-        ph = Image.open(io.BytesIO(fetch(top["image"]))).convert("RGB")
-        ph.thumbnail((820, 820))
-        im.paste(ph, ((W - ph.width) // 2, 330 + (820 - ph.height) // 2))
-    except Exception as e:
-        print("hook image failed:", e, file=sys.stderr)
-    pct = int(top.get("pct") or 0)
-    d.rounded_rectangle((100, 330, 400, 440), 26, fill=ACCENT)
-    d.text((250, 385), f"{pct}% OFF", fill="white", font=font(58), anchor="mm")
-    price, lp = top.get("price"), top.get("list_price")
-    d.text((W // 2, 1250), f"Rs {float(price):,.0f}", fill="#111111", font=font(130), anchor="mm")
-    if lp:
-        t = f"Rs {float(lp):,.0f}"
-        f2 = font(60)
-        w = d.textlength(t, font=f2)
-        d.text((W // 2, 1370), t, fill="#888888", font=f2, anchor="mm")
-        d.line((W // 2 - w / 2, 1366, W // 2 + w / 2, 1366), fill="#888888", width=6)
-    d.text((W // 2, 1500), f"DESI CHOICE · {n} deals", fill="#f97316", font=font(52), anchor="mm")
-    d.text((W // 2, 1580), "dekhte raho...", fill="#999999", font=font(40), anchor="mm")
-    return im
-
-
-def slide_title(label, n, best):
-    im = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(im)
-    d.rounded_rectangle((90, 560, W - 90, 1360), 48, fill="white", outline="#fdba74", width=6)
-    d.text((W // 2, 700), "DESI CHOICE", fill="#f97316", font=font(64), anchor="mm")
-    d.text((W // 2, 860), f"{label}", fill="#111111", font=fit(d, label, 110, W - 260), anchor="mm")
-    d.text((W // 2, 1020), f"{n} DEALS", fill="#111111", font=font(84), anchor="mm")
-    if best:
-        d.rounded_rectangle((250, 1130, W - 250, 1260), 36, fill=ACCENT)
-        d.text((W // 2, 1195), f"{best}% tak OFF", fill="white", font=font(70), anchor="mm")
-    return im
-
-
-def slide_item(it, idx, total):
-    im = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(im)
-    d.rounded_rectangle((60, 120, W - 60, 1560), 48, fill="white", outline="#fdba74", width=6)
-    ok = False
-    try:
-        ph = Image.open(io.BytesIO(fetch(it["image"]))).convert("RGB")
-        ph.thumbnail((860, 860))
-        im.paste(ph, ((W - ph.width) // 2, 190 + (860 - ph.height) // 2))
-        ok = True
-    except Exception as e:
-        print("image failed:", it.get("image"), e, file=sys.stderr)
-    if not ok:
-        d.text((W // 2, 620), "photo na mili", fill="#999999", font=font(48), anchor="mm")
-    pct = int(it.get("pct") or 0)
-    d.rounded_rectangle((100, 160, 400, 270), 26, fill=ACCENT)
-    d.text((250, 215), f"{pct}% OFF", fill="white", font=font(58), anchor="mm")
-    d.text((W - 110, 215), f"{idx}/{total}", fill="#999999", font=font(50), anchor="rm")
-    f = font(46)
-    y = 1085
-    for ln in wrap(d, short(it.get("title"), 50), f, W - 220)[:2]:
-        d.text((110, y), ln, fill="#222222", font=f, anchor="lm")
-        y += 58
-    y = 1225
-    for b in (it.get("benefits") or [])[:2]:
-        b = str(b).strip()
-        if not b:
-            continue
-        d.text((110, y), "+", fill="#16a34a", font=font(44), anchor="lm")
-        d.text((160, y), b, fill="#166534", font=fit(d, b, 40, W - 280), anchor="lm")
-        y += 64
+def price_strip(d, it, pct_badge=True):
+    """Bottom strip kept clear of the Reels UI (bottom ~230px)."""
+    d.rounded_rectangle((50, 1390, W - 50, 1660), 44, fill=(255, 255, 255, 235))
     price, lp = it.get("price"), it.get("list_price")
-    d.text((110, 1430), rs(price), fill="#111111", font=font(100), anchor="lm")
+    d.text((100, 1500), inr(price), font=font(128), fill="#111111", anchor="lm")
     if lp:
-        x0 = 110 + d.textlength(rs(price), font=font(100)) + 36
-        t = rs(lp)
-        d.text((x0, 1438), t, fill="#888888", font=font(52), anchor="lm")
-        w = d.textlength(t, font=font(52))
-        d.line((x0, 1433, x0 + w, 1433), fill="#888888", width=5)
-    return im
+        x0 = 100 + d.textlength(inr(price), font=font(128)) + 34
+        t = inr(lp)
+        d.text((x0, 1512), t, font=font(58), fill="#888888", anchor="lm")
+        w = d.textlength(t, font=font(58))
+        d.line((x0, 1507, x0 + w, 1507), fill="#888888", width=5)
+    pct = int(it.get("pct") or 0)
+    if pct_badge and pct:
+        d.rounded_rectangle((100, 1570, 420, 1640), 22, fill=ACCENT)
+        d.text((260, 1605), f"{pct}% OFF", font=font(44), fill="white", anchor="mm")
+    d.text((W - 100, 1605), "DESI CHOICE", font=font(36), fill="#f97316", anchor="rm")
 
 
-def slide_outro():
-    im = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(im)
-    d.rounded_rectangle((90, 600, W - 90, 1320), 48, fill="white", outline="#fdba74", width=6)
-    d.text((W // 2, 780), "LINKS", fill="#f97316", font=font(110), anchor="mm")
-    d.text((W // 2, 930), "COMMENTS me hain", fill="#111111", font=font(76), anchor="mm")
-    d.text((W // 2, 1100), "Follow @DesiChoice", fill="#555555", font=font(60), anchor="mm")
-    d.text((W // 2, 1200), "roz naye deals", fill="#555555", font=font(60), anchor="mm")
-    return im
+def photo_frame(photo, it, caption=None, counter=None):
+    """Blurred full-bleed bg + white product card + caption + price strip. Returns RGB image."""
+    im = blurred_bg(photo).convert("RGBA")
+    d = ImageDraw.Draw(im, "RGBA")
+    d.rounded_rectangle((50, 250, W - 50, 1230), 48, fill=(255, 255, 255, 255))
+    ph = photo.copy()
+    ph.thumbnail((940, 940))
+    im.paste(ph, ((W - ph.width) // 2, 250 + (980 - ph.height) // 2))
+    if counter:
+        d.rounded_rectangle((W - 230, 190, W - 60, 270), 30, fill=(0, 0, 0, 170))
+        d.text((W - 145, 230), counter, font=font(44), fill="white", anchor="mm")
+    if caption:
+        f = fit(d, caption, 64, W - 160, 40)
+        for k, ln in enumerate(wrap(d, caption, f, W - 160)):
+            text_outline(d, (W // 2, 1290 + k * 70), ln, f)
+    price_strip(d, it)
+    return im.convert("RGB")
 
 
-def say(text):
-    return text.replace("%", " percent").replace("Rs", "rupaye")
+def hook_overlay(head, sub, it):
+    """Transparent overlay for the hook shot (drawn over blurred video / photo)."""
+    ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(ov, "RGBA")
+    d.rounded_rectangle((50, 170, W - 50, 520), 46, fill=(0, 0, 0, 150))
+    text_outline(d, (W // 2, 290), head, fit(d, head, 120, W - 160, 60), fill="#ffeb3b", sw=7)
+    text_outline(d, (W // 2, 440), sub, fit(d, sub, 62, W - 160, 36), sw=5)
+    price_strip(d, it)
+    return ov
 
 
-def voice_lines(label, items):
-    n = len(items)
-    best = max(int(i.get("pct") or 0) for i in items)
-    out = [f"{label} ke {n} deals, {best} percent tak off. Dekhte hain."]
-    for k, it in enumerate(items, 1):
-        out.append(f"Number {k}. {short(it.get('title'), 40)}. Sirf {float(it['price']):,.0f} rupaye, {int(it.get('pct') or 0)} percent off.")
-        for b in (it.get("benefits") or [])[:2]:
-            out[-1] += f" {b}."
-    out.append("Saare links comments me hain. Follow karo roz ke naye deals ke liye.")
-    return [say(x) for x in out]
+def outro_frame(photo, it):
+    im = blurred_bg(photo).convert("RGBA")
+    d = ImageDraw.Draw(im, "RGBA")
+    d.rounded_rectangle((70, 560, W - 70, 1260), 54, fill=(255, 255, 255, 240))
+    d.text((W // 2, 700), "LINK", font=font(120), fill="#f97316", anchor="mm")
+    d.text((W // 2, 850), "COMMENTS me hai", font=font(74), fill="#111111", anchor="mm")
+    d.text((W // 2, 1010), "Follow @DesiChoice", font=font(58), fill="#555555", anchor="mm")
+    d.text((W // 2, 1100), "roz aise sasti deals", font=font(52), fill="#555555", anchor="mm")
+    return im.convert("RGB")
 
 
-async def tts_one(text, path):
+# ───────────────────────── script (hook + lines) ─────────────────────────
+def clean_bullet(b):
+    b = re.sub(r"\s+", " ", b or "").strip(" .:-|")
+    head = re.split(r"\s[|•]\s", b)[0]
+    if ":" in head and len(head.split(":")[0]) >= 6:
+        head = head.split(":")[0]
+    if len(head) > 34:
+        head = head[:34].rsplit(" ", 1)[0]
+    return head.rstrip(" ,.-")
+
+
+_H = ("शून्य एक दो तीन चार पाँच छह सात आठ नौ दस ग्यारह बारह तेरह चौदह पंद्रह सोलह सत्रह अठारह उन्नीस बीस इक्कीस बाईस तेईस चौबीस पच्चीस छब्बीस "
+      "सत्ताईस अट्ठाईस उनतीस तीस इकतीस बत्तीस तैंतीस चौंतीस पैंतीस छत्तीस सैंतीस अड़तीस उनतालीस चालीस इकतालीस बयालीस तैंतालीस चौवालीस पैंतालीस "
+      "छियालीस सैंतालीस अड़तालीस उनचास पचास इक्यावन बावन तिरपन चौवन पचपन छप्पन सत्तावन अट्ठावन उनसठ साठ इकसठ बासठ तिरसठ चौंसठ पैंसठ छियासठ "
+      "सड़सठ अड़सठ उनहत्तर सत्तर इकहत्तर बहत्तर तिहत्तर चौहत्तर पचहत्तर छिहत्तर सतहत्तर अठहत्तर उनासी अस्सी इक्यासी बयासी तिरासी चौरासी पचासी "
+      "छियासी सत्तासी अट्ठासी नवासी नब्बे इक्यानवे बानवे तिरानवे चौरानवे पंचानवे छियानवे सत्तानवे अट्ठानवे निन्यानवे").split()
+
+
+def hindi_num(n):
+    n = int(round(float(n)))
+    if n < 100:
+        return _H[n]
+    out = []
+    if n >= 100000:
+        out.append(hindi_num(n // 100000) + " लाख"); n %= 100000
+    if n >= 1000:
+        out.append(_H[n // 1000] + " हज़ार"); n %= 1000
+    if n >= 100:
+        out.append(_H[n // 100] + " सौ"); n %= 100
+    if n:
+        out.append(_H[n])
+    return " ".join(out)
+
+
+def rs_voice(v):
+    return hindi_num(v) + " रुपये"
+
+
+def default_script(it, n_items):
+    """Fallback when Groq script is not in the payload. Spoken text in Devanagari so the Hindi voice sounds natural."""
+    price, lp, pct = float(it["price"]), float(it.get("list_price") or 0), int(it.get("pct") or 0)
+    save = int(lp - price) if lp > price else 0
+    name = spoken_name(it.get("title"))
+    head = f"{inr(lp)} → {inr(price)}?!" if lp else f"{pct}% OFF!"
+    sub = f"{pct}% OFF · {short(it.get('title'), 28)}"
+    hook = f"रुको! {rs_voice(lp)} वाला {name} अभी सिर्फ़ {rs_voice(price)} में? पहले ये देख लो।" if lp else \
+           f"रुको! {name} पर {hindi_num(pct)} परसेंट की छूट, सिर्फ़ {rs_voice(price)} में।"
+    feats = [{"text": clean_bullet(b), "voice": clean_bullet(b) + "।"} for b in (it.get("benefits") or [])[:3] if clean_bullet(b)]
+    return {"head": head, "sub": sub, "hook": hook, "lines": feats,
+            "price_voice": f"और कीमत? सिर्फ़ {rs_voice(price)}। पूरे {rs_voice(save)} की बचत।" if save else f"कीमत सिर्फ़ {rs_voice(price)}।",
+            "outro": "लिंक कमेंट्स में है। रोज़ ऐसी डील के लिए फ़ॉलो करो।"}
+
+
+# ───────────────────────── tts / ffmpeg ─────────────────────────
+async def _tts(text, path):
     import edge_tts
-    await edge_tts.Communicate(text, VOICE).save(path)
+    await edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH).save(path)
 
 
-def tts(texts):
-    paths = []
+def tts_one(text, path):
     try:
-        for i, t in enumerate(texts):
-            p = f"{TMP}/v{i}.mp3"
-            asyncio.run(tts_one(t, p))
-            paths.append(p)
-        return paths
+        asyncio.run(_tts(text, path))
+        return path if os.path.getsize(path) > 500 else None
     except Exception as e:
-        print("TTS unavailable, rendering silent:", e, file=sys.stderr)
+        print("TTS failed:", str(e)[:120], file=sys.stderr)
         return None
 
 
 def dur(path):
-    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path], capture_output=True, text=True)
-    return float(r.stdout.strip() or 0)
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
+                       capture_output=True, text=True)
+    try:
+        return float(r.stdout.strip())
+    except Exception:
+        return 0.0
 
 
-def clip(png, seconds, audio, out):
-    vf = f"scale={W}:{H},zoompan=z='min(zoom+0.0004,1.03)':d={int(seconds*25)}:s={W}x{H}:fps=25,format=yuv420p"
-    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-t", f"{seconds:.2f}", "-i", png]
-    if audio:
-        cmd += ["-i", audio]
-    else:
-        cmd += ["-f", "lavfi", "-t", f"{seconds:.2f}", "-i", "anullsrc=r=44100:cl=mono"]
-    cmd += ["-vf", vf, "-r", "25", "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-c:a", "aac", "-b:a", "128k",
-            "-ar", "44100", "-ac", "1", "-af", "apad", "-t", f"{seconds:.2f}", "-shortest", out]
-    subprocess.run(cmd, check=True)
+def run(cmd):
+    r = subprocess.run(cmd, capture_output=True, text=True)
+    if r.returncode:
+        print("ffmpeg error:", r.stderr[-600:], file=sys.stderr)
+        raise RuntimeError("ffmpeg failed")
+
+
+def still_clip(png, secs, audio, out, k):
+    # alternate zoom in / out so consecutive photos do not feel identical
+    z = "min(zoom+0.0006,1.08)" if k % 2 == 0 else "if(eq(on,1),1.08,max(zoom-0.0006,1.0))"
+    vf = f"scale=2160:3840,zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps=25,format=yuv420p"
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", png]
+    cmd += ["-i", audio] if audio else ["-f", "lavfi", "-t", f"{secs:.2f}", "-i", "anullsrc=r=44100:cl=mono"]
+    cmd += ["-vf", vf, "-r", "25", "-c:v", "libx264", "-preset", "veryfast", "-crf", "22", "-c:a", "aac", "-b:a", "128k",
+            "-ar", "44100", "-ac", "1", "-af", "apad", "-t", f"{secs:.2f}", out]
+    run(cmd)
+
+
+def video_clip(mp4, overlay_png, secs, audio, out):
+    """Product video: blurred cover bg + video fit-to-width in the middle + overlay (hook text, price). Video muted, voice on top."""
+    fc = (f"[0:v]split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=30:6,eq=brightness=-0.18[bg];"
+          f"[b]scale={W}:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[m];[m][1:v]overlay=0:0,format=yuv420p[v]")
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-stream_loop", "-1", "-i", mp4, "-loop", "1", "-i", overlay_png]
+    cmd += ["-i", audio] if audio else ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono"]
+    cmd += ["-filter_complex", fc, "-map", "[v]", "-map", "2:a", "-r", "25", "-c:v", "libx264", "-preset", "veryfast",
+            "-crf", "22", "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "1", "-af", "apad", "-t", f"{secs:.2f}", out]
+    run(cmd)
+
+
+# ───────────────────────── main ─────────────────────────
+def load_photos(it, media):
+    urls = list(dict.fromkeys(([it.get("image")] if it.get("image") else []) + [u for u in media.get("images", [])]))
+    # gallery first (hi-res, different angles); feed photo is a low-res search thumbnail
+    urls = [u for u in media.get("images", [])] + ([it["image"]] if it.get("image") else [])
+    out = []
+    for u in dict.fromkeys(urls):
+        try:
+            im = Image.open(io.BytesIO(fetch(u))).convert("RGB")
+            if min(im.size) >= 300:
+                out.append(im)
+        except Exception as e:
+            print("photo failed:", u[-30:], str(e)[:60], file=sys.stderr)
+        if len(out) >= 5:
+            break
+    return out
+
+
+def load_video(media):
+    for u in media.get("videos", []):
+        try:
+            p = f"{TMP}/pv.mp4"
+            open(p, "wb").write(fetch(u, 60))
+            if dur(p) >= 1.5:
+                return p
+        except Exception as e:
+            print("video failed:", str(e)[:80], file=sys.stderr)
+    return None
 
 
 def main():
     payload = json.loads(os.environ["PAYLOAD"])
     label = payload.get("label") or "Top Deals"
-    items = [i for i in payload.get("items", []) if i.get("price")][:5]
-    if len(items) < 2:
-        sys.exit("need >= 2 items")
+    items = [i for i in payload.get("items", []) if i.get("price")][:3]
+    if not items:
+        sys.exit("need >= 1 item")
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(TMP, exist_ok=True)
-    best = max(int(i.get("pct") or 0) for i in items)
-    top, head, hook_voice = pick_hook(items)
-    slides = [slide_hook(top, head, label, len(items))] + [slide_item(it, k, len(items)) for k, it in enumerate(items, 1)] + [slide_outro()]
-    pngs = []
-    for k, s in enumerate(slides):
-        p = f"{TMP}/s{k}.png"
-        s.save(p)
-        pngs.append(p)
-    texts = voice_lines(label, items)
-    texts[0] = say(hook_voice)
-    audio = tts(texts)
-    clips = []
-    for k, png in enumerate(pngs):
-        a = audio[k] if audio else None
-        secs = max(3.2, (dur(a) + 0.5) if a else 3.6)
+    try:
+        import product_media
+    except Exception:
+        product_media = None
+
+    shots = []     # {"kind": "video"|"still", "png":..., "mp4":..., "voice": text}
+    meta_items = []
+    for idx, it in enumerate(items):
+        media = product_media.media(it["asin"]) if (product_media and it.get("asin")) else {"images": [], "videos": [], "bullets": []}
+        if not it.get("benefits") and media.get("bullets"):
+            it["benefits"] = [clean_bullet(b) for b in media["bullets"][:3]]
+        photos = load_photos(it, media)
+        if not photos:
+            print("no photo for", it.get("asin"), file=sys.stderr)
+            continue
+        vid = load_video(media) if idx == 0 else None
+        sc = it.get("script") or default_script(it, len(items))
+        base = default_script(it, len(items))
+        for k_ in ("head", "sub", "hook", "price_voice", "outro"):
+            sc.setdefault(k_, base[k_])
+        lines = sc.get("lines") or base["lines"]
+        n_photo = len(photos)
+        meta_items.append({"asin": it.get("asin"), "photos": n_photo, "video": bool(vid)})
+        # shot 1: hook (video if Amazon has one, else the best photo)
+        ov = hook_overlay(sc["head"], sc["sub"], it)
+        if vid:
+            ovp = f"{TMP}/ov{idx}.png"
+            ov.save(ovp)
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": sc["hook"], "min": 3.6})
+        else:
+            f = photo_frame(photos[0], it, None, None).convert("RGBA")
+            f.alpha_composite(ov)
+            p = f"{TMP}/h{idx}.png"
+            f.convert("RGB").save(p)
+            shots.append({"kind": "still", "png": p, "voice": sc["hook"], "min": 3.2})
+        # feature shots: one distinct photo per line (gallery order), counter 2/5 ...
+        gal = photos[1:] if len(photos) > 1 else photos
+        total = len(gal)
+        for j, ph in enumerate(gal[:4]):
+            ln = lines[j] if j < len(lines) else None
+            cap = ln["text"] if ln else None
+            voice = ln["voice"] if ln else None
+            p = f"{TMP}/p{idx}_{j}.png"
+            photo_frame(ph, it, cap, f"{j + 1}/{min(total, 4)}").save(p)
+            shots.append({"kind": "still", "png": p, "voice": voice, "min": 2.6})
+        # price + CTA
+        p = f"{TMP}/pr{idx}.png"
+        photo_frame(photos[0], it, "Aaj ka price check karo", None).save(p)
+        shots.append({"kind": "still", "png": p, "voice": sc["price_voice"], "min": 3.0})
+    if not shots:
+        sys.exit("no media at all")
+    shots.append({"kind": "still", "png": f"{TMP}/outro.png", "voice": (items[0].get("script") or {}).get("outro") or "लिंक कमेंट्स में है। रोज़ ऐसी डील के लिए फ़ॉलो करो।", "min": 3.0})
+    outro_photo = Image.open(io.BytesIO(fetch(items[0]["image"]))).convert("RGB") if items[0].get("image") else Image.new("RGB", (W, H), "#fff7ed")
+    outro_frame(outro_photo, items[0]).save(f"{TMP}/outro.png")
+
+    clips, voiced = [], 0
+    for k, s in enumerate(shots):
+        a = tts_one(s["voice"], f"{TMP}/v{k}.mp3") if s.get("voice") else None
+        voiced += 1 if a else 0
+        secs = max(s["min"], (dur(a) + 0.35) if a else s["min"])
+        if s["kind"] == "video":
+            secs = min(max(secs, s["min"]), 7.0)
         c = f"{TMP}/c{k}.mp4"
-        clip(png, secs, a, c)
+        if s["kind"] == "video":
+            video_clip(s["mp4"], s["png"], secs, a, c)
+        else:
+            still_clip(s["png"], secs, a, c, k)
         clips.append(c)
     with open(f"{TMP}/list.txt", "w") as f:
         for c in clips:
             f.write(f"file '{os.path.abspath(c)}'\n")
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", f"{TMP}/list.txt",
-                    "-c", "copy", "-movflags", "+faststart", f"{OUT}/reel.mp4"], check=True)
+    run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", f"{TMP}/list.txt", "-c", "copy",
+         "-movflags", "+faststart", f"{OUT}/reel.mp4"])
     total = dur(f"{OUT}/reel.mp4")
-    json.dump({"label": label, "items": len(items), "seconds": round(total, 1), "voice": bool(audio)}, open(f"{OUT}/meta.json", "w"))
-    print("done", total, "s, voice:", bool(audio))
+    json.dump({"label": label, "items": len(meta_items), "media": meta_items, "seconds": round(total, 1), "voice": voiced > 0,
+               "shots": len(shots)}, open(f"{OUT}/meta.json", "w"))
+    print("done", round(total, 1), "s, shots", len(shots), "voice shots", voiced, meta_items)
 
 
 if __name__ == "__main__":
