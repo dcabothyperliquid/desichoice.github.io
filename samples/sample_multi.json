@@ -1,0 +1,29 @@
+{
+ "label": "Electronics",
+ "items": [
+  {
+   "asin": "B0D78YCR1K",
+   "title": "pTron Bassbuds Astra in-Ear TWS Earbuds w/Stereo Sound, 50Hrs",
+   "price": 599,
+   "list_price": 2899,
+   "pct": 79,
+   "image": "https://m.media-amazon.com/images/I/41TdDa7cmvL.jpg"
+  },
+  {
+   "asin": "B0B5LVS732",
+   "title": "Noise Pulse Go Buzz Smart Watch with Advanced Bluetooth Calling",
+   "price": 1299,
+   "list_price": 4999,
+   "pct": 74,
+   "image": "https://m.media-amazon.com/images/I/61akt30bJsL.jpg"
+  },
+  {
+   "asin": "B0F1N79TYM",
+   "title": "Dell SE2225HM 21.5\" FHD, 100Hz Refresh, VA Panel, 5ms Monitor",
+   "price": 6349,
+   "list_price": 17444,
+   "pct": 64,
+   "image": "https://m.media-amazon.com/images/I/61ZYIqoyMyL.jpg"
+  }
+ ]
+}

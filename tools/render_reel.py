@@ -14,9 +14,9 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 sys.path.insert(0, os.path.dirname(__file__))
 W, H = 1080, 1920
-OUT, TMP = "out", "tmp"
+OUT, TMP = os.environ.get("REEL_OUT", "out"), os.environ.get("REEL_TMP", "tmp")
 VOICE = os.environ.get("REEL_VOICE", "hi-IN-SwaraNeural")
-RATE = os.environ.get("REEL_RATE", "+14%")
+RATE = os.environ.get("REEL_RATE", "+8%")
 PITCH = os.environ.get("REEL_PITCH", "+2Hz")
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
 ACCENT = "#e53935"
@@ -204,9 +204,17 @@ async def _tts(text, path):
 
 
 def tts_one(text, path):
+    """One sentence -> mp3 with leading/trailing silence removed (edge-tts pads ~0.3s each side = the 'ruk ruk ke' feel)."""
+    raw = path + ".raw.mp3"
     try:
-        asyncio.run(_tts(text, path))
-        return path if os.path.getsize(path) > 500 else None
+        asyncio.run(_tts(text, raw))
+        if os.path.getsize(raw) < 500:
+            return None
+        trim = ("silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.02,areverse,"
+                "silenceremove=start_periods=1:start_threshold=-42dB:start_silence=0.02,areverse")
+        r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw, "-af", trim, "-ar", "44100", "-ac", "1", path],
+                           capture_output=True, text=True)
+        return path if r.returncode == 0 and os.path.exists(path) and os.path.getsize(path) > 500 else raw
     except Exception as e:
         print("TTS failed:", str(e)[:120], file=sys.stderr)
         return None
@@ -268,18 +276,128 @@ def load_photos(it, media):
     return out
 
 
-def load_video(media):
-    """HLS (.m3u8) from Amazon -> first ~7s as local mp4 (ffmpeg pulls the playlist itself)."""
+def load_video(media, path=None, secs=7):
+    """HLS (.m3u8) from Amazon -> first `secs` seconds as local mp4 (ffmpeg pulls the playlist itself)."""
+    path = path or f"{TMP}/pv.mp4"
     for u in media.get("videos", []):
-        p = f"{TMP}/pv.mp4"
-        r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-user_agent", "Mozilla/5.0", "-i", u, "-t", "7", "-an",
-                            "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p", p],
+        r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-user_agent", "Mozilla/5.0", "-i", u, "-t", str(secs), "-an",
+                            "-c:v", "libx264", "-preset", "veryfast", "-crf", "23", "-pix_fmt", "yuv420p", path],
                            capture_output=True, text=True, timeout=120)
-        if r.returncode == 0 and os.path.exists(p) and dur(p) >= 1.5:
-            print("video ok:", u[-60:], round(dur(p), 1), "s")
-            return p
+        if r.returncode == 0 and os.path.exists(path) and dur(path) >= 1.5:
+            print("video ok:", u[-60:], round(dur(path), 1), "s")
+            return path
         print("video failed:", u[-50:], r.stderr[-160:], file=sys.stderr)
     return None
+
+
+ORD = ["पहला", "दूसरा", "तीसरा"]
+
+
+def item_script(it, k, n):
+    """Per-item narration for multi-product reels (fallback when Groq script missing)."""
+    price, lp, pct = float(it["price"]), float(it.get("list_price") or 0), int(it.get("pct") or 0)
+    name = spoken_name(it.get("title"))
+    sc = dict(it.get("script") or {})
+    sc.setdefault("intro", f"{ORD[k]} है {name}, सिर्फ़ {rs_voice(price)} में, पूरे {hindi_num(pct)} परसेंट की छूट के साथ।")
+    sc.setdefault("lines", [{"text": clean_bullet(b), "voice": clean_bullet(b)} for b in (it.get("benefits") or [])[:2] if clean_bullet(b)])
+    sc.setdefault("tag", f"{k + 1}. {short(it.get('title'), 26)}")
+    return sc
+
+
+def build_multi(payload, items, shots, meta_items):
+    n = len(items)
+    top = max(items, key=lambda i: int(i.get("pct") or 0))
+    hk = payload.get("hook") or {}
+    head = hk.get("head") or f"{n} DEALS · {int(top.get('pct') or 0)}% tak OFF"
+    sub = hk.get("sub") or payload.get("label") or "Top Deals"
+    hvoice = hk.get("voice") or f"रुको! आज की {hindi_num(n)} सबसे बढ़िया डील्स, एक तो सिर्फ़ {rs_voice(top['price'])} की।"
+    first_media = None
+    for k, it in enumerate(items):
+        media = product_media.media(it["asin"]) if (product_media and it.get("asin")) else {"images": [], "videos": [], "bullets": []}
+        if not it.get("benefits") and media.get("bullets"):
+            it["benefits"] = [clean_bullet(b) for b in media["bullets"][:2]]
+        photos = load_photos(it, media)
+        if not photos:
+            continue
+        if os.environ.get("DEBUG_MONTAGE"):
+            sheet = Image.new("RGB", (5 * 300, 300), "white")
+            for q, ph in enumerate(photos[:5]):
+                t = ph.copy(); t.thumbnail((300, 300)); sheet.paste(t, (q * 300, 0))
+            sheet.save(f"{OUT}/gallery_{it.get('asin')}.jpg")
+        vid = None
+        if media.get("videos"):
+            os.makedirs(f"{TMP}/v{k}", exist_ok=True)
+            vid = load_video(media, f"{TMP}/pv{k}.mp4", secs=5)
+        sc = item_script(it, k, n)
+        meta_items.append({"asin": it.get("asin"), "photos": len(photos), "video": bool(vid)})
+        gal = photos[1:] if len(photos) > 1 else photos
+        # product shot A: video (5s max) or hero photo, name tag + intro voice
+        cap = sc["tag"]
+        if k == 0:
+            ov = hook_overlay(head, sub, it)
+            if vid:
+                ovp = f"{TMP}/hov.png"; ov.save(ovp)
+                shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": hvoice, "min": 3.4})
+            else:
+                f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(ov)
+                p = f"{TMP}/hs.png"; f.convert("RGB").save(p)
+                shots.append({"kind": "still", "png": p, "voice": hvoice, "min": 3.0})
+        if vid:
+            ov = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ov, "RGBA")
+            d.rounded_rectangle((50, 110, W - 50, 250), 40, fill=(0, 0, 0, 165))
+            text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
+            price_strip(d, it)
+            ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": sc["intro"], "min": 3.0})
+        else:
+            p = f"{TMP}/a{k}.png"; photo_frame(photos[0], it, cap, None).save(p)
+            shots.append({"kind": "still", "png": p, "voice": sc["intro"], "min": 2.6})
+        # product shot B..: gallery photos with feature captions (voice: the line itself)
+        for j, ph in enumerate(gal[:2]):
+            ln = sc["lines"][j] if j < len(sc["lines"]) else None
+            p = f"{TMP}/b{k}_{j}.png"
+            photo_frame(ph, it, ln["text"] if ln else None, None).save(p)
+            shots.append({"kind": "still", "png": p, "voice": ln["voice"] if ln else None, "min": 2.0})
+        if first_media is None:
+            first_media = photos[0]
+    outro = payload.get("outro") or "सारे लिंक कमेंट्स में हैं। रोज़ ऐसी डील्स के लिए फ़ॉलो करो।"
+    p = f"{TMP}/outro.png"
+    outro_frame(first_media or Image.new("RGB", (W, H), "#fff7ed"), items[0]).save(p)
+    shots.append({"kind": "still", "png": p, "voice": outro, "min": 2.8})
+
+
+def build_single(payload, items, shots, meta_items):
+    idx, it = 0, items[0]
+    media = product_media.media(it["asin"]) if (product_media and it.get("asin")) else {"images": [], "videos": [], "bullets": []}
+    if not it.get("benefits") and media.get("bullets"):
+        it["benefits"] = [clean_bullet(b) for b in media["bullets"][:3]]
+    photos = load_photos(it, media)
+    if not photos:
+        return
+    vid = load_video(media, f"{TMP}/pv0.mp4", secs=7) if media.get("videos") else None
+    sc = it.get("script") or default_script(it, 1)
+    base = default_script(it, 1)
+    for k_ in ("head", "sub", "hook", "price_voice", "outro"):
+        sc.setdefault(k_, base[k_])
+    lines = sc.get("lines") or base["lines"]
+    meta_items.append({"asin": it.get("asin"), "photos": len(photos), "video": bool(vid)})
+    ov = hook_overlay(sc["head"], sc["sub"], it)
+    if vid:
+        ovp = f"{TMP}/ov0.png"; ov.save(ovp)
+        shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": sc["hook"], "min": 3.6})
+    else:
+        f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(ov)
+        p = f"{TMP}/h0.png"; f.convert("RGB").save(p)
+        shots.append({"kind": "still", "png": p, "voice": sc["hook"], "min": 3.0})
+    gal = photos[1:] if len(photos) > 1 else photos
+    for j, ph in enumerate(gal[:3]):
+        ln = lines[j] if j < len(lines) else None
+        p = f"{TMP}/p0_{j}.png"
+        photo_frame(ph, it, ln["text"] if ln else None, f"{j + 1}/{min(len(gal), 3)}").save(p)
+        shots.append({"kind": "still", "png": p, "voice": ln["voice"] if ln else None, "min": 2.0})
+    p = f"{TMP}/pr0.png"
+    photo_frame(photos[0], it, "LINK: COMMENTS me hai", None).save(p)
+    shots.append({"kind": "still", "png": p, "voice": sc["price_voice"] + " " + sc["outro"], "min": 3.0})
 
 
 def main():
@@ -290,64 +408,17 @@ def main():
         sys.exit("need >= 1 item")
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(TMP, exist_ok=True)
-    try:
-        import product_media
-    except Exception:
-        product_media = None
-
-    shots = []     # {"kind": "video"|"still", "png":..., "mp4":..., "voice": text}
-    meta_items = []
-    for idx, it in enumerate(items):
-        media = product_media.media(it["asin"]) if (product_media and it.get("asin")) else {"images": [], "videos": [], "bullets": []}
-        if not it.get("benefits") and media.get("bullets"):
-            it["benefits"] = [clean_bullet(b) for b in media["bullets"][:3]]
-        photos = load_photos(it, media)
-        if not photos:
-            print("no photo for", it.get("asin"), file=sys.stderr)
-            continue
-        vid = load_video(media) if idx == 0 else None
-        sc = it.get("script") or default_script(it, len(items))
-        base = default_script(it, len(items))
-        for k_ in ("head", "sub", "hook", "price_voice", "outro"):
-            sc.setdefault(k_, base[k_])
-        lines = sc.get("lines") or base["lines"]
-        n_photo = len(photos)
-        meta_items.append({"asin": it.get("asin"), "photos": n_photo, "video": bool(vid)})
-        # shot 1: hook (video if Amazon has one, else the best photo)
-        ov = hook_overlay(sc["head"], sc["sub"], it)
-        if vid:
-            ovp = f"{TMP}/ov{idx}.png"
-            ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": sc["hook"], "min": 3.6})
-        else:
-            f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA")
-            f.alpha_composite(ov)
-            p = f"{TMP}/h{idx}.png"
-            f.convert("RGB").save(p)
-            shots.append({"kind": "still", "png": p, "voice": sc["hook"], "min": 3.2})
-        # feature shots: one distinct photo per line (gallery order), counter 2/5 ...
-        gal = photos[1:] if len(photos) > 1 else photos
-        total = len(gal)
-        for j, ph in enumerate(gal[:3]):
-            ln = lines[j] if j < len(lines) else None
-            cap = ln["text"] if ln else None
-            voice = ln["voice"] if ln else None
-            p = f"{TMP}/p{idx}_{j}.png"
-            photo_frame(ph, it, cap, f"{j + 1}/{min(total, 3)}").save(p)
-            shots.append({"kind": "still", "png": p, "voice": voice, "min": 2.2})
-        # price + CTA (last shot of the product, hero photo again)
-        p = f"{TMP}/pr{idx}.png"
-        photo_frame(photos[0], it, "LINK: COMMENTS me hai", None).save(p)
-        shots.append({"kind": "still", "png": p, "voice": sc["price_voice"] + " " + sc["outro"], "min": 3.4})
+    shots, meta_items = [], []
+    (build_multi if len(items) > 1 else build_single)(payload, items, shots, meta_items)
     if not shots:
         sys.exit("no media at all")
     clips, voiced = [], 0
     for k, s in enumerate(shots):
         a = tts_one(s["voice"], f"{TMP}/v{k}.mp3") if s.get("voice") else None
         voiced += 1 if a else 0
-        secs = max(s["min"], (dur(a) + 0.35) if a else s["min"])
+        secs = max(s["min"], (dur(a) + 0.15) if a else s["min"])
         if s["kind"] == "video":
-            secs = min(max(secs, s["min"]), 7.0)
+            secs = min(secs, 7.0)
         c = f"{TMP}/c{k}.mp4"
         if s["kind"] == "video":
             video_clip(s["mp4"], s["png"], secs, a, c)
@@ -361,8 +432,8 @@ def main():
          "-movflags", "+faststart", f"{OUT}/reel.mp4"])
     total = dur(f"{OUT}/reel.mp4")
     json.dump({"label": label, "items": len(meta_items), "media": meta_items, "seconds": round(total, 1), "voice": voiced > 0,
-               "shots": len(shots)}, open(f"{OUT}/meta.json", "w"))
-    print("done", round(total, 1), "s, shots", len(shots), "voice shots", voiced, meta_items)
+               "voice_name": VOICE, "shots": len(shots)}, open(f"{OUT}/meta.json", "w"))
+    print("done", round(total, 1), "s, shots", len(shots), "voice shots", voiced, meta_items, VOICE)
 
 
 if __name__ == "__main__":
