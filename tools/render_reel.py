@@ -219,7 +219,7 @@ def tts_one(text, path):
                 "silenceremove=start_periods=1:start_threshold=-33dB:start_silence=0.01,areverse,"
                 "silenceremove=stop_periods=-1:stop_duration=0.14:stop_threshold=-34dB:stop_silence=0.1")
         r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw, "-af", trim, "-ar", "44100", "-ac", "1", path],
-                           capture_output=True, text=True)
+                           capture_output=True, text=True, timeout=60)
         return path if r.returncode == 0 and os.path.exists(path) and os.path.getsize(path) > 500 else raw
     except Exception as e:
         print("TTS failed:", str(e)[:120], file=sys.stderr)
@@ -228,7 +228,7 @@ def tts_one(text, path):
 
 def dur(path):
     r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
-                       capture_output=True, text=True)
+                       capture_output=True, text=True, timeout=30)
     try:
         return float(r.stdout.strip())
     except Exception:
@@ -236,7 +236,7 @@ def dur(path):
 
 
 def run(cmd):
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=240)
     if r.returncode:
         print("ffmpeg error:", r.stderr[-600:], file=sys.stderr)
         raise RuntimeError("ffmpeg failed")
@@ -279,15 +279,25 @@ def is_junk(im):
         return False
 
 
-def _xget(url, tries=4):
-    """Xbot (Render free) so raha ho to pehli request jagati hai: retry."""
+_XBOT_DEADLINE = [None]     # total time budget for ALL Xbot media downloads (server atak jaye to poora job 15 min na khaye)
+XBOT_BUDGET = 240
+
+
+def _xget(url, tries=3):
+    """Xbot (Render free) so raha ho to pehli request jagati hai: retry -- par total XBOT_BUDGET sec se zyada kabhi nahi."""
     import time as _t
+    if _XBOT_DEADLINE[0] is None:
+        _XBOT_DEADLINE[0] = _t.time() + XBOT_BUDGET
     for i in range(tries):
+        left = _XBOT_DEADLINE[0] - _t.time()
+        if left <= 3:
+            print("xbot media budget khatam, skip:", url[-40:], file=sys.stderr)
+            return None
         try:
-            return fetch(url, timeout=90)
+            return fetch(url, timeout=max(5, min(45, left)))
         except Exception as e:
             print("xbot media retry", i + 1, str(e)[:60], file=sys.stderr)
-            _t.sleep(8)
+            _t.sleep(min(6, max(0, _XBOT_DEADLINE[0] - _t.time())))
     return None
 
 
@@ -299,6 +309,8 @@ def item_media(it):
         imgs, vids = [], []
         for j, u in enumerate(m["photos"]):
             b = _xget(u)
+            if not b and j == 0:
+                break               # pehli hi photo nahi mili -> Xbot down/atka hai, baaki par waqt kharab mat karo
             if b:
                 p = os.path.abspath(f"{TMP}/xm_{it.get('asin')}_{j}.jpg")
                 open(p, "wb").write(b)
@@ -487,7 +499,18 @@ def build_single(payload, items, shots, meta_items):
     shots.append({"kind": "still", "png": p, "voice": sc["price_voice"] + " " + sc["outro"], "min": 3.0})
 
 
+def _watchdog(signum, frame):
+    print("WATCHDOG: render 12 min se zyada chala (media download / ffmpeg atka) -- abort", file=sys.stderr)
+    sys.exit(3)
+
+
 def main():
+    try:
+        import signal
+        signal.signal(signal.SIGALRM, _watchdog)
+        signal.alarm(12 * 60)
+    except Exception:
+        pass
     payload = json.loads(os.environ["PAYLOAD"])
     label = payload.get("label") or "Top Deals"
     items = [i for i in payload.get("items", []) if i.get("price")][:3]
