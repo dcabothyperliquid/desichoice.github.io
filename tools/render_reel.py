@@ -237,12 +237,24 @@ def default_script(it, n_items):
 
 
 # ───────────────────────── tts / ffmpeg ─────────────────────────
-async def _tts(text, path):
+def _style(text, lively=False):
+    """Har line ki rate/pitch thodi alag (text-hash se, taaki same text par same awaaz) -> ek hi flat sur wali robotic feel nahi.
+    REEL_RATE / REEL_PITCH env set ho to wahi chalega. lively=True (hook): thodi energetic."""
+    if os.environ.get("REEL_RATE") or os.environ.get("REEL_PITCH"):
+        return RATE, PITCH
+    h = sum(ord(c) for c in text)
+    rate = 6 if lively else (2, 4, 6, 3, 5)[h % 5]
+    pitch = 3 if lively else (-2, 0, 2, 1, -1)[(h // 5) % 5]
+    return f"{rate:+d}%", f"{pitch:+d}Hz"
+
+
+async def _tts(text, path, lively=False):
     import edge_tts
     last = None
+    rate, pitch = _style(text, lively)
     for v in [VOICE] + [x for x in FALLBACK_VOICES if x != VOICE]:
         try:
-            await edge_tts.Communicate(text, v, rate=RATE, pitch=PITCH if v == VOICE else "+0Hz").save(path)
+            await edge_tts.Communicate(text, v, rate=rate if v == VOICE else RATE, pitch=pitch if v == VOICE else "+0Hz").save(path)
             if os.path.exists(path) and os.path.getsize(path) > 500:
                 VOICE_USED[0] = v
                 return
@@ -256,7 +268,17 @@ def flow(text):
     """TTS ko bhejne se pehle: vakya ke beech ke comma/hyphen/colon hatao (neural voice har comma par ruk jaati hai -> tuk-tuk bolna).
     Sirf vakya ke ant ka viram (। ? !) rehta hai. Content/shabd same rehte hain; screen text par asar nahi."""
     t = str(text or "")
-    t = re.sub(r"[,;:،、\u2013\u2014\u2012]+", " ", t)
+    def _soft(sent):                           # har vakya me max 1 comma (saans), wo bhi tab jab dono taraf >=4 shabd hon; baaki jud jaate hain
+        parts = [x.strip() for x in re.split(r"[,،、]+", sent) if x.strip()]
+        buf, used = (parts[0] if parts else ""), False
+        for x in parts[1:]:
+            if not used and len(buf.split()) >= 4 and len(x.split()) >= 4:
+                buf, used = buf + ", " + x, True
+            else:
+                buf += " " + x
+        return buf
+    t = "".join(_soft(x) if not re.fullmatch(r"[।?!.\s]*", x) else x for x in re.split(r"([।?!.]+\s*)", t))
+    t = re.sub(r"[;:\u2013\u2014\u2012]+", " ", t)
     t = re.sub(r"(?<=\S)-(?=\S)", " ", t)
     t = re.sub(r"\s*\.\.\.+\s*", " ", t)
     t = re.sub(r"[!?](?=\s*\S)", "।", t)           # vakya ke beech ka ! ya ? -> chhota viram; aakhri wala intonation ke liye rehta hai
@@ -264,11 +286,11 @@ def flow(text):
     return t
 
 
-def tts_one(text, path):
+def tts_one(text, path, lively=False):
     """One sentence -> mp3 with leading/trailing silence removed (edge-tts pads ~0.3s each side = the 'ruk ruk ke' feel)."""
     raw = path + ".raw.mp3"
     try:
-        asyncio.run(_tts(flow(text), raw))
+        asyncio.run(_tts(flow(text), raw, lively))
         if os.path.getsize(raw) < 500:
             return None
         # sirf shuru/ant ki khamoshi hatao; beech ke natural pauses (comma/purn viram) rehne do, bahut lambe (>0.5s) hi chhote karo
@@ -448,6 +470,7 @@ def load_video(media, path=None, secs=7):
 
 
 ORD = ["पहला", "दूसरा", "तीसरा"]
+CONNECT = ["चलो अब अगला देखते हैं।", "और आख़िर में ये वाला भी देख लो।"]   # product ke beech bolne wala jod
 
 
 def item_script(it, k, n):
@@ -504,9 +527,11 @@ def build_multi(payload, items, shots, meta_items):
         bens = item_benefits(it, sc)
         cap = sc["tag"]
         if k == 0:
-            intro = price_first(it)
+            hook_v = with_stop(str((payload.get("hook") or {}).get("voice") or "").strip())
+            intro = (hook_v + " " if hook_v else "") + price_first(it)      # AI hook line pehle, phir product ka price-intro (ek hi TTS = ek flow)
         else:
             intro = (given.get("intro") or "").strip() or f"{ORD[k]} है {spoken_name(it.get('title'))}, सिर्फ़ {rs_short(it['price'])} में।"
+            intro = (CONNECT[min(k - 1, len(CONNECT) - 1)] + " " + intro) if k < n - 1 or n == 2 else (CONNECT[-1] + " " + intro)
         # ---- shot A: video clip (ya hero photo) + naam/price intro
         if vid:
             if k == 0:
@@ -517,7 +542,7 @@ def build_multi(payload, items, shots, meta_items):
                 text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
                 price_strip(d, it)
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": intro, "min": min(max(dur(vid), 5.0), 7.0), "pk": k})
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": intro, "min": min(max(dur(vid), 5.0), 7.0), "pk": k, "lively": k == 0})
         else:
             if k == 0:
                 f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
@@ -527,7 +552,7 @@ def build_multi(payload, items, shots, meta_items):
                 d.rounded_rectangle((50, 110, W - 50, 235), 40, fill=(0, 0, 0, 165))
                 text_outline(d, (W // 2, 172), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
             p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
-            shots.append({"kind": "still", "png": p, "voice": intro, "min": 4.5, "pk": k})
+            shots.append({"kind": "still", "png": p, "voice": intro, "min": 4.5, "pk": k, "lively": k == 0})
         # ---- shots B: 2-3 gallery photos, har photo par ek benefit (screen caption + awaaz)
         cnt = max(2, min(3, len(bens))) if bens else 2
         for j in range(cnt):
@@ -536,6 +561,7 @@ def build_multi(payload, items, shots, meta_items):
             p = f"{TMP}/b{k}_{j}.png"
             photo_frame(ph, it, ln[0] if ln else None, f"{j + 1}/{cnt}").save(p)
             shots.append({"kind": "still", "png": p, "voice": with_stop(ln[1]) if ln else None, "min": 3.2, "pk": k})
+        shots[-1]["tail"] = 0.6                  # product khatam: agle product se pehle thoda gap
         if first_media is None:
             first_media = photos[0]
     outro = "लिंक कमेंट्स में है, और ऐसी डील्स के लिए फ़ॉलो ज़रूर करना।"
@@ -618,11 +644,11 @@ def main():
         sys.exit("no media at all")
     voiced = 0
     for k, s_ in enumerate(shots):
-        a = tts_one(s_["voice"], f"{TMP}/v{k}.mp3") if s_.get("voice") else None
+        a = tts_one(s_["voice"], f"{TMP}/v{k}.mp3", bool(s_.get("lively"))) if s_.get("voice") else None
         voiced += 1 if a else 0
         s_["audio"] = a
         # shot ki lambai = poori awaaz + chhota tail (awaaz kabhi kaati nahi jaati)
-        secs = max(dur(a) + 0.25, s_["min"]) if a else s_["min"]
+        secs = max(dur(a) + s_.get("tail", 0.25), s_["min"]) if a else s_["min"]
         s_["secs"] = secs
     # har product kam se kam PRODUCT_MIN sec: kami ho to us product ke shots me barabar baant do
     by = {}
