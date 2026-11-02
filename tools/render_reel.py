@@ -92,19 +92,27 @@ def slide_item(it, idx, total):
     d.rounded_rectangle((100, 160, 400, 270), 26, fill=ACCENT)
     d.text((250, 215), f"{pct}% OFF", fill="white", font=font(58), anchor="mm")
     d.text((W - 110, 215), f"{idx}/{total}", fill="#999999", font=font(50), anchor="rm")
-    f = font(52)
-    y = 1100
-    for ln in wrap(d, short(it.get("title")), f, W - 220):
+    f = font(46)
+    y = 1085
+    for ln in wrap(d, short(it.get("title"), 50), f, W - 220)[:2]:
         d.text((110, y), ln, fill="#222222", font=f, anchor="lm")
-        y += 68
+        y += 58
+    y = 1225
+    for b in (it.get("benefits") or [])[:2]:
+        b = str(b).strip()
+        if not b:
+            continue
+        d.text((110, y), "+", fill="#16a34a", font=font(44), anchor="lm")
+        d.text((160, y), b, fill="#166534", font=fit(d, b, 40, W - 280), anchor="lm")
+        y += 64
     price, lp = it.get("price"), it.get("list_price")
-    d.text((110, 1400), rs(price), fill="#111111", font=font(100), anchor="lm")
+    d.text((110, 1430), rs(price), fill="#111111", font=font(100), anchor="lm")
     if lp:
         x0 = 110 + d.textlength(rs(price), font=font(100)) + 36
         t = rs(lp)
-        d.text((x0, 1408), t, fill="#888888", font=font(52), anchor="lm")
+        d.text((x0, 1438), t, fill="#888888", font=font(52), anchor="lm")
         w = d.textlength(t, font=font(52))
-        d.line((x0, 1403, x0 + w, 1403), fill="#888888", width=5)
+        d.line((x0, 1433, x0 + w, 1433), fill="#888888", width=5)
     return im
 
 
@@ -129,6 +137,8 @@ def voice_lines(label, items):
     out = [f"{label} ke {n} deals, {best} percent tak off. Dekhte hain."]
     for k, it in enumerate(items, 1):
         out.append(f"Number {k}. {short(it.get('title'), 40)}. Sirf {float(it['price']):,.0f} rupaye, {int(it.get('pct') or 0)} percent off.")
+        for b in (it.get("benefits") or [])[:2]:
+            out[-1] += f" {b}."
     out.append("Saare links comments me hain. Follow karo roz ke naye deals ke liye.")
     return [say(x) for x in out]
 
