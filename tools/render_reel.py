@@ -12,7 +12,12 @@ Output: out/reel.mp4 + out/meta.json. Voice failure -> silent reel, media failur
 import asyncio, io, json, os, re, subprocess, sys, urllib.request
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
-sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    import product_media
+except Exception as _e:
+    print("product_media unavailable:", _e, file=sys.stderr)
+    product_media = None
 W, H = 1080, 1920
 OUT, TMP = os.environ.get("REEL_OUT", "out"), os.environ.get("REEL_TMP", "tmp")
 VOICE = os.environ.get("REEL_VOICE", "hi-IN-SwaraNeural")
