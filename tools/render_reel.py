@@ -470,7 +470,8 @@ def load_video(media, path=None, secs=7):
 
 
 ORD = ["पहला", "दूसरा", "तीसरा"]
-CONNECT = ["चलो अब अगला देखते हैं।", "और आख़िर में ये वाला भी देख लो।"]   # product ke beech bolne wala jod
+CONNECT = ["अच्छा, अब ये देखो।", "ये तो कुछ नहीं, अब ये देखो।", "चलो अब ये वाला।"]   # fallback jod (AI intro na aaye tab)
+CONNECT_LAST = "और आख़िर में, ये मत छोड़ना।"
 
 
 def item_script(it, k, n):
@@ -528,10 +529,12 @@ def build_multi(payload, items, shots, meta_items):
         cap = sc["tag"]
         if k == 0:
             hook_v = with_stop(str((payload.get("hook") or {}).get("voice") or "").strip())
-            intro = (hook_v + " " if hook_v else "") + price_first(it)      # AI hook line pehle, phir product ka price-intro (ek hi TTS = ek flow)
+            first = (given.get("intro") or "").strip() or price_first(it)    # AI intro (bol-chal) pehle; na ho to template
+            intro = (hook_v + " " if hook_v else "") + first                 # hook + intro ek hi TTS = ek flow
         else:
-            intro = (given.get("intro") or "").strip() or f"{ORD[k]} है {spoken_name(it.get('title'))}, सिर्फ़ {rs_short(it['price'])} में।"
-            intro = (CONNECT[min(k - 1, len(CONNECT) - 1)] + " " + intro) if k < n - 1 or n == 2 else (CONNECT[-1] + " " + intro)
+            intro = (given.get("intro") or "").strip()                        # AI intro me jod (transition) pehle se hota hai
+            if not intro:                                                     # fallback: har baar alag jod, phir product
+                intro = f"{CONNECT[(k - 1) % len(CONNECT)] if k < n - 1 else CONNECT_LAST} {spoken_name(it.get('title'))}, सिर्फ़ {rs_short(it['price'])} में।"
         # ---- shot A: video clip (ya hero photo) + naam/price intro
         if vid:
             if k == 0:
@@ -564,7 +567,7 @@ def build_multi(payload, items, shots, meta_items):
         shots[-1]["tail"] = 0.6                  # product khatam: agle product se pehle thoda gap
         if first_media is None:
             first_media = photos[0]
-    outro = "लिंक कमेंट्स में है, और ऐसी डील्स के लिए फ़ॉलो ज़रूर करना।"
+    outro = (str(payload.get("outro") or "").strip()) or "लिंक कमेंट्स में है। रील सेव कर लो, और ऐसी डील्स के लिए फ़ॉलो ज़रूर करना।"
     p = f"{TMP}/outro.png"
     outro_frame(first_media or Image.new("RGB", (W, H), "#fff7ed"), items[0]).save(p)
     shots.append({"kind": "still", "png": p, "voice": outro, "min": 2.6})
