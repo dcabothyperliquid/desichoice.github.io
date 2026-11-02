@@ -1,0 +1,40 @@
+name: Warm Deal Reel media
+
+# Xbot (Render) dispatches this: Amazon photos + 7s clip are fetched/encoded HERE (ffmpeg, PIL) and uploaded back to Xbot,
+# which stores them in Turso. Render's 512MB box never runs ffmpeg/PIL for this any more. No secrets needed
+# (uploads use a short-lived signed key passed in `targets`).
+
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: 'Xbot public URL'
+        required: true
+      targets:
+        description: 'JSON [{"asin","cat","k","e"}]'
+        required: true
+
+# Ek time pe ek run; beech me aaye dispatch me sirf sabse naya queue rehta hai (naya khali slot miss nahi hota)
+concurrency:
+  group: warm-media
+  cancel-in-progress: false
+
+jobs:
+  warm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ffmpeg + python deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          pip install -q pillow requests beautifulsoup4 lxml
+      - name: Warm media
+        env:
+          BASE: ${{ github.event.inputs.base }}
+          TARGETS: ${{ github.event.inputs.targets }}
+        run: python tools/warm_media.py
