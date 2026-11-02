@@ -538,6 +538,89 @@ def sweep_category(am, cat):
     return sorted(got.values(), key=lambda x: (-x["pct"], -(x.get("reviews") or 0)))[:PER_CAT_OFFERS]
 
 
+# ---- title-based category check ----------------------------------------------------------------------------------
+# Amazon's department search is loose ("laptop" also returns stands, sleeves, bags), so every offer is re-filed by what its
+# TITLE says. First matching rule wins. No match = keep the category it was found in.
+_LAPTOP_WORD = re.compile(r"\b(laptop|notebook|macbook|chromebook|thinkpad|ideapad|vivobook|zenbook|inspiron|pavilion|victus|thinkbook)\b")
+_NOT_A_LAPTOP = re.compile(r"\b(stand|bag|bags|backpack|sleeve|case|cover|skin|charger|adapter|cooling|pad|mouse|keyboard|holder|riser|cable|dock|hub|"
+                           r"protector|guard|sticker|organi[sz]er|lock|table|desk|tray|cleaner|lamp|brief|monitor|projector|tablet|portable)\b")
+TITLE_RULES = [
+    ("tools_auto",      r"\bcar\b|\bcar\d+|\bbike\b|motorcycle|\bhelmet\b|dash ?cam|\btyre|windshield|sun ?shade|automotive|\bcar[- ]"),
+    ("pets",            r"\b(dogs?|cats?|puppy|kitten|pets?)\b"),
+    ("hobby_music",     r"guitar|ukulele|piano|harmonica|\bflute\b|violin|\btabla\b|\bdrums?\b|karaoke|casio"),
+    ("home_kitchen",    r"washing machine|refrigerator|\bfridge\b|mixer|grinder|cooker|kettle|vacuum|air ?fryer|induction|lunch ?(box|bag)|"
+                        r"\bbottle|flask|coffee|descaler|gasket|cookware|\bmop\b|chimney|geyser|water purifier|toaster|\boven\b|blender|juicer|"
+                        r"dishwasher|\bpan\b|\bpot\b|casserole|tiffin|dinner ?set|steel (glass|plate)"),
+    ("gaming",          r"gaming|gamepad|joystick|playstation|\bps[45]\b|xbox|nintendo|\bcontroller\b"),
+    ("furniture_decor", r"table lamp|study lamp|night lamp"),
+    ("accessories",     r"keyboard|\bmouse\b|mouse ?pad|power ?bank|laptop (stand|sleeve|riser|cooling)|sleeve|webcam|usb hub|\bcable\b|charger|adapter|"
+                        r"pen ?drive|hard ?disk|\bssd\b|micro ?sd|memory card|card reader|monitor (arm|mount|stand)|wall mount|bracket|cooling pad|"
+                        r"magsafe|(phone|mobile)\s(pouch|holster|holder|case|cover)|(pouch|holster).{0,30}phone|screen ?guard|tempered"),
+    ("monitors",        r"\bmonitors?\b|\btv\b|television|projector"),
+    ("electronics",     r"earbuds?|headphones?|earphones?|neckband|\btws\b|speakers?|soundbar|dolby|home theat|\bcamera\b"),
+    ("mobiles",         r"smartphones?|smart phone|\b5g\b|iphone|smart ?watch|mobile phone"),
+    ("smart_home",      r"smart (plug|bulb|light|lock|switch|speaker)|alexa|echo dot|cctv|security camera|video doorbell|extension board|surge"),
+    ("beauty_health",   r"serum|shampoo|lotion|cream|\bsoap\b|moisturi[sz]|sunscreen|face ?wash|hair|\bskin\b|trimmer|razor|perfume|deodorant|"
+                        r"lipstick|kajal|vitamin|supplement|toothpaste|face mask"),
+    ("office_books",    r"stationery|\bpens?\b|diary|\bnovels?\b|\bbooks?\b|\bhow to\b|laminat|shredder|marker|stapler|writing tablet|bulletin board|notice board|paperback|hardcover"),
+    ("toys_kids",       r"\btoys?\b|\bkids?\b|\bbaby\b|scooter|\bdoll\b|puzzle|stroller|diaper"),
+    ("fitness_outdoor", r"\byoga\b|dumbbell|\bgym\b|treadmill|bicycle|fitness|resistance band|skipping|trekking|camping|\btent\b|cricket|badminton|football"),
+    ("furniture_decor", r"\bshelf|\brack\b|\bvase|decor|\bstool|ottoman|\bsofa|\bchair|\btable\b|\bbed\b|mattress|curtain|\blamp|night light|wall art|"
+                        r"photo frame|planter|\bplants?\b|storage|cabinet|wardrobe|organi[sz]er|\bmirror|cushion|bedsheet|moss stick"),
+    ("fashion",         r"saree|kurta|kurti|shirt|jeans|\bdress\b|shoes?|sneaker|sandal|slipper|\bwatch\b|wallet|\bbelt\b|jacket|hoodie|trouser|"
+                        r"leggings|\bbags?\b|backpack|handbag|trolley|luggage|duffel|analog|quartz|chronograph"),
+]
+_TITLE_RULES = [(c, re.compile(rx)) for c, rx in TITLE_RULES]
+
+
+def classify(item):
+    """Category key the TITLE points to, or None (= no opinion, keep the found category)."""
+    t = (item.get("name") or "").lower().replace("cable world", "")      # brand name, not a cable
+    if not t:
+        return None
+    try:
+        price = float(item.get("now") or 0)
+    except (TypeError, ValueError):
+        price = 0
+    if _LAPTOP_WORD.search(t) and not _NOT_A_LAPTOP.search(t) and price >= 12000:
+        return "laptops"
+    for cat, rx in _TITLE_RULES:
+        if rx.search(t):
+            return cat
+    return None
+
+
+def _usable_name(n):
+    n = (n or "").strip()
+    if not n or "terms and conditions" in n.lower():
+        return False
+    return " " in n or len(n) > 15                         # a bare brand token ("ATHCO") is a scrape miss, not a product title
+
+
+def regroup(cats):
+    """Re-file every offer by title; dedupe by asin; each category sorted best discount first and capped."""
+    flat = {}
+    for cat, lst in (cats or {}).items():
+        for it in lst:
+            if not _usable_name(it.get("name")):
+                continue
+            new = classify(it)
+            if new is None and cat == "laptops":
+                continue                                   # "laptops" only holds titles that really say laptop - cannot verify, so drop
+            new = new or cat
+            if new in CAT_LABEL:
+                ic, lab = CAT_LABEL[new]
+                it = dict(it, cat=new, label=lab, icon=ic)
+            old = flat.get(it["asin"])
+            if not old or (it.get("pct") or 0) > (old.get("pct") or 0):
+                flat[it["asin"]] = it
+    out = {c: [] for c in cats or {}}
+    for it in flat.values():
+        out.setdefault(it["cat"], []).append(it)
+    return {c: sorted(l, key=lambda x: (-(x.get("pct") or 0), -(x.get("reviews") or 0)))[:PER_CAT_OFFERS] for c, l in out.items()}
+
+
+
 def _drop_stale(cats):
     cutoff = time.time() - FRESH_H * 3600
     return {c: [i for i in lst if float(i.get("t") or 0) >= cutoff] for c, lst in cats.items()}
@@ -564,6 +647,7 @@ def run_offers(am, force=False):
             cats[cat] = items
             swept[cat] = iso()
             changed = True
+            cats = regroup(cats)
             data = {"v": 3, "updated": iso(), "fresh_h": FRESH_H, "cats": _drop_stale(cats), "swept": swept}
             write_json(OFFERS_PATH, data)               # write after every category: a cancelled run loses nothing
     return changed

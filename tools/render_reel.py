@@ -3,7 +3,7 @@
 payload = {"label": "Mobiles", "items": [{"title", "price", "list_price", "pct", "image"}, ...]}
 Voice: edge-tts (free). If TTS is unreachable the reel is rendered silent instead of failing.
 """
-import asyncio, io, json, os, subprocess, sys, urllib.request
+import asyncio, io, json, os, re, subprocess, sys, urllib.request
 from PIL import Image, ImageDraw, ImageFont
 
 W, H = 1080, 1920
@@ -59,6 +59,54 @@ def fit(draw, text, size, maxw):
     while size > 30 and draw.textlength(text, font=font(size)) > maxw:
         size -= 4
     return font(size)
+
+
+HOOKS = [
+    # (headline on slide, voice template)  vars: name was price pct n label
+    ("ITNA SASTA?!", "Itna sasta? Rs {was} ka {name} ab sirf Rs {price}! Aise {n} deals dekho."),
+    ("RUKO! DEKHO", "Ruko, scroll mat karo! {name} pe {pct} percent off, sirf Rs {price}. Aise {n} deals ye rahe."),
+    ("PRICE GIRA!", "Rs {was} se seedha Rs {price}! {name}. Aise {n} sasti deals abhi dekho."),
+    ("LOOT DEAL", "Ye loot deal hai! {name} sirf Rs {price}, {pct} percent off. Baaki {m} deals bhi dekho."),
+]
+
+
+def pick_hook(items):
+    """Hook built from the best-discount product (real numbers), variant picked by job id so reels differ."""
+    top = max(items, key=lambda i: int(i.get("pct") or 0))
+    seed = sum(ord(c) for c in os.environ.get("JOB_ID", "x"))
+    head, tpl = HOOKS[seed % len(HOOKS)]
+    base = re.split(r"\s[|\-–—]\s|,\s", (top.get("title") or "").strip())[0]
+    spoken = " ".join(base.split()[:5]).strip(" .,&")
+    voice = tpl.format(name=spoken, was=f"{float(top.get('list_price') or top['price']):,.0f}",
+                       price=f"{float(top['price']):,.0f}", pct=int(top.get("pct") or 0), n=len(items), m=len(items) - 1)
+    return top, head, voice
+
+
+def slide_hook(top, head, label, n):
+    im = Image.new("RGB", (W, H), BG)
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle((60, 110, W - 60, 1640), 48, fill="white", outline="#fdba74", width=6)
+    d.text((W // 2, 230), head, fill=ACCENT, font=fit(d, head, 110, W - 200), anchor="mm")
+    try:
+        ph = Image.open(io.BytesIO(fetch(top["image"]))).convert("RGB")
+        ph.thumbnail((820, 820))
+        im.paste(ph, ((W - ph.width) // 2, 330 + (820 - ph.height) // 2))
+    except Exception as e:
+        print("hook image failed:", e, file=sys.stderr)
+    pct = int(top.get("pct") or 0)
+    d.rounded_rectangle((100, 330, 400, 440), 26, fill=ACCENT)
+    d.text((250, 385), f"{pct}% OFF", fill="white", font=font(58), anchor="mm")
+    price, lp = top.get("price"), top.get("list_price")
+    d.text((W // 2, 1250), f"Rs {float(price):,.0f}", fill="#111111", font=font(130), anchor="mm")
+    if lp:
+        t = f"Rs {float(lp):,.0f}"
+        f2 = font(60)
+        w = d.textlength(t, font=f2)
+        d.text((W // 2, 1370), t, fill="#888888", font=f2, anchor="mm")
+        d.line((W // 2 - w / 2, 1366, W // 2 + w / 2, 1366), fill="#888888", width=6)
+    d.text((W // 2, 1500), f"DESI CHOICE · {n} deals", fill="#f97316", font=font(52), anchor="mm")
+    d.text((W // 2, 1580), "dekhte raho...", fill="#999999", font=font(40), anchor="mm")
+    return im
 
 
 def slide_title(label, n, best):
@@ -187,13 +235,15 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(TMP, exist_ok=True)
     best = max(int(i.get("pct") or 0) for i in items)
-    slides = [slide_title(label, len(items), best)] + [slide_item(it, k, len(items)) for k, it in enumerate(items, 1)] + [slide_outro()]
+    top, head, hook_voice = pick_hook(items)
+    slides = [slide_hook(top, head, label, len(items))] + [slide_item(it, k, len(items)) for k, it in enumerate(items, 1)] + [slide_outro()]
     pngs = []
     for k, s in enumerate(slides):
         p = f"{TMP}/s{k}.png"
         s.save(p)
         pngs.append(p)
     texts = voice_lines(label, items)
+    texts[0] = say(hook_voice)
     audio = tts(texts)
     clips = []
     for k, png in enumerate(pngs):

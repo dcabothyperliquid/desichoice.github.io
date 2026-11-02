@@ -67,5 +67,37 @@ class T(unittest.TestCase):
         self.assertFalse(S.ACCESSORY.search("Tata Tea Gold 1 kg"))
 
 
+
+class TitleClassify(unittest.TestCase):
+    def cl(self, name, now="999"):
+        return S.classify({"name": name, "now": now})
+
+    def test_laptop_accessories_are_not_laptops(self):
+        self.assertEqual(self.cl("Tygot Aluminium Laptop Stand Adjustable 6 Angles", "299"), "accessories")
+        self.assertEqual(self.cl("Dyazo 13.3 Inch Laptop Sleeve Case with Handle", "299"), "accessories")
+        self.assertEqual(self.cl("Safari Omega Pro Laptop Backpack With Raincover", "729"), "fashion")
+        self.assertEqual(self.cl("HAMMONDS FLYCATCHER Genuine Leather Office Bag for Men - 15.6 Inch Laptop", "2559"), "fashion")
+
+    def test_real_laptop(self):
+        self.assertEqual(self.cl("HP Pavilion 15 Laptop, Intel Core i5, 16GB RAM", "55990"), "laptops")
+        self.assertNotEqual(self.cl("Some Laptop Table", "55990"), "laptops")
+
+    def test_misc(self):
+        self.assertEqual(self.cl("Safari Genius Alley Set of 3 Trolley Bags Hard Case"), "fashion")
+        self.assertEqual(self.cl("Spigen Floating Waterproof Phone Pouch (2 Pack)"), "accessories")
+        self.assertEqual(self.cl("Zebronics Juke Bar 9330 500W Soundbar"), "electronics")
+        self.assertEqual(self.cl("WALI Dual Monitor Wall Mount, Single to Double"), "accessories")
+        self.assertEqual(self.cl("Noise Pulse Go Buzz Smart Watch with Bluetooth Calling"), "mobiles")
+        self.assertIsNone(self.cl("Dell SE2225HM 21.5in FHD, 100Hz Refresh, VA Panel"))
+
+    def test_regroup_moves_and_dedupes(self):
+        a = {"asin": "A1", "name": "Tygot Laptop Stand", "now": "299", "pct": 85, "reviews": 10, "cat": "laptops"}
+        b = {"asin": "A1", "name": "Tygot Laptop Stand", "now": "299", "pct": 80, "reviews": 10, "cat": "electronics"}
+        out = S.regroup({"laptops": [a], "electronics": [b]})
+        self.assertEqual([i["asin"] for i in out["accessories"]], ["A1"])
+        self.assertEqual(out["accessories"][0]["label"], "Accessories")
+        self.assertEqual(out["laptops"], [])
+
+
 if __name__ == "__main__":
     unittest.main()
