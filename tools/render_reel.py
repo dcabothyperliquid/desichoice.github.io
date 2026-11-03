@@ -439,6 +439,18 @@ def fill(text, items):
     return re.sub(r"\{[^}]*\}", "", out).strip()
 
 
+_DEVA = re.compile("[\u0900-\u097F]")
+
+
+def fill_screen(text, items):
+    """Hook ka SCREEN text (head/sub): capital placeholder ({DMAX}/{PMIN}/{P1}) bhi screen form ({dmax}/{pmin}/{p1}) me bharo.
+    Capital = Hindi shabd (sirf awaaz ke liye); DejaVu font me Devanagari glyph nahi -> boxes. Bacha Devanagari bhi hata do."""
+    if not text:
+        return text
+    t = re.sub(r"\{(PMIN|DMAX|[PLSD])(\d?)\}", lambda m: "{" + m.group(1).lower() + m.group(2) + "}", text)
+    return re.sub(r"\s{2,}", " ", _DEVA.sub("", fill(t, items))).strip()
+
+
 def load_photos(it, media):
     urls = list(dict.fromkeys(([it.get("image")] if it.get("image") else []) + [u for u in media.get("images", [])]))
     # gallery first (hi-res, different angles); feed photo is a low-res search thumbnail
@@ -663,7 +675,7 @@ def main():
     if not items:
         sys.exit("need >= 1 item")
     try:
-        payload["hook"] = {k: fill(v, items) for k, v in (payload.get("hook") or {}).items()}
+        payload["hook"] = {k: (fill_screen(v, items) if k in ("head", "sub") else fill(v, items)) for k, v in (payload.get("hook") or {}).items()}
         if payload.get("outro"):
             payload["outro"] = fill(payload["outro"], items)
         for it_ in items:
