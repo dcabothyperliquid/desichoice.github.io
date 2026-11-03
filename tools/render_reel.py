@@ -655,7 +655,7 @@ def main():
     except Exception:
         pass
     payload = json.loads(os.environ["PAYLOAD"])
-    if payload.get("voice_test"):
+    if "voice_test" in payload:
         return voice_test(payload["voice_test"])
     label = payload.get("label") or "Top Deals"
     items = [i for i in payload.get("items", []) if i.get("price")][:3]
