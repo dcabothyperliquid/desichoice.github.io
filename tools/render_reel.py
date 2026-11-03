@@ -21,11 +21,11 @@ except Exception as _e:
 W, H = 1080, 1920
 OUT, TMP = os.environ.get("REEL_OUT", "out"), os.environ.get("REEL_TMP", "tmp")
 VOICE = os.environ.get("REEL_VOICE", "hi-IN-SwaraNeural")        # female Hindi neural voice
-RATE = os.environ.get("REEL_RATE", "+4%")                          # tez rate robotic lagta hai -> natural pace
+RATE = os.environ.get("REEL_RATE", "+24%")                          # tez rate robotic lagta hai -> natural pace
 PITCH = os.environ.get("REEL_PITCH", "+0Hz")
 FALLBACK_VOICES = ["en-US-AvaMultilingualNeural", "en-US-EmmaMultilingualNeural"]   # sirf female fallbacks
 VOICE_USED = [None]
-PRODUCT_MIN = float(os.environ.get("REEL_PRODUCT_MIN", "15"))      # har product kam se kam itne sec
+PRODUCT_MIN = float(os.environ.get("REEL_PRODUCT_MIN", "10"))      # har product kam se kam itne sec
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
 ACCENT = "#e53935"
 MAX_VIDEO_S = 4.5
@@ -243,7 +243,7 @@ def _style(text, lively=False):
     if os.environ.get("REEL_RATE") or os.environ.get("REEL_PITCH"):
         return RATE, PITCH
     h = sum(ord(c) for c in text)
-    rate = 6 if lively else (2, 4, 6, 3, 5)[h % 5]
+    rate = 30 if lively else (20, 24, 28, 22, 26)[h % 5]
     pitch = 3 if lively else (-2, 0, 2, 1, -1)[(h // 5) % 5]
     return f"{rate:+d}%", f"{pitch:+d}Hz"
 
@@ -542,11 +542,11 @@ def build_multi(payload, items, shots, meta_items):
         if hook_shot:
             if vid:
                 hp = f"{TMP}/hov.png"; hook_overlay(head, sub, it).save(hp)
-                shots.append({"kind": "video", "mp4": vid, "png": hp, "voice": hook_v, "min": 3.4, "pk": k, "lively": True})
+                shots.append({"kind": "video", "mp4": vid, "png": hp, "voice": hook_v, "min": 2.8, "pk": k, "lively": True})
             else:
                 f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
                 hp = f"{TMP}/hov.png"; f.convert("RGB").save(hp)
-                shots.append({"kind": "still", "png": hp, "voice": hook_v, "min": 3.4, "pk": k, "lively": True})
+                shots.append({"kind": "still", "png": hp, "voice": hook_v, "min": 2.8, "pk": k, "lively": True})
         # ---- shot A: video clip (ya hero photo) + product intro (hook ke baad wahi clip aage chalti hai)
         if vid:
             ov = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ov, "RGBA")
@@ -554,14 +554,14 @@ def build_multi(payload, items, shots, meta_items):
             text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
             price_strip(d, it)
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": intro, "min": 4.5, "pk": k, "vcont": hook_shot})
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": intro, "min": 3.5, "pk": k, "vcont": hook_shot})
         else:
             f = photo_frame(photos[0], it, None, None).convert("RGBA")
             d = ImageDraw.Draw(f, "RGBA")
             d.rounded_rectangle((50, 110, W - 50, 235), 40, fill=(0, 0, 0, 165))
             text_outline(d, (W // 2, 172), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
             p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
-            shots.append({"kind": "still", "png": p, "voice": intro, "min": 4.5, "pk": k})
+            shots.append({"kind": "still", "png": p, "voice": intro, "min": 3.5, "pk": k})
         # ---- shots B: 2-3 gallery photos, har photo par ek benefit (screen caption + awaaz)
         cnt = max(2, min(3, len(bens))) if bens else 2
         for j in range(cnt):
@@ -569,7 +569,7 @@ def build_multi(payload, items, shots, meta_items):
             ln = bens[j] if j < len(bens) else None
             p = f"{TMP}/b{k}_{j}.png"
             photo_frame(ph, it, ln[0] if ln else None, f"{j + 1}/{cnt}").save(p)
-            shots.append({"kind": "still", "png": p, "voice": with_stop(ln[1]) if ln else None, "min": 3.2, "pk": k})
+            shots.append({"kind": "still", "png": p, "voice": with_stop(ln[1]) if ln else None, "min": 2.6, "pk": k})
         shots[-1]["tail"] = 0.6                  # product khatam: agle product se pehle thoda gap
         if first_media is None:
             first_media = photos[0]
