@@ -21,8 +21,9 @@ except Exception as _e:
 W, H = 1080, 1920
 OUT, TMP = os.environ.get("REEL_OUT", "out"), os.environ.get("REEL_TMP", "tmp")
 VOICE = os.environ.get("REEL_VOICE", "hi-IN-SwaraNeural")        # female Hindi neural voice
-RATE = os.environ.get("REEL_RATE", "+24%")                          # tez rate robotic lagta hai -> natural pace
-PITCH = os.environ.get("REEL_PITCH", "+0Hz")
+RATE = os.environ.get("REEL_RATE", "+6%")                           # edge-tts me zyada rate = bhaari/male + toot-toot awaaz; speed ffmpeg atempo se (SPEEDUP)
+PITCH = os.environ.get("REEL_PITCH", "+4Hz")                         # halka upar = saaf female sur
+SPEEDUP = float(os.environ.get("REEL_SPEEDUP", "1.16"))           # pitch-preserving tez bolna (atempo)
 FALLBACK_VOICES = ["en-US-AvaMultilingualNeural", "en-US-EmmaMultilingualNeural"]   # sirf female fallbacks
 VOICE_USED = [None]
 PRODUCT_MIN = float(os.environ.get("REEL_PRODUCT_MIN", "10"))      # har product kam se kam itne sec
@@ -243,8 +244,8 @@ def _style(text, lively=False):
     if os.environ.get("REEL_RATE") or os.environ.get("REEL_PITCH"):
         return RATE, PITCH
     h = sum(ord(c) for c in text)
-    rate = 30 if lively else (20, 24, 28, 22, 26)[h % 5]
-    pitch = 3 if lively else (-2, 0, 2, 1, -1)[(h // 5) % 5]
+    rate = 8 if lively else (4, 6, 8, 5, 7)[h % 5]
+    pitch = 7 if lively else (3, 4, 5, 4, 3)[(h // 5) % 5]
     return f"{rate:+d}%", f"{pitch:+d}Hz"
 
 
@@ -254,7 +255,7 @@ async def _tts(text, path, lively=False):
     rate, pitch = _style(text, lively)
     for v in [VOICE] + [x for x in FALLBACK_VOICES if x != VOICE]:
         try:
-            await edge_tts.Communicate(text, v, rate=rate if v == VOICE else RATE, pitch=pitch if v == VOICE else "+0Hz").save(path)
+            await edge_tts.Communicate(text, v, rate=rate if v == VOICE else RATE, pitch=pitch if v == VOICE else PITCH).save(path)
             if os.path.exists(path) and os.path.getsize(path) > 500:
                 VOICE_USED[0] = v
                 return
@@ -297,7 +298,7 @@ def tts_one(text, path, lively=False):
         trim = ("silenceremove=start_periods=1:start_threshold=-35dB:start_silence=0.03,areverse,"
                 "silenceremove=start_periods=1:start_threshold=-35dB:start_silence=0.12,areverse,"
                 "silenceremove=stop_periods=-1:stop_duration=0.5:stop_threshold=-38dB:stop_silence=0.3,"
-                "highpass=f=70,acompressor=threshold=0.12:ratio=2.2:attack=8:release=160,loudnorm=I=-16:TP=-1.5:LRA=9")
+                f"atempo={SPEEDUP},highpass=f=80,acompressor=threshold=0.12:ratio=2.2:attack=8:release=160,loudnorm=I=-16:TP=-1.5:LRA=9")
         r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", raw, "-af", trim, "-ar", "44100", "-ac", "1", path],
                            capture_output=True, text=True, timeout=60)
         return path if r.returncode == 0 and os.path.exists(path) and os.path.getsize(path) > 500 else raw
@@ -479,7 +480,7 @@ def item_script(it, k, n):
     price, lp, pct = float(it["price"]), float(it.get("list_price") or 0), int(it.get("pct") or 0)
     name = spoken_name(it.get("title"))
     sc = dict(it.get("script") or {})
-    sc.setdefault("intro", f"{ORD[k]} है {name}, सिर्फ़ {rs_voice(price)} में, पूरे {hindi_num(pct)} परसेंट की छूट के साथ।")
+    sc.setdefault("intro", f"ये देखो {name}, सिर्फ़ {rs_voice(price)} में, और पूरे {hindi_num(pct)} परसेंट डिस्काउंट के साथ।")
     sc.setdefault("lines", [{"text": clean_bullet(b), "voice": clean_bullet(b)} for b in (it.get("benefits") or [])[:2] if clean_bullet(b)])
     sc.setdefault("tag", f"{k + 1}. {short(it.get('title'), 26)}")
     return sc
