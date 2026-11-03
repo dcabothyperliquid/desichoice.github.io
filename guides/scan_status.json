@@ -1,13 +1,21 @@
 {
- "time": "2026-11-03T02:59:22Z",
+ "time": "2026-11-03T03:25:12Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 129,
+ "pages_loaded": 131,
  "pages": [
   {
    "url": "https://www-amazon-in.translate.goog/s?k=diwali+gift+hamper&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1927117,
+   "html_len": 7458,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=diwali+gift+hamper&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1886061,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -15,15 +23,23 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=diwali+decoration+lights&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1894827,
-   "has_results": true,
+   "html_len": 7516,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=diwali+decoration+lights&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7367,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=dry+fruits+gift+box&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2009530,
+   "html_len": 2292543,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -31,7 +47,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=diya+candles+rangoli&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1775123,
+   "html_len": 1754985,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -39,7 +55,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=room+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 967833,
+   "html_len": 1001683,
    "has_results": true,
    "marks": [],
    "cards": 10
@@ -47,7 +63,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=geyser+water+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1292016,
+   "html_len": 7469,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=geyser+water+heater&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1362902,
    "has_results": true,
    "marks": [],
    "cards": 16
@@ -55,7 +79,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=blanket+quilt&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2525023,
+   "html_len": 2409190,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -63,7 +87,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=woolen+jacket+sweater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2182948,
+   "html_len": 1988256,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -71,7 +95,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=wheat+flour+atta&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1783858,
+   "html_len": 1778203,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -79,7 +103,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=basmati+rice&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1603249,
+   "html_len": 1722602,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -87,7 +111,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=toor+dal+pulses&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1510106,
+   "html_len": 1520356,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -95,7 +119,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=cooking+oil+ghee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1838823,
+   "html_len": 7440,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=cooking+oil+ghee&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1735887,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -103,7 +135,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2037486,
+   "html_len": 7374,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1840544,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -111,15 +151,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=biscuits+namkeen+snacks&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7508,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=biscuits+namkeen+snacks&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1612309,
+   "html_len": 1640178,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -127,15 +159,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=almonds+cashews+dry+fruits&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7545,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=almonds+cashews+dry+fruits&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1688629,
+   "html_len": 1687928,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -143,7 +167,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=masala+spices&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1707077,
+   "html_len": 1763909,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -151,7 +175,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=laundry+detergent&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7441,
+   "html_len": 7440,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -159,15 +183,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=laundry+detergent&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7293,
-   "has_results": false,
+   "html_len": 1859708,
+   "has_results": true,
    "marks": [],
-   "cards": 0
+   "cards": 48
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=dishwash+liquid&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7424,
+   "html_len": 7423,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -175,31 +199,23 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=dishwash+liquid&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1560357,
+   "html_len": 7272,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=floor+cleaner+toilet+cleaner&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1667885,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=floor+cleaner+toilet+cleaner&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7562,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=floor+cleaner+toilet+cleaner&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7414,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
    "url": "https://www-amazon-in.translate.goog/s?k=handwash+sanitizer&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1766966,
+   "html_len": 1744050,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -207,7 +223,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=shampoo+conditioner&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1593799,
+   "html_len": 7461,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=shampoo+conditioner&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1765896,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -215,7 +239,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=soap+body+wash&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1610852,
+   "html_len": 7420,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=soap+body+wash&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1842881,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -223,15 +255,23 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=toothpaste&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1593143,
-   "has_results": true,
+   "html_len": 7365,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=toothpaste&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7217,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=face+wash+moisturizer&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1774886,
+   "html_len": 1777798,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -239,7 +279,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=baby+diapers&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1901122,
+   "html_len": 1925998,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -247,7 +287,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=sanitary+pads&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1757468,
+   "html_len": 1859061,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -255,7 +295,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=AA+AAA+batteries&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1091828,
+   "html_len": 7440,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=AA+AAA+batteries&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 914777,
    "has_results": true,
    "marks": [],
    "cards": 16
@@ -263,7 +311,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=whey+protein&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1677489,
+   "html_len": 1700249,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -271,58 +319,10 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=multivitamin+tablets&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1479242,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=dog+food&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7354,
+   "html_len": 7469,
    "has_results": false,
    "marks": [],
    "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=dog+food&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7206,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=garbage+bags&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7395,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=garbage+bags&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1637580,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=led+bulb&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7354,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=led+bulb&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1671617,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
   }
  ]
 }
