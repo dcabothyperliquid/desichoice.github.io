@@ -316,17 +316,24 @@ def dur(path):
         return 0.0
 
 
-def run(cmd):
-    r = subprocess.run(cmd, capture_output=True, text=True, timeout=240)
+def run(cmd, timeout=240):
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
     if r.returncode:
         print("ffmpeg error:", r.stderr[-600:], file=sys.stderr)
         raise RuntimeError("ffmpeg failed")
 
 
 def still_clip(png, secs, audio, out, k):
-    # alternate zoom in / out so consecutive photos do not feel identical
-    z = "min(zoom+0.0006,1.08)" if k % 2 == 0 else "if(eq(on,1),1.08,max(zoom-0.0006,1.0))"
-    vf = f"scale=2160:3840,zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=1:s={W}x{H}:fps=25,format=yuv420p"
+    # smooth Ken-Burns: zoom in / zoom out / zoom + slow pan left->right / right->left. Zoom stays <= 1.08 and pan is small,
+    # so the text + price strip baked into the png never get cut at the edges.
+    N = max(2, int(secs * 25))
+    c = "(iw-iw/zoom)/2"
+    modes = [("1.0+0.08*on/%d" % N, c, "(ih-ih/zoom)/2"),
+             ("1.08-0.08*on/%d" % N, c, "(ih-ih/zoom)/2"),
+             ("1.05+0.03*on/%d" % N, "(iw-iw/zoom)*(0.38+0.24*on/%d)" % N, "(ih-ih/zoom)*0.45"),
+             ("1.08-0.03*on/%d" % N, "(iw-iw/zoom)*(0.62-0.24*on/%d)" % N, "(ih-ih/zoom)*0.55")]
+    z, x, y = modes[k % 4]
+    vf = f"scale=2160:3840,zoompan=z='{z}':x='{x}':y='{y}':d=1:s={W}x{H}:fps=25,format=yuv420p"
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", png]
     cmd += ["-i", audio] if audio else ["-f", "lavfi", "-t", f"{secs:.2f}", "-i", "anullsrc=r=44100:cl=mono"]
     cmd += ["-vf", vf, "-r", "25", "-c:v", "libx264", "-preset", "veryfast", "-crf", "22", "-c:a", "aac", "-b:a", "128k",
@@ -343,6 +350,106 @@ def video_clip(mp4, overlay_png, secs, audio, out, start=0.0):
     cmd += ["-filter_complex", fc, "-map", "[v]", "-map", "2:a", "-r", "25", "-c:v", "libx264", "-preset", "veryfast",
             "-crf", "22", "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "1", "-af", "apad", "-t", f"{secs:.2f}", out]
     run(cmd)
+
+
+# ───────────────────────── final assembly: transitions + word captions + music ─────────────────────────
+HERE = os.path.dirname(os.path.abspath(__file__))
+FONTS_DIR = os.path.join(HERE, "fonts")                     # Hind-Bold.ttf (Devanagari + Latin) for captions
+MUSIC = os.environ.get("REEL_MUSIC", os.path.join(HERE, "music", "bed.m4a"))
+MUSIC_VOL = float(os.environ.get("REEL_MUSIC_VOL", "0.42"))   # relative level; ducks further under the voice
+CAPTION_Y = int(os.environ.get("REEL_CAPTION_Y", "1335"))     # baseline (px from top) of the word captions
+XF_D, XF_CUT = 0.25, 0.04
+
+
+def _trans(shots, i):
+    """(xfade name, seconds) for the join into shot i."""
+    cur, prev = shots[i], shots[i - 1]
+    if cur.get("vcont"):
+        return "fade", XF_CUT                  # hook -> intro continue the same clip: practically a cut
+    if cur.get("pk") is None:
+        return "fade", XF_D                    # outro
+    if cur.get("pk") != prev.get("pk"):
+        return "slideup", XF_D                 # next product
+    return ("fade", "slideleft")[i % 2], XF_D
+
+
+def _ass_time(t):
+    t = max(0.0, t)
+    return f"{int(t // 3600)}:{int(t % 3600 // 60):02d}:{t % 60:05.2f}"
+
+
+def make_ass(shots, starts, path):
+    """Word-by-word captions: chunks of <=3 words, the word being spoken is yellow. Word timing = spread over the audio by word length."""
+    head = ("[Script Info]\nScriptType: v4.00+\nPlayResX: %d\nPlayResY: %d\nWrapStyle: 2\nScaledBorderAndShadow: yes\n\n"
+            "[V4+ Styles]\nFormat: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,"
+            "StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding\n"
+            "Style: Cap,Hind,96,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,8,0,2,50,50,%d,1\n\n"
+            "[Events]\nFormat: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text\n") % (W, H, H - CAPTION_Y)
+    ev = []
+    for k, s_ in enumerate(shots):
+        a, txt = s_.get("audio"), str(s_.get("voice") or "")
+        if not a or not txt.strip():
+            continue
+        words = [w.strip(" ।,.!?;:\"'()") for w in txt.split()]
+        words = [w for w in words if w]
+        if not words:
+            continue
+        t0, span = starts[k] + 0.08, max(0.6, dur(a) - 0.12)
+        wts = [max(2, len(w)) for w in words]
+        tot, acc, times = float(sum(wts)), 0.0, []
+        for w_ in wts:
+            times.append((t0 + span * acc / tot, t0 + span * (acc + w_) / tot)); acc += w_
+        chunks, cur = [], []
+        for idx, w in enumerate(words):
+            if cur and (len(cur) >= 3 or sum(len(words[q]) for q in cur) + len(w) > 18):
+                chunks.append(cur); cur = []
+            cur.append(idx)
+        if cur:
+            chunks.append(cur)
+        for ch in chunks:
+            for pos, idx in enumerate(ch):
+                st = times[idx][0]
+                en = times[ch[pos + 1]][0] if pos + 1 < len(ch) else times[idx][1] + 0.12
+                parts = [("{\\c&H00E5FF&\\fscx108\\fscy108}" + words[q] + "{\\c&HFFFFFF&\\fscx100\\fscy100}") if q == idx else words[q] for q in ch]
+                ev.append(f"Dialogue: 0,{_ass_time(st)},{_ass_time(en)},Cap,,0,0,0,,{' '.join(parts)}")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(head + "\n".join(ev) + "\n")
+    return len(ev)
+
+
+def assemble(clips, shots, out_path):
+    n = len(clips)
+    durs = [dur(c) for c in clips]
+    v_prev, a_prev, L, starts = "[0:v]", "[0:a]", durs[0], [0.0]
+    vf, af = [], []
+    for i in range(1, n):
+        tr, dd = _trans(shots, i)
+        off = L - dd
+        vf.append(f"{v_prev}[{i}:v]xfade=transition={tr}:duration={dd}:offset={off:.3f}[v{i}]")
+        af.append(f"{a_prev}[{i}:a]acrossfade=d={dd}[a{i}]")
+        v_prev, a_prev = f"[v{i}]", f"[a{i}]"
+        starts.append(off)
+        L += durs[i] - dd
+    ass = os.path.abspath(f"{TMP}/caps.ass")
+    nev = make_ass(shots, starts, ass)
+    vf.append(f"{v_prev}subtitles={ass}:fontsdir={FONTS_DIR},format=yuv420p[vout]")
+    have_music = os.path.exists(MUSIC)
+    if have_music:
+        af.append(f"{a_prev}asplit=2[vo][sc]")
+        af.append(f"[{n}:a]volume={MUSIC_VOL},aformat=sample_rates=44100:channel_layouts=mono[mu]")
+        af.append("[mu][sc]sidechaincompress=threshold=0.03:ratio=9:attack=15:release=400[du]")
+        af.append(f"[vo][du]amix=inputs=2:duration=first:normalize=0,afade=t=out:st={max(0, L - 1.3):.2f}:d=1.2,alimiter=limit=0.95[aout]")
+    else:
+        af.append(f"{a_prev}anull[aout]")
+    cmd = ["ffmpeg", "-y", "-loglevel", "error"]
+    for c in clips:
+        cmd += ["-i", c]
+    if have_music:
+        cmd += ["-stream_loop", "-1", "-i", MUSIC]
+    cmd += ["-filter_complex", ";".join(vf + af), "-map", "[vout]", "-map", "[aout]", "-r", "25", "-c:v", "libx264", "-preset", "veryfast",
+            "-crf", "22", "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "1", "-movflags", "+faststart", "-t", f"{L:.2f}", out_path]
+    run(cmd, timeout=420)
+    print(f"assembled: {n} clips, xfade transitions, {nev} caption events, music={have_music}, {L:.1f}s")
 
 
 # ───────────────────────── main ─────────────────────────
@@ -726,11 +833,15 @@ def main():
             still_clip(s_["png"], secs, a, c, k)
         clips.append(c)
         prev_secs = secs
-    with open(f"{TMP}/list.txt", "w") as f:
-        for c in clips:
-            f.write(f"file '{os.path.abspath(c)}'\n")
-    run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", f"{TMP}/list.txt", "-c", "copy",
-         "-movflags", "+faststart", f"{OUT}/reel.mp4"])
+    try:
+        assemble(clips, shots, f"{OUT}/reel.mp4")
+    except Exception as e:           # kuch bhi toota to purana plain concat (reel phir bhi banegi)
+        print("fancy assemble failed -> plain concat:", str(e)[:200], file=sys.stderr)
+        with open(f"{TMP}/list.txt", "w") as f:
+            for c in clips:
+                f.write(f"file '{os.path.abspath(c)}'\n")
+        run(["ffmpeg", "-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", f"{TMP}/list.txt", "-c", "copy",
+             "-movflags", "+faststart", f"{OUT}/reel.mp4"])
     total = dur(f"{OUT}/reel.mp4")
     json.dump({"label": label, "items": len(meta_items), "media": meta_items, "seconds": round(total, 1), "voice": voiced > 0,
                "voice_name": VOICE, "voice_used": VOICE_USED[0], "shots": len(shots)}, open(f"{OUT}/meta.json", "w"))
