@@ -158,9 +158,9 @@ HOT_QUERIES = ["smartphone", "laptop", "smart tv", "smartwatch", "wireless earbu
 _JS_CARDS = r"""
 () => [...document.querySelectorAll('div[data-component-type="s-search-result"]')].map(c => {
   const asin = c.getAttribute('data-asin') || '';
-  const h = c.querySelector('h2');
-  const title = h ? (h.innerText || h.getAttribute('aria-label') || '').trim() : '';
   const im = c.querySelector('img.s-image');
+  let title = [...c.querySelectorAll('h2')].map(h => (h.innerText || h.getAttribute('aria-label') || '').trim()).sort((a, b) => b.length - a.length)[0] || '';
+  if (title.split(/\s+/).length < 3 && im && (im.alt || '').trim().length > title.length) title = im.alt.trim();
   const pe = c.querySelector('.a-price:not(.a-text-price) .a-offscreen');
   const we = c.querySelector('.a-price.a-text-price .a-offscreen, [data-a-strike="true"] .a-offscreen');
   const re_ = c.querySelector('span.a-icon-alt');
@@ -363,9 +363,11 @@ def parse_cards(html):
     for c in soup.select('div[data-component-type="s-search-result"]'):
         def txt(el):
             return el.get_text(" ", strip=True) if el else ""
-        h = c.find("h2")
-        title = (txt(h) or (h.get("aria-label") or "").strip()) if h else ""
         im = c.select_one("img.s-image")
+        _t = [(txt(h) or (h.get("aria-label") or "").strip()) for h in c.find_all("h2")]      # apparel cards: first h2 = brand only, product title is in another h2
+        title = max(_t, key=len) if _t else ""
+        if len(title.split()) < 3 and im and len((im.get("alt") or "").strip()) > len(title):
+            title = im.get("alt").strip()                                                      # still a bare brand -> image alt holds the full title
         pe = c.select_one(".a-price:not(.a-text-price) .a-offscreen")
         we = c.select_one('[data-a-strike="true"] .a-offscreen')      # ONLY the struck-through MRP (unit prices like Rs36.9/count are .a-text-price too)
         ra = c.select_one("span.a-icon-alt")
