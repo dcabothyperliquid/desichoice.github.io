@@ -55,6 +55,11 @@ class T(unittest.TestCase):
         self.assertIn("christmas", xm); self.assertIn("newyear", xm)
         self.assertIn("newyear", [k for k, *_ in S.active_themes(datetime(2027, 1, 1, tzinfo=timezone.utc))])  # wraps the year
 
+    def test_ladies_needs_product_title(self):
+        mk = lambda a, n: {"asin": a, "name": n, "pct": 60, "now": 499, "was": 1299, "reviews": 900, "rating": 4.3, "t": 1}
+        out = S.regroup({"ladies": [mk("A1", "Ratnavali Jewels"), mk("A2", "Biba Women Cotton Kurti Set with Dupatta")]})
+        self.assertEqual([i["asin"] for i in out["ladies"]], ["A2"])           # brand-only title dropped, real product kept
+
     def test_ladies_rule(self):
         cl = lambda n: S.classify({"name": n, "now": "999"})
         self.assertEqual(cl("Biba Women Cotton Kurti Set with Dupatta"), "ladies")

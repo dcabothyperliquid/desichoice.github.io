@@ -616,8 +616,8 @@ def regroup(cats):
             if not _usable_name(it.get("name")):
                 continue
             new = classify(it)
-            if new is None and cat == "laptops":
-                continue                                   # "laptops" only holds titles that really say laptop - cannot verify, so drop
+            if new is None and cat in ("laptops", "ladies"):
+                continue                                   # "laptops"/"ladies" only hold titles that really say so (a bare brand title like "Ratnavali Jewels" gives the reel script nothing) - cannot verify, so drop
             new = new or cat
             if new in CAT_LABEL:
                 ic, lab = CAT_LABEL[new]
