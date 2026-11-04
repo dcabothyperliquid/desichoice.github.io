@@ -59,11 +59,11 @@ MIN_PRICE_ESS, MIN_PRICE_HOT, MIN_PRICE_OFFER = 49, 1500, 299     # rupees
 MAX_HOT, MAX_ESS, MAX_TREND, PER_THEME, PER_CAT_OFFERS = 30, 60, 36, 14, 40
 NAME_MAX = 70
 
-# ---- the 17 categories (same keys / labels as Zoe) -------------------------------------------------------------
+# ---- the 18 categories (17 from Zoe + Ladies) -------------------------------------------------------------
 CATEGORIES = [
     ("home_kitchen", "🍳", "Home & Kitchen"), ("electronics", "🎧", "Electronics"), ("laptops", "💻", "Laptops"),
     ("mobiles", "📱", "Mobiles"), ("monitors", "🖥️", "Monitors & TV"), ("accessories", "🖱️", "Accessories"),
-    ("beauty_health", "🧴", "Beauty & Health"), ("fitness_outdoor", "🏃", "Fitness & Outdoor"), ("fashion", "👟", "Fashion"),
+    ("beauty_health", "🧴", "Beauty & Health"), ("fitness_outdoor", "🏃", "Fitness & Outdoor"), ("fashion", "👟", "Fashion"), ("ladies", "👗", "Ladies"),
     ("toys_kids", "🧸", "Toys & Kids"), ("tools_auto", "🔧", "Tools & Auto"), ("pets", "🐶", "Pets"),
     ("office_books", "📚", "Office & Books"), ("gaming", "🎮", "Gaming"), ("smart_home", "🏠", "Smart Home"),
     ("furniture_decor", "🛋️", "Furniture & Decor"), ("hobby_music", "🎸", "Hobby & Music"),
@@ -82,6 +82,7 @@ SCOPES = {
     "beauty_health":   [("beauty", None), ("hpc", None)],
     "fitness_outdoor": [("sports", None)],
     "fashion":         [("apparel", None), ("shoes", None)],
+    "ladies":          [("apparel", "women kurti set"), ("apparel", "women dress top"), ("jewelry", "women earrings necklace")],
     "toys_kids":       [("toys", None), ("baby", None)],
     "tools_auto":      [("home-improvement", None), ("automotive", None)],
     "pets":            [("pets", None)],
@@ -92,7 +93,7 @@ SCOPES = {
     "hobby_music":     [("musical-instruments", None)],
 }
 FALLBACK_KW = {"home_kitchen": "kitchen appliances", "laptops": "laptop", "gaming": "gaming", "hobby_music": "guitar keyboard instrument",
-               "office_books": "stationery books", "pets": "pet food", "tools_auto": "car accessories tools", "fashion": "men shoes clothing",
+               "office_books": "stationery books", "pets": "pet food", "tools_auto": "car accessories tools", "fashion": "men shoes clothing", "ladies": "women kurti dress",
                "fitness_outdoor": "fitness", "toys_kids": "toys", "beauty_health": "skin care", "electronics": "electronics",
                "furniture_decor": "furniture", "mobiles": "smartphone", "monitors": "monitor", "accessories": "computer accessories",
                "smart_home": "smart home"}
@@ -133,9 +134,13 @@ ACCESSORY = re.compile(r"\b(holder|dispenser|rack|stand|cover|case|bowl|feeder|t
 # Festival dates move every year (Diwali, Holi, Rakhi): adjust the windows here once a year.
 THEMES = [
     ("festive", "Festive sale", "🪔", (9, 15), (10, 10), ["festive offers", "navratri decoration", "home decor lights"]),
-    ("diwali", "Diwali gifts", "🪔", (10, 10), (11, 12), ["diwali gift hamper", "diwali decoration lights", "dry fruits gift box", "diya candles rangoli"]),
+    ("diwali", "Diwali gifts", "🪔", (10, 10), (11, 9), ["diwali gift hamper", "diwali decoration lights", "dry fruits gift box", "diya candles rangoli"]),
     ("wedding", "Wedding season", "💍", (11, 10), (2, 28), ["wedding gift", "ethnic wear", "jewellery set", "gift set"]),
     ("winter", "Winter ready", "🧣", (10, 20), (2, 15), ["room heater", "geyser water heater", "blanket quilt", "woolen jacket sweater"]),
+    ("chhath", "Chhath Puja", "🌅", (11, 5), (11, 16), ["chhath puja samagri", "puja thali set", "copper kalash puja", "bamboo soop dala"]),
+    ("christmas", "Christmas", "🎄", (12, 5), (12, 26), ["christmas decoration", "christmas tree", "santa claus gifts", "christmas gift set"]),
+    ("newyear", "New Year party", "🎉", (12, 20), (1, 2), ["new year party decoration", "party lights", "photo frame gift", "gift set"]),
+    ("valentine", "Valentine's Day", "❤️", (2, 1), (2, 14), ["valentine gift", "teddy bear", "chocolate gift box", "couple gift"]),
     ("republic", "Republic Day sale", "🇮🇳", (1, 1), (1, 27), ["smartphone", "laptop", "smart tv", "headphones"]),
     ("holi", "Holi", "🎨", (2, 20), (3, 10), ["holi colours", "water gun pichkari", "gulal"]),
     ("summer", "Summer cooling", "❄️", (3, 1), (6, 15), ["air cooler", "ceiling fan", "split ac", "water bottle cooler"]),
@@ -560,6 +565,12 @@ TITLE_RULES = [
     ("electronics",     r"earbuds?|headphones?|earphones?|neckband|\btws\b|speakers?|soundbar|dolby|home theat|\bcamera\b"),
     ("mobiles",         r"smartphones?|smart phone|\b5g\b|iphone|smart ?watch|mobile phone"),
     ("smart_home",      r"smart (plug|bulb|light|lock|switch|speaker)|alexa|echo dot|cctv|security camera|video doorbell|extension board|surge"),
+    ("ladies",          r"\b(kurtis?|kurta sets?|sarees?|saris?|lehengas?|dupattas?|palazzos?|salwar|anarkali|gowns?|leggings?|jeggings?|tunics?|"
+                        r"crop tops?|maxi|midi|skirts?|kaftan|co-?ord sets?|blouse|shrugs?|jumpsuits?|earrings?|necklaces?|bangles?|jhumkas?|"
+                        r"mangalsutra|anklets?|chokers?|nose pins?|handbags?|clutch|sling bags?|hair clips?|hair bands?|scrunchies?|bindi)\b|"
+                        r"\b(women'?s?|womens|ladies)\b.{0,40}\b(dress|tops?|shirts?|t-?shirts?|jeans|jackets?|sweaters?|cardigans?|shoes?|"
+                        r"sandals?|heels|flats|bellies|watch|wallet|bags?|tote)\b|"
+                        r"\b(dress|tops?|jeans|shoes|sandals|watch|bags?)\b.{0,25}\b(for )?(women|womens|ladies)\b"),
     ("beauty_health",   r"serum|shampoo|lotion|cream|\bsoap\b|moisturi[sz]|sunscreen|face ?wash|hair|\bskin\b|trimmer|razor|perfume|deodorant|"
                         r"lipstick|kajal|vitamin|supplement|toothpaste|face mask"),
     ("office_books",    r"stationery|\bpens?\b|diary|\bnovels?\b|\bbooks?\b|\bhow to\b|laminat|shredder|marker|stapler|writing tablet|bulletin board|notice board|paperback|hardcover"),

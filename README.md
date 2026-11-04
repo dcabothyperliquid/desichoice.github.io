@@ -1,12 +1,12 @@
 # Desi Choice - Amazon India deals (site + feed)
 
-Free, public, GitHub Actions + GitHub Pages. `index.html` is the page (Top offers, Trending, Daily essentials, 17 category tabs); the same JSON files feed the bots. No guides, only deals.
+Free, public, GitHub Actions + GitHub Pages. `index.html` is the page (Top offers, Trending, Daily essentials, 18 category tabs); the same JSON files feed the bots. No guides, only deals.
 Repo name `desichoice.github.io` under the account `desichoice` = site at https://desichoice.github.io (Settings -> Pages -> Deploy from branch `main` / root).
 
 | File | What |
 |---|---|
 | `guides/hot.json` | `ess` (Daily Essentials), `hot` (Top Offers ticker), `trend` (seasonal: Diwali, Winter, Wedding ...), `themes` |
-| `guides/offers.json` | `cats` = Top Offers per category (17 categories, up to 40 each) |
+| `guides/offers.json` | `cats` = Top Offers per category (18 categories, up to 40 each) |
 
 Item: `asin, name, pct, rating, t, img, link, now, was, deal, cat, label, icon, reviews, tier` (rupees as plain numbers).
 

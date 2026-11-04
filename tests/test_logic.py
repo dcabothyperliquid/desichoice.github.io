@@ -49,6 +49,20 @@ class T(unittest.TestCase):
         self.assertEqual(keys[0], "diwali")                           # soonest-ending first
         jan = [k for k, *_ in S.active_themes(datetime(2027, 1, 10, tzinfo=timezone.utc))]
         self.assertIn("winter", jan); self.assertIn("republic", jan)  # winter wraps the new year
+        chh = [k for k, *_ in S.active_themes(datetime(2026, 11, 10, tzinfo=timezone.utc))]
+        self.assertIn("chhath", chh); self.assertNotIn("diwali", chh)
+        xm = [k for k, *_ in S.active_themes(datetime(2026, 12, 22, tzinfo=timezone.utc))]
+        self.assertIn("christmas", xm); self.assertIn("newyear", xm)
+        self.assertIn("newyear", [k for k, *_ in S.active_themes(datetime(2027, 1, 1, tzinfo=timezone.utc))])  # wraps the year
+
+    def test_ladies_rule(self):
+        cl = lambda n: S.classify({"name": n, "now": "999"})
+        self.assertEqual(cl("Biba Women Cotton Kurti Set with Dupatta"), "ladies")
+        self.assertEqual(cl("Women's Gold Plated Jhumka Earrings"), "ladies")
+        self.assertEqual(cl("Fabindia Women Printed Maxi Dress"), "ladies")
+        self.assertEqual(cl("Pink Hair Clips Set for Women"), "ladies")
+        self.assertNotEqual(cl("Garnier Vitamin C Face Serum"), "ladies")          # beauty stays beauty
+        self.assertNotEqual(cl("Men Running Shoes Sports"), "ladies")
 
     def test_round_robin(self):
         mk = lambda a, p: {"asin": a, "pct": p}
@@ -58,7 +72,7 @@ class T(unittest.TestCase):
     def test_clean_and_scopes(self):
         it = S.clean(S.card_to_item(card(text="x -23%")), cat="tea")
         self.assertNotIn("_price", it); self.assertEqual(it["cat"], "tea"); self.assertIn("tier", it)
-        self.assertEqual(len(S.CATEGORIES), 17)
+        self.assertEqual(len(S.CATEGORIES), 18)
         self.assertEqual(set(S.SCOPES), {k for k, _, _ in S.CATEGORIES})
         self.assertEqual(set(S.FALLBACK_KW), set(S.SCOPES))
 
