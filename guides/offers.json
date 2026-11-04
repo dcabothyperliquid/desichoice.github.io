@@ -1,6 +1,6 @@
 {
  "v": 3,
- "updated": "2026-11-04T06:04:57Z",
+ "updated": "2026-11-04T06:20:43Z",
  "fresh_h": 48,
  "cats": {
   "home_kitchen": [
@@ -4523,56 +4523,7 @@
    }
   ],
   "hobby_music": [],
-  "ladies": [
-   {
-    "asin": "B0CBCJ19JK",
-    "name": "Plain Cotton Golden Lace Border Pattern Casual Kurtis Kurta for Girls",
-    "pct": 69,
-    "rating": 4.0,
-    "t": 1793772263,
-    "img": "https://m.media-amazon.com/images/I/41Wezm8hdVL.jpg",
-    "now": "299",
-    "was": "950",
-    "link": "https://www.amazon.in/dp/B0CBCJ19JK?tag=desichoice06-21",
-    "reviews": 261,
-    "tier": "budget",
-    "cat": "ladies",
-    "label": "Ladies",
-    "icon": "👗"
-   },
-   {
-    "asin": "B0HMLFDPYH",
-    "name": "Traditional Ashtapailu Choker Red Necklace Set for Women | Gold-Tone",
-    "pct": 68,
-    "rating": 0.0,
-    "t": 1793772297,
-    "img": "https://m.media-amazon.com/images/I/71RCHtbQZZL.jpg",
-    "now": "474",
-    "was": "1500",
-    "link": "https://www.amazon.in/dp/B0HMLFDPYH?tag=desichoice06-21",
-    "tier": "budget",
-    "cat": "ladies",
-    "label": "Ladies",
-    "icon": "👗"
-   },
-   {
-    "asin": "B0GWTMGR7F",
-    "name": "Pure Cotton Co Ord Set for Women | Kurta Sets for Women | Embroidered",
-    "pct": 67,
-    "rating": 4.3,
-    "t": 1793772263,
-    "img": "https://m.media-amazon.com/images/I/51gmcJ4iBkL.jpg",
-    "now": "499",
-    "was": "1499",
-    "link": "https://www.amazon.in/dp/B0GWTMGR7F?tag=desichoice06-21",
-    "deal": "Great Indian Festival",
-    "reviews": 376,
-    "tier": "budget",
-    "cat": "ladies",
-    "label": "Ladies",
-    "icon": "👗"
-   }
-  ]
+  "ladies": []
  },
  "swept": {
   "home_kitchen": "2026-11-04T01:00:07Z",
@@ -4592,6 +4543,6 @@
   "smart_home": "2026-11-04T01:09:43Z",
   "furniture_decor": "2026-11-04T01:10:37Z",
   "hobby_music": "2026-11-04T01:10:58Z",
-  "ladies": "2026-11-04T06:04:57Z"
+  "ladies": "2026-11-04T06:20:43Z"
  }
 }
