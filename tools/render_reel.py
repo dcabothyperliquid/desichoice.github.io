@@ -383,7 +383,7 @@ def make_ass(shots, starts, path):
     head = ("[Script Info]\nScriptType: v4.00+\nPlayResX: %d\nPlayResY: %d\nWrapStyle: 2\nScaledBorderAndShadow: yes\n\n"
             "[V4+ Styles]\nFormat: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,"
             "StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding\n"
-            "Style: Cap,Hind,96,&H00FFFFFF,&H00FFFFFF,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,8,0,2,50,50,%d,1\n\n"
+            "Style: Cap,Hind,70,&H00FFFFFF,&H00FFFFFF,&H00202020,&H78000000,-1,0,0,0,100,100,0,0,1,4,2,2,70,70,%d,1\n\n"
             "[Events]\nFormat: Layer,Start,End,Style,Name,MarginL,MarginR,MarginV,Effect,Text\n") % (W, H, H - CAPTION_Y)
     ev = []
     for k, s_ in enumerate(shots):
@@ -410,7 +410,7 @@ def make_ass(shots, starts, path):
             for pos, idx in enumerate(ch):
                 st = times[idx][0]
                 en = times[ch[pos + 1]][0] if pos + 1 < len(ch) else times[idx][1] + 0.12
-                parts = [("{\\c&H00E5FF&\\fscx108\\fscy108}" + words[q] + "{\\c&HFFFFFF&\\fscx100\\fscy100}") if q == idx else words[q] for q in ch]
+                parts = [("{\\c&HA8E9FF&}" + words[q] + "{\\c&HFFFFFF&}") if q == idx else words[q] for q in ch]
                 ev.append(f"Dialogue: 0,{_ass_time(st)},{_ass_time(en)},Cap,,0,0,0,,{' '.join(parts)}")
     with open(path, "w", encoding="utf-8") as f:
         f.write(head + "\n".join(ev) + "\n")
