@@ -379,7 +379,7 @@ def _ass_time(t):
 
 
 def make_ass(shots, starts, path):
-    """Word-by-word captions: chunks of <=3 words, the word being spoken is yellow. Word timing = spread over the audio by word length."""
+    """Static white captions: whole phrase (<=6 words) at once, no highlight. Word timing = spread over the audio by word length."""
     head = ("[Script Info]\nScriptType: v4.00+\nPlayResX: %d\nPlayResY: %d\nWrapStyle: 2\nScaledBorderAndShadow: yes\n\n"
             "[V4+ Styles]\nFormat: Name,Fontname,Fontsize,PrimaryColour,SecondaryColour,OutlineColour,BackColour,Bold,Italic,Underline,"
             "StrikeOut,ScaleX,ScaleY,Spacing,Angle,BorderStyle,Outline,Shadow,Alignment,MarginL,MarginR,MarginV,Encoding\n"
@@ -399,19 +399,16 @@ def make_ass(shots, starts, path):
         tot, acc, times = float(sum(wts)), 0.0, []
         for w_ in wts:
             times.append((t0 + span * acc / tot, t0 + span * (acc + w_) / tot)); acc += w_
-        chunks, cur = [], []
-        for idx, w in enumerate(words):
-            if cur and (len(cur) >= 3 or sum(len(words[q]) for q in cur) + len(w) > 18):
-                chunks.append(cur); cur = []
-            cur.append(idx)
-        if cur:
-            chunks.append(cur)
-        for ch in chunks:
-            for pos, idx in enumerate(ch):
-                st = times[idx][0]
-                en = times[ch[pos + 1]][0] if pos + 1 < len(ch) else times[idx][1] + 0.12
-                parts = [("{\\c&HA8E9FF&}" + words[q] + "{\\c&HFFFFFF&}") if q == idx else words[q] for q in ch]
-                ev.append(f"Dialogue: 0,{_ass_time(st)},{_ass_time(en)},Cap,,0,0,0,,{' '.join(parts)}")
+        # static white captions: <=6 words per chunk shown together (2 lines of <=3 words), no per-word highlight
+        n_ch = -(-len(words) // 6)                              # even split: no tiny tail chunk, every line <=3 words
+        size = -(-len(words) // n_ch)
+        chunks = [list(range(i, min(i + size, len(words)))) for i in range(0, len(words), size)]
+        for ci, ch in enumerate(chunks):
+            st = times[ch[0]][0]
+            en = times[chunks[ci + 1][0]][0] if ci + 1 < len(chunks) else times[ch[-1]][1] + 0.12
+            half = (len(ch) + 1) // 2 if len(ch) > 3 else len(ch)
+            txt_ = " ".join(words[q] for q in ch[:half]) + ("\\N" + " ".join(words[q] for q in ch[half:]) if half < len(ch) else "")
+            ev.append(f"Dialogue: 0,{_ass_time(st)},{_ass_time(en)},Cap,,0,0,0,,{txt_}")
     with open(path, "w", encoding="utf-8") as f:
         f.write(head + "\n".join(ev) + "\n")
     return len(ev)
