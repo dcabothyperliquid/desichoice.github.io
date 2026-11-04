@@ -357,7 +357,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FONTS_DIR = os.path.join(HERE, "fonts")                     # Hind-Bold.ttf (Devanagari + Latin) for captions
 MUSIC = os.environ.get("REEL_MUSIC", os.path.join(HERE, "music", "bed.m4a"))
 MUSIC_VOL = float(os.environ.get("REEL_MUSIC_VOL", "0.42"))   # relative level; ducks further under the voice
-CAPTION_Y = int(os.environ.get("REEL_CAPTION_Y", "1335"))     # baseline (px from top) of the word captions
+CAPTION_Y = int(os.environ.get("REEL_CAPTION_Y", "1185"))     # baseline (px from top) of the word captions
 XF_D, XF_CUT = 0.25, 0.04
 
 
