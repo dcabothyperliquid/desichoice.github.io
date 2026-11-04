@@ -536,7 +536,7 @@ def build_feed(am):
 
 def sweep_category(am, cat):
     ic, lab = CAT_LABEL[cat]
-    got = {}
+    got, per_scope = {}, []
     _mp, _mr = (LADIES_MIN_PRICE, LADIES_MIN_RATING) if cat == "ladies" else (MIN_PRICE_OFFER, MIN_RATING)      # ladies items (kurti, jewellery, tops) are cheap + rated a bit lower: relaxed gates only here
     for alias, kw in SCOPES[cat]:
         if am.blocked() or am.out_of_time():
@@ -545,8 +545,18 @@ def sweep_category(am, cat):
         if raw == 0 and not am.blocked():                       # wrong alias -> keyword search instead
             items, raw = am.items(kw or FALLBACK_KW.get(cat), None, PAGES, MIN_PCT, _mp, _mr)
         log(f"  {cat} [{alias}/{kw}]: {raw} cards -> {len(items)} offers")
+        per_scope.append([clean(i, cat=cat, label=lab, icon=ic) for i in items])
         for i in items:
             got[i["asin"]] = clean(i, cat=cat, label=lab, icon=ic)
+    if cat == "ladies":      # round-robin over the search scopes so girls/teen, sarees, kurti, jewellery... all stay in the capped list (not only the highest-% scope)
+        lists = [sorted(l, key=lambda x: (-x["pct"], -(x.get("reviews") or 0))) for l in per_scope if l]
+        mixed, seen = [], set()
+        for k in range(max((len(l) for l in lists), default=0)):
+            for l in lists:
+                if k < len(l) and l[k]["asin"] not in seen:
+                    seen.add(l[k]["asin"])
+                    mixed.append(l[k])
+        return mixed[:PER_CAT_OFFERS]
     return sorted(got.values(), key=lambda x: (-x["pct"], -(x.get("reviews") or 0)))[:PER_CAT_OFFERS]
 
 
