@@ -85,7 +85,8 @@ SCOPES = {
     "fashion":         [("apparel", None), ("shoes", None)],
     "ladies":          [("apparel", "women kurti set"), ("apparel", "women dress top"), ("jewelry", "women earrings necklace"),
                         ("apparel", "women saree"), ("apparel", "kurti"), ("apparel", "women tops"), ("jewelry", "women jewellery set"),
-                        ("shoes", "women handbag"), ("shoes", "women sandals")],
+                        ("shoes", "women handbag"), ("shoes", "women sandals"),
+                        ("apparel", "girls tops dress"), ("apparel", "teen girls clothing")],
     "toys_kids":       [("toys", None), ("baby", None)],
     "tools_auto":      [("home-improvement", None), ("automotive", None)],
     "pets":            [("pets", None)],
@@ -574,9 +575,9 @@ TITLE_RULES = [
     ("ladies",          r"\b(kurtis?|kurta sets?|sarees?|saris?|lehengas?|dupattas?|palazzos?|salwar|anarkali|gowns?|leggings?|jeggings?|tunics?|"
                         r"crop tops?|maxi|midi|skirts?|kaftan|co-?ord sets?|blouse|shrugs?|jumpsuits?|earrings?|necklaces?|bangles?|jhumkas?|"
                         r"mangalsutra|anklets?|chokers?|nose pins?|handbags?|clutch|sling bags?|hair clips?|hair bands?|scrunchies?|bindi)\b|"
-                        r"\b(women'?s?|womens|ladies)\b.{0,40}\b(dress|tops?|shirts?|t-?shirts?|jeans|jackets?|sweaters?|cardigans?|shoes?|"
+                        r"\b(women'?s?|womens|ladies|girls?|teen(age)?)\b.{0,40}\b(dress(es)?|frocks?|tops?|shirts?|t-?shirts?|jeans|jackets?|sweaters?|cardigans?|hoodies?|shoes?|"
                         r"sandals?|heels|flats|bellies|watch|wallet|bags?|tote)\b|"
-                        r"\b(dress|tops?|jeans|shoes|sandals|watch|bags?)\b.{0,25}\b(for )?(women|womens|ladies)\b"),
+                        r"\b(dress(es)?|tops?|jeans|shoes|sandals|watch|bags?)\b.{0,25}\b(for )?(women|womens|ladies|girls?)\b"),
     ("beauty_health",   r"serum|shampoo|lotion|cream|\bsoap\b|moisturi[sz]|sunscreen|face ?wash|hair|\bskin\b|trimmer|razor|perfume|deodorant|"
                         r"lipstick|kajal|vitamin|supplement|toothpaste|face mask"),
     ("office_books",    r"stationery|\bpens?\b|diary|\bnovels?\b|\bbooks?\b|\bhow to\b|laminat|shredder|marker|stapler|writing tablet|bulletin board|notice board|paperback|hardcover"),
@@ -588,6 +589,10 @@ TITLE_RULES = [
                         r"leggings|\bbags?\b|backpack|handbag|trolley|luggage|duffel|analog|quartz|chronograph"),
 ]
 _TITLE_RULES = [(c, re.compile(rx)) for c, rx in TITLE_RULES]
+
+
+_LITTLE_KIDS = re.compile(r"\b(baby|babies|infant|toddler|newborn|kids?|boys?)\b|\b\d{1,2}\s*-\s*\d{1,2}\s*(years?|yrs?|months?|m)\b")
+_TEEN_OR_WOMEN = re.compile(r"\b(teen(age)?s?|women'?s?|womens|ladies|juniors?)\b")
 
 
 def classify(item):
@@ -603,6 +608,8 @@ def classify(item):
         return "laptops"
     for cat, rx in _TITLE_RULES:
         if rx.search(t):
+            if cat == "ladies" and _LITTLE_KIDS.search(t) and not _TEEN_OR_WOMEN.search(t):
+                continue                                  # little-kids wear (baby / toddler / "2-3 years") is toys_kids, not Ladies & teen girls
             return cat
     return None
 
