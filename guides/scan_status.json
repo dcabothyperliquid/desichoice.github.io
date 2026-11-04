@@ -1,13 +1,13 @@
 {
- "time": "2026-11-04T05:57:33Z",
+ "time": "2026-11-04T06:04:57Z",
  "mode": "offers",
  "captcha_streak": 0,
- "pages_loaded": 6,
+ "pages_loaded": 7,
  "pages": [
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+kurti+set&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1957942,
+   "html_len": 2235776,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -15,15 +15,23 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+kurti+set&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1868937,
-   "has_results": true,
+   "html_len": 7673,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+dress+top&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1963385,
+   "html_len": 7566,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+dress+top&i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2179957,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -31,7 +39,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+dress+top&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2199446,
+   "html_len": 2209709,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -39,7 +47,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+earrings+necklace&i=jewelry&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1856446,
+   "html_len": 1852813,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -47,7 +55,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+earrings+necklace&i=jewelry&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1975089,
+   "html_len": 2057992,
    "has_results": true,
    "marks": [],
    "cards": 48
