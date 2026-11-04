@@ -56,6 +56,7 @@ MIN_REVIEWS = 50
 MAX_PCT = 85
 SUSPICIOUS_PCT, SUSPICIOUS_REVIEWS = 70, 300
 MIN_PRICE_ESS, MIN_PRICE_HOT, MIN_PRICE_OFFER = 49, 1500, 299     # rupees
+LADIES_MIN_PRICE, LADIES_MIN_RATING = 149, 3.8                      # ladies category only
 MAX_HOT, MAX_ESS, MAX_TREND, PER_THEME, PER_CAT_OFFERS = 30, 60, 36, 14, 40
 NAME_MAX = 70
 
@@ -258,14 +259,14 @@ def card_to_item(c, now=None):
             "reviews": parse_reviews(c.get("reviews")), "_price": price}
 
 
-def credible(it, min_pct, min_price):
+def credible(it, min_pct, min_price, min_rating=MIN_RATING):
     """same gates as Naami: real discount, rating >= 4.0 (unknown skipped), reviews >= 50 (unknown skipped), suspicious-discount gate."""
     if not it or not it.get("name"):
         return False
     pct, price = it["pct"], it["_price"]
     if pct < min_pct or pct > MAX_PCT or price < min_price:
         return False
-    if 0 < it["rating"] < MIN_RATING:
+    if 0 < it["rating"] < min_rating:
         return False
     if 0 < it["reviews"] < MIN_REVIEWS:
         return False
@@ -445,7 +446,7 @@ class Amazon:
             _rec["extract_error"] = str(e)[:120]
             return []
 
-    def items(self, kw=None, alias=None, pages=1, pct=MIN_PCT, min_price=MIN_PRICE_OFFER):
+    def items(self, kw=None, alias=None, pages=1, pct=MIN_PCT, min_price=MIN_PRICE_OFFER, min_rating=MIN_RATING):
         """-> (kept credible items, raw card count). Falls back to an unfiltered page when the discount filter returns 0 cards."""
         out, seen, raw_n = [], set(), 0
         for p in range(1, pages + 1):
@@ -455,7 +456,7 @@ class Amazon:
             raw_n += len(cards)
             for c in cards:
                 it = card_to_item(c)
-                if it and it["asin"] not in seen and credible(it, pct, min_price):
+                if it and it["asin"] not in seen and credible(it, pct, min_price, min_rating):
                     seen.add(it["asin"])
                     out.append(it)
             if self.blocked() or self.out_of_time() or not cards:
@@ -533,12 +534,13 @@ def build_feed(am):
 def sweep_category(am, cat):
     ic, lab = CAT_LABEL[cat]
     got = {}
+    _mp, _mr = (LADIES_MIN_PRICE, LADIES_MIN_RATING) if cat == "ladies" else (MIN_PRICE_OFFER, MIN_RATING)      # ladies items (kurti, jewellery, tops) are cheap + rated a bit lower: relaxed gates only here
     for alias, kw in SCOPES[cat]:
         if am.blocked() or am.out_of_time():
             break
-        items, raw = am.items(kw, alias, PAGES, MIN_PCT, MIN_PRICE_OFFER)
+        items, raw = am.items(kw, alias, PAGES, MIN_PCT, _mp, _mr)
         if raw == 0 and not am.blocked():                       # wrong alias -> keyword search instead
-            items, raw = am.items(kw or FALLBACK_KW.get(cat), None, PAGES, MIN_PCT, MIN_PRICE_OFFER)
+            items, raw = am.items(kw or FALLBACK_KW.get(cat), None, PAGES, MIN_PCT, _mp, _mr)
         log(f"  {cat} [{alias}/{kw}]: {raw} cards -> {len(items)} offers")
         for i in items:
             got[i["asin"]] = clean(i, cat=cat, label=lab, icon=ic)
