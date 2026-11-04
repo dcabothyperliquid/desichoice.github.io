@@ -546,12 +546,6 @@ def sweep_category(am, cat):
         log(f"  {cat} [{alias}/{kw}]: {raw} cards -> {len(items)} offers")
         for i in items:
             got[i["asin"]] = clean(i, cat=cat, label=lab, icon=ic)
-    if cat == "ladies":      # TEMP debug: why ladies ends empty -> guides/ladies_debug.json
-        try:
-            write_json(os.path.join(os.path.dirname(OFFERS_PATH), "ladies_debug.json"), {"time": iso(), "kept": len(got),
-                "sample": [{"name": (v.get("name") or "")[:90], "cls": classify(v), "pct": v.get("pct"), "now": v.get("now"), "rating": v.get("rating"), "reviews": v.get("reviews")} for v in list(got.values())[:25]]})
-        except Exception as e:
-            log("ladies debug failed", e)
     return sorted(got.values(), key=lambda x: (-x["pct"], -(x.get("reviews") or 0)))[:PER_CAT_OFFERS]
 
 
