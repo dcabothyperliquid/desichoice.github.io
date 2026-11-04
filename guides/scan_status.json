@@ -1,13 +1,13 @@
 {
- "time": "2026-11-04T06:36:28Z",
+ "time": "2026-11-04T06:44:36Z",
  "mode": "offers",
  "captcha_streak": 0,
- "pages_loaded": 18,
+ "pages_loaded": 23,
  "pages": [
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+kurti+set&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1947151,
+   "html_len": 2025162,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -15,15 +15,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+kurti+set&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1911468,
-   "has_results": true,
+   "html_len": 7667,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+dress+top&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2231526,
+   "html_len": 1986719,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -31,15 +31,23 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+dress+top&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2246477,
-   "has_results": true,
+   "html_len": 7668,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+earrings+necklace&i=jewelry&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1916991,
+   "html_len": 7639,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+earrings+necklace&i=jewelry&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1914070,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -47,7 +55,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+earrings+necklace&i=jewelry&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2073022,
+   "html_len": 2067076,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -55,7 +63,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+saree&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2269991,
+   "html_len": 2343165,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -63,7 +71,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+saree&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2324764,
+   "html_len": 2221657,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -71,7 +79,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kurti&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2099970,
+   "html_len": 2220557,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -79,7 +87,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kurti&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2114920,
+   "html_len": 2230202,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -87,7 +95,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+tops&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2358114,
+   "html_len": 2312813,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -95,7 +103,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+tops&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2571738,
+   "html_len": 2390792,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -103,7 +111,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+jewellery+set&i=jewelry&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2114966,
+   "html_len": 2004268,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -111,15 +119,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+jewellery+set&i=jewelry&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1634977,
-   "has_results": true,
+   "html_len": 7709,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+handbag&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2247894,
+   "html_len": 2439389,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -127,15 +135,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+handbag&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1887341,
-   "has_results": true,
+   "html_len": 7622,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+sandals&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2208778,
+   "html_len": 2210744,
    "has_results": true,
    "marks": [],
    "cards": 48
@@ -143,7 +151,39 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=women+sandals&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2169744,
+   "html_len": 2185938,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=girls+tops+dress&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1830861,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=girls+tops+dress&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1978485,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=teen+girls+clothing&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2130273,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=teen+girls+clothing&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2149147,
    "has_results": true,
    "marks": [],
    "cards": 48
