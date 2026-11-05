@@ -1,325 +1,197 @@
 {
- "time": "2026-11-05T01:26:18Z",
+ "time": "2026-11-05T02:57:44Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 132,
+ "pages_loaded": 24,
  "pages": [
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=diwali+gift+hamper&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=women+kurti+set&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1941268,
+   "html_len": 1900260,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=diwali+decoration+lights&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=women+kurti+set&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2039429,
+   "html_len": 1928893,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=dry+fruits+gift+box&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=women+dress+top&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2063007,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=diya+candles+rangoli&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1740948,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=chhath+puja+samagri&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 944537,
-   "has_results": true,
-   "marks": [],
-   "cards": 6
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=puja+thali+set&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1654009,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=copper+kalash+puja&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1424245,
-   "has_results": true,
-   "marks": [],
-   "cards": 37
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=bamboo+soop+dala&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 809495,
-   "has_results": true,
-   "marks": [],
-   "cards": 1
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=room+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 962813,
-   "has_results": true,
-   "marks": [],
-   "cards": 10
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=geyser+water+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1108358,
-   "has_results": true,
-   "marks": [],
-   "cards": 16
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=blanket+quilt&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 2417559,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=woolen+jacket+sweater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 2121456,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=wheat+flour+atta&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1859041,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=basmati+rice&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7390,
+   "html_len": 7565,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=basmati+rice&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=women+dress+top&i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1603044,
+   "html_len": 2174930,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=toor+dal+pulses&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=women+dress+top&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1676718,
+   "html_len": 2136147,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=cooking+oil+ghee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=women+earrings+necklace&i=jewelry&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1724680,
+   "html_len": 1854560,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=women+earrings+necklace&i=jewelry&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7373,
+   "html_len": 1834692,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+saree&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2547120,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+saree&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2331161,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=kurti&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1998944,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=kurti&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2082269,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+tops&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2309738,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+tops&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2481132,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+jewellery+set&i=jewelry&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1993470,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+jewellery+set&i=jewelry&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1981652,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+handbag&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2248732,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+handbag&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2264173,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+sandals&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2058969,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+sandals&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2104705,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=girls+tops+dress&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1869437,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=girls+tops+dress&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1835073,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=teen+girls+clothing&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7600,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=teen+girls+clothing&i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7222,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=biscuits+namkeen+snacks&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1663802,
+   "html_len": 2015667,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=almonds+cashews+dry+fruits&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=teen+girls+clothing&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1680231,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=masala+spices&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7397,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=masala+spices&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1724326,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=laundry+detergent&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1775566,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=dishwash+liquid&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7419,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=dishwash+liquid&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1558534,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=floor+cleaner+toilet+cleaner&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1593679,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=handwash+sanitizer&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1765010,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=shampoo+conditioner&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7455,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=shampoo+conditioner&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1818561,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=soap+body+wash&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1807462,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=toothpaste&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1788138,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=face+wash+moisturizer&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1731801,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=baby+diapers&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1802646,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=sanitary+pads&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1779185,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=AA+AAA+batteries&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1076722,
-   "has_results": true,
-   "marks": [],
-   "cards": 16
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=whey+protein&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1906878,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=multivitamin+tablets&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1474649,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=dog+food&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1784009,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=garbage+bags&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1558177,
+   "html_len": 2093395,
    "has_results": true,
    "marks": [],
    "cards": 48
