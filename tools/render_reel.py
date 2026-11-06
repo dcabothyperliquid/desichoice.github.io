@@ -520,12 +520,12 @@ def make_ass(shots, starts, path):
         a, txt = s_.get("audio"), str(s_.get("voice") or "")
         if not a or not txt.strip():
             continue
-        words = [w.strip(" ।,.!?;:\"'()") for w in txt.split()]
+        words = [w.strip(" ।,.!?;:\"'()") for w in cap_text(txt).split()]
         words = [w for w in words if w]
         if not words:
             continue
         t0, span = starts[k] + 0.08, max(0.6, dur(a) - 0.12)
-        wts = [max(2, len(w)) for w in words]
+        wts = [14 if w[0] == "₹" else max(2, len(w)) for w in words]      # ₹ price ek token hai par bolne me 3-4 shabd lagte hain
         tot, acc, times = float(sum(wts)), 0.0, []
         for w_ in wts:
             times.append((t0 + span * acc / tot, t0 + span * (acc + w_) / tot)); acc += w_
@@ -683,6 +683,102 @@ def fill_screen(text, items):
         return text
     t = re.sub(r"\{(PMIN|DMAX|[PLSD])(\d?)\}", lambda m: "{" + m.group(1).lower() + m.group(2) + "}", text)
     return re.sub(r"\s{2,}", " ", _DEVA.sub("", fill(t, items))).strip()
+
+
+# ───────────────────────── video captions: Roman Hinglish + ₹ numerals (awaaz Devanagari hi rehti hai) ─────────────────────────
+_CAP_MAP = {}          # {"दो हज़ार छह सौ रुपये": "₹2,629", ...} -- main() me items ke hisaab se bharta hai
+
+_LOAN = {w.split("=")[0]: w.split("=")[1] for w in (
+    "फोन=phone ब्लूटूथ=bluetooth डिस्काउंट=discount सेविंग=saving प्राइस=price फीचर=feature फीचर्स=features क्वालिटी=quality प्रोडक्ट=product "
+    "डील=deal डील्स=deals रील=reel लिंक=link कमेंट्स=comments कमेंट=comment बैटरी=battery चार्ज=charge चार्जिंग=charging स्पीकर=speaker "
+    "कैमरा=camera वॉटरप्रूफ=waterproof स्क्रीन=screen साउंड=sound म्यूज़िक=music मूवी=movie थिएटर=theatre कनेक्ट=connect सेलेक्ट=select "
+    "यूज़=use मॉडल=model ब्रांड=brand वायरलेस=wireless डिज़ाइन=design बेस=bass वॉट=watt लीटर=litre किचन=kitchen लैपटॉप=laptop मॉनिटर=monitor "
+    "मोबाइल=mobile एक्सेसरीज़=accessories ऑफ़र=offer अमेज़न=Amazon अमेज़ॉन=Amazon टीवी=TV सेट=set पैक=pack साइज़=size कलर=color "
+    "है=hai हैं=hain में=mein और=aur नहीं=nahi वाला=wala वाली=wali वाले=wale ये=ye वो=wo वह=wo आप=aap आपको=aapko आपके=aapke आपका=aapka "
+    "आपकी=aapki क्या=kya कैसे=kaise क्यों=kyun कुछ=kuch सब=sab बहुत=bahut बस=bas सच=sach सिर्फ़=sirf सिर्फ=sirf ज़रूर=zaroor रोज़=roz "
+    "दाम=daam मिलेगा=milega मिलेगी=milegi मिल=mil रहा=raha रही=rahi रहे=rahe सकते=sakte सकती=sakti हो=ho तो=toh भी=bhi पर=par से=se "
+    "का=ka की=ki के=ke को=ko एक=ek दो=do तीन=teen चार=chaar पाँच=paanch देखो=dekho देख=dekh घर=ghar काम=kaam आराम=aaram पैसा=paisa "
+    "ज़्यादा=zyada आएगा=aayega आएगी=aayegi लाइफ=life सूटकेस=suitcase सूटकेस=suitcase रात=raat लिंक्स=links शेयर=share भेज=bhej भेजो=bhejo डीलर=dealer").split()}
+
+_VOW = {"अ": "a", "आ": "aa", "इ": "i", "ई": "ee", "उ": "u", "ऊ": "oo", "ए": "e", "ऐ": "ai", "ओ": "o", "औ": "au", "ऑ": "o", "ऋ": "ri"}
+_MAT = {"ा": "aa", "ि": "i", "ी": "i", "ु": "u", "ू": "u", "े": "e", "ै": "ai", "ो": "o", "ौ": "au", "ॉ": "o", "ृ": "ri"}
+_CON = {"क": "k", "ख": "kh", "ग": "g", "घ": "gh", "ङ": "n", "च": "ch", "छ": "chh", "ज": "j", "झ": "jh", "ञ": "n", "ट": "t", "ठ": "th",
+        "ड": "d", "ढ": "dh", "ण": "n", "त": "t", "थ": "th", "द": "d", "ध": "dh", "न": "n", "प": "p", "फ": "ph", "ब": "b", "भ": "bh",
+        "म": "m", "य": "y", "र": "r", "ल": "l", "व": "v", "श": "sh", "ष": "sh", "स": "s", "ह": "h"}
+_NUKTA = {"क": "q", "ख": "kh", "ग": "gh", "ज": "z", "ड": "d", "ढ": "dh", "फ": "f"}
+
+
+def _deva_word(w):
+    """Ek Devanagari shabd -> Roman Hinglish (schwa deletion ke saath). Loanword/common shabd _LOAN se, baaki phonetic."""
+    if w in _LOAN:
+        return _LOAN[w]
+    # units: [roman_consonants, vowel_str or None(=inherent a), is_cons]
+    units, i, n = [], 0, len(w)
+    while i < n:
+        c = w[i]
+        if c in _CON:
+            r = _CON[c]
+            if i + 1 < n and w[i + 1] == "\u093c":                 # nukta
+                r = _NUKTA.get(c, r); i += 1
+            u = [r, None]
+            i += 1
+            if i < n and w[i] == "\u094d":                          # halant: aage wale se jud jaata hai, koi vowel nahi
+                u[1] = ""; i += 1
+            elif i < n and w[i] in _MAT:
+                u[1] = _MAT[w[i]]; i += 1
+            units.append(u)
+        elif c in _VOW:
+            units.append(["", _VOW[c]]); i += 1
+        elif c in "ंँ":
+            nx = w[i + 1] if i + 1 < n else ""
+            units.append(["m" if nx in "पफबभम" and nx else "n", ""]); i += 1
+        elif c == "ः":
+            units.append(["h", ""]); i += 1
+        elif c == "\u093c":
+            i += 1
+        else:
+            units.append([c, ""]); i += 1
+    # schwa: aakhri consonant ka hamesha hatao; beech ke (pehle ko chhodkar) tab hatao jab agla vowel wala ho aur pichla bhi
+    idx = [k for k, u in enumerate(units) if u[1] is None]
+    for k in reversed(idx):
+        last_cons = all(units[j][1] == "" and units[j][0] in ("n", "h") or not units[j][0] for j in range(k + 1, len(units)))
+        if last_cons:
+            units[k][1] = ""; continue
+        nxt_has_v = k + 1 < len(units) and units[k + 1][1] != ""
+        prev_has_v = k > 0 and units[k - 1][1] != ""
+        if k > 0 and nxt_has_v and prev_has_v:
+            units[k][1] = ""
+    if units and units[-1][1] == "aa" and len(units) > 1:      # shabd ke ant me ा: 'ka', 'wala', 'milega' (aa nahi)
+        units[-1][1] = "a"
+    out = "".join(u[0] + ("a" if u[1] is None else u[1]) for u in units)
+    if w.endswith("ें") and out.endswith("en"):                 # इसमें -> ismein
+        out = out[:-2] + "ein"
+    return out.replace("aao", "ao")
+
+
+def cap_text(text):
+    """Bolne wali Devanagari line -> video caption: price/discount ₹/% numerals me, baaki Roman Hinglish."""
+    t = str(text or "")
+    for k in sorted(_CAP_MAP, key=len, reverse=True):
+        t = t.replace(k, _CAP_MAP[k])
+    return re.sub(r"[\u0900-\u0963\u0971-\u097F]+", lambda m: _deva_word(m.group(0)), t)
+
+
+def build_cap_map(items):
+    """fill() jo Hindi shabd bharta hai (rs_voice/hindi_num/rs_short) unka screen roop: ₹2,629 / 84%."""
+    _CAP_MAP.clear()
+    for it in items:
+        try:
+            price, lp, pct = float(it["price"]), float(it.get("list_price") or 0), int(it.get("pct") or 0)
+        except Exception:
+            continue
+        save = int(lp - price) if lp > price else 0
+        for v in (price, lp or price, save or price):
+            _CAP_MAP[rs_voice(v)] = inr(v)
+            _CAP_MAP[rs_short(v)] = inr(v)
+            _CAP_MAP[rs_short(v).replace(" रुपये", "")] = inr(v)
+        _CAP_MAP[hindi_num(pct) + " परसेंट"] = f"{pct}%"
+
 
 
 def load_photos(it, media):
@@ -968,6 +1064,7 @@ def main():
                 ln_["text"], ln_["voice"] = fill_screen(ln_.get("text"), items), fill(ln_.get("voice"), items)      # screen text: Hindi shabd nahi (tofu), sirf Rs/%
     except Exception as e:
         print("script fill failed:", e, file=sys.stderr)
+    build_cap_map(items)
     os.makedirs(OUT, exist_ok=True)
     os.makedirs(TMP, exist_ok=True)
     shots, meta_items = [], []
