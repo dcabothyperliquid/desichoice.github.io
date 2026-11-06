@@ -166,12 +166,12 @@ def price_strip(d, it, pct_badge=True):
     rt = _rating(it)
     if rt:                                    # trust: gold star + rating + (reviews), badge aur DESI CHOICE ke beech
         r_, n_ = rt
-        x = 446
+        x = 436
         _star(d, x + 20, 1604, 24, "#f59e0b")
         d.text((x + 52, 1605), f"{r_:.1f}", font=font(44), fill="#111111", anchor="lm")
         if n_ > 0:
-            d.text((x + 52 + d.textlength(f"{r_:.1f}", font=font(44)) + 8, 1607), f"({fmt_reviews(n_)})", font=font(32), fill="#666666", anchor="lm")
-    d.text((W - 100, 1605), "DESI CHOICE", font=font(36), fill="#f97316", anchor="rm")
+            d.text((x + 52 + d.textlength(f"{r_:.1f}", font=font(44)) + 8, 1607), f"({fmt_reviews(n_)})", font=font(28), fill="#666666", anchor="lm")
+    d.text((W - 100, 1605), "DESI CHOICE", font=font(30 if rt else 36), fill="#f97316", anchor="rm")
 
 
 def title_chip(d, text, y0=110, y1=240):
@@ -757,7 +757,7 @@ _LOAN = {w.split("=")[0]: w.split("=")[1] for w in (
     "आपकी=aapki क्या=kya कैसे=kaise क्यों=kyun कुछ=kuch सब=sab बहुत=bahut बस=bas सच=sach सिर्फ़=sirf सिर्फ=sirf ज़रूर=zaroor रोज़=roz "
     "दाम=daam मिलेगा=milega मिलेगी=milegi मिल=mil रहा=raha रही=rahi रहे=rahe सकते=sakte सकती=sakti हो=ho तो=toh भी=bhi पर=par से=se "
     "का=ka की=ki के=ke को=ko एक=ek दो=do तीन=teen चार=chaar पाँच=paanch देखो=dekho देख=dekh घर=ghar काम=kaam आराम=aaram पैसा=paisa "
-    "ईयरबड्स=earbuds ईयरबड=earbud ईयरफ़ोन=earphone इयरफ़ोन=earphone ईयरफोन=earphone इयरफोन=earphone बोट=boAt फिलिप्स=Philips प्लेटाइम=playtime प्लेबैक=playback टेंशन=tension ऑप्शन=option कॉल्स=calls कॉल=call माइक=mic फ़ास्ट=fast फास्ट=fast रेडी=ready गेमिंग=gaming ऑडियो=audio हेडफोन=headphone नेकबैंड=neckband ज़्यादा=zyada आएगा=aayega आएगी=aayegi लाइफ=life सूटकेस=suitcase सूटकेस=suitcase रात=raat लिंक्स=links शेयर=share भेज=bhej भेजो=bhejo डीलर=dealer").split()}
+    "टाइटन=Titan ईयरबड्स=earbuds ईयरबड=earbud ईयरफ़ोन=earphone इयरफ़ोन=earphone ईयरफोन=earphone इयरफोन=earphone बोट=boAt फिलिप्स=Philips प्लेटाइम=playtime प्लेबैक=playback टेंशन=tension ऑप्शन=option कॉल्स=calls कॉल=call माइक=mic फ़ास्ट=fast फास्ट=fast रेडी=ready गेमिंग=gaming ऑडियो=audio हेडफोन=headphone नेकबैंड=neckband ज़्यादा=zyada आएगा=aayega आएगी=aayegi लाइफ=life सूटकेस=suitcase सूटकेस=suitcase रात=raat लिंक्स=links शेयर=share भेज=bhej भेजो=bhejo डीलर=dealer").split()}
 
 _VOW = {"अ": "a", "आ": "aa", "इ": "i", "ई": "ee", "उ": "u", "ऊ": "oo", "ए": "e", "ऐ": "ai", "ओ": "o", "औ": "au", "ऑ": "o", "ऋ": "ri"}
 _MAT = {"ा": "aa", "ि": "i", "ी": "i", "ु": "u", "ू": "u", "े": "e", "ै": "ai", "ो": "o", "ौ": "au", "ॉ": "o", "ृ": "ri"}
