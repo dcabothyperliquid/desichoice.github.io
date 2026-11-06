@@ -110,7 +110,7 @@ h2{font-size:22px;letter-spacing:-.02em;margin:30px 2px 12px;display:flex;align-
 <script>
 (function(){
   var $=function(i){return document.getElementById(i)};
-  var CATS=[["home_kitchen","🍳","Home & Kitchen"],["electronics","🎧","Electronics"],["laptops","💻","Laptops"],["mobiles","📱","Mobiles"],["monitors","🖥️","Monitors & TV"],["accessories","🖱️","Accessories"],["beauty_health","🧴","Beauty & Health"],["fitness_outdoor","🏃","Fitness & Outdoor"],["fashion","👟","Fashion"],["ladies","👗","Ladies"],["toys_kids","🧸","Toys & Kids"],["tools_auto","🔧","Tools & Auto"],["pets","🐶","Pets"],["office_books","📚","Office & Books"],["gaming","🎮","Gaming"],["smart_home","🏠","Smart Home"],["furniture_decor","🛋️","Furniture & Decor"],["hobby_music","🎸","Hobby & Music"]];
+  var CATS=[["home_kitchen","🍳","Home & Kitchen"],["electronics","🎧","Electronics"],["laptops","💻","Laptops"],["mobiles","📱","Mobiles"],["monitors","🖥️","Monitors & TV"],["accessories","🖱️","Accessories"],["beauty_health","🧴","Beauty & Health"],["fitness_outdoor","🏃","Fitness & Outdoor"],["fashion","👟","Fashion"],["ladies","👗","Ladies"],["toys_kids","🧸","Toys & Kids"],["ladies_fashion","👠","Ladies Fashion"],["kids_mom","👶","Kids & Mom"],["tools_auto","🔧","Tools & Auto"],["pets","🐶","Pets"],["office_books","📚","Office & Books"],["gaming","🎮","Gaming"],["smart_home","🏠","Smart Home"],["furniture_decor","🛋️","Furniture & Decor"],["hobby_music","🎸","Hobby & Music"]];
   var MAX_AGE_H=72, PER=5, essList=[], page=0, offers={}, trend=[], theme='all';
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function num(v){var n=parseFloat(String(v==null?'':v).replace(/,/g,''));return isFinite(n)?n:0}

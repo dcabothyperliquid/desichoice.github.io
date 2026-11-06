@@ -64,7 +64,11 @@ class T(unittest.TestCase):
         cl = lambda n: S.classify({"name": n, "now": "999"})
         self.assertEqual(cl("Biba Women Cotton Kurti Set with Dupatta"), "ladies")
         self.assertEqual(cl("Women's Gold Plated Jhumka Earrings"), "ladies")
-        self.assertEqual(cl("Fabindia Women Printed Maxi Dress"), "ladies")
+        self.assertEqual(cl("Fabindia Women Printed Maxi Dress"), "ladies_fashion")      # dresses / shoes / sandals live in Ladies Fashion now
+        self.assertEqual(cl("Women Heels Block Sandals for Party"), "ladies_fashion")
+        self.assertEqual(cl("Women Dress Material Unstitched Cotton Kurti"), "ladies")      # dress material is not a dress
+        self.assertEqual(cl("Baby Girl Frock Dress 2-3 Years"), "kids_mom")
+        self.assertEqual(cl("Kids Building Blocks Toy Set"), "toys_kids")
         self.assertEqual(cl("Pink Hair Clips Set for Women"), "ladies")
         self.assertNotEqual(cl("Garnier Vitamin C Face Serum"), "ladies")          # beauty stays beauty
         self.assertNotEqual(cl("Men Running Shoes Sports"), "ladies")
@@ -77,7 +81,7 @@ class T(unittest.TestCase):
     def test_clean_and_scopes(self):
         it = S.clean(S.card_to_item(card(text="x -23%")), cat="tea")
         self.assertNotIn("_price", it); self.assertEqual(it["cat"], "tea"); self.assertIn("tier", it)
-        self.assertEqual(len(S.CATEGORIES), 18)
+        self.assertEqual(len(S.CATEGORIES), 20)
         self.assertEqual(set(S.SCOPES), {k for k, _, _ in S.CATEGORIES})
         self.assertEqual(set(S.FALLBACK_KW), set(S.SCOPES))
 

@@ -56,7 +56,8 @@ MIN_REVIEWS = 50
 MAX_PCT = 85
 SUSPICIOUS_PCT, SUSPICIOUS_REVIEWS = 70, 300
 MIN_PRICE_ESS, MIN_PRICE_HOT, MIN_PRICE_OFFER = 49, 1500, 299     # rupees
-LADIES_MIN_PRICE, LADIES_MIN_RATING = 149, 3.8                      # ladies category only
+LADIES_MIN_PRICE, LADIES_MIN_RATING = 149, 3.8                      # ladies / ladies_fashion / kids_mom only
+MIXED_CATS = ("ladies", "ladies_fashion", "kids_mom")                # cheap, mixed-scope categories: relaxed gates + round-robin over scopes
 MAX_HOT, MAX_ESS, MAX_TREND, PER_THEME, PER_CAT_OFFERS = 30, 60, 36, 14, 40
 NAME_MAX = 70
 
@@ -68,6 +69,7 @@ CATEGORIES = [
     ("toys_kids", "🧸", "Toys & Kids"), ("tools_auto", "🔧", "Tools & Auto"), ("pets", "🐶", "Pets"),
     ("office_books", "📚", "Office & Books"), ("gaming", "🎮", "Gaming"), ("smart_home", "🏠", "Smart Home"),
     ("furniture_decor", "🛋️", "Furniture & Decor"), ("hobby_music", "🎸", "Hobby & Music"),
+    ("ladies_fashion", "👠", "Ladies Fashion"), ("kids_mom", "👶", "Kids & Mom"),      # FB sections: dresses+shoes+sandals / baby-kids-mom
 ]
 CAT_LABEL = {k: (ic, lab) for k, ic, lab in CATEGORIES}
 
@@ -95,12 +97,17 @@ SCOPES = {
     "smart_home":      [("electronics", "smart home"), ("electronics", "security camera")],
     "furniture_decor": [("garden", "furniture"), ("kitchen", "home decor")],
     "hobby_music":     [("musical-instruments", None)],
+    "ladies_fashion":  [("apparel", "women dress"), ("apparel", "girls dress frock"), ("apparel", "women gown maxi dress"),
+                        ("shoes", "women sandals"), ("shoes", "women heels"), ("shoes", "women flats bellies"), ("shoes", "girls sandals shoes")],
+    "kids_mom":        [("apparel", "baby clothes"), ("apparel", "kids clothing set"), ("baby", None), ("baby", "baby feeding bottle"),
+                        ("baby", "maternity nursing mom"), ("shoes", "kids shoes sandals")],
 }
 FALLBACK_KW = {"home_kitchen": "kitchen appliances", "laptops": "laptop", "gaming": "gaming", "hobby_music": "guitar keyboard instrument",
                "office_books": "stationery books", "pets": "pet food", "tools_auto": "car accessories tools", "fashion": "men shoes clothing", "ladies": "women kurti dress",
                "fitness_outdoor": "fitness", "toys_kids": "toys", "beauty_health": "skin care", "electronics": "electronics",
                "furniture_decor": "furniture", "mobiles": "smartphone", "monitors": "monitor", "accessories": "computer accessories",
-               "smart_home": "smart home"}
+               "smart_home": "smart home",
+               "ladies_fashion": "women dress sandals", "kids_mom": "baby kids"}
 
 # ---- Daily Essentials: (key, label, icon, search keyword, must-match regex) -------------------------------------
 ESS = [
@@ -537,7 +544,7 @@ def build_feed(am):
 def sweep_category(am, cat):
     ic, lab = CAT_LABEL[cat]
     got, per_scope = {}, []
-    _mp, _mr = (LADIES_MIN_PRICE, LADIES_MIN_RATING) if cat == "ladies" else (MIN_PRICE_OFFER, MIN_RATING)      # ladies items (kurti, jewellery, tops) are cheap + rated a bit lower: relaxed gates only here
+    _mp, _mr = (LADIES_MIN_PRICE, LADIES_MIN_RATING) if cat in MIXED_CATS else (MIN_PRICE_OFFER, MIN_RATING)      # ladies items (kurti, jewellery, tops) are cheap + rated a bit lower: relaxed gates only here
     for alias, kw in SCOPES[cat]:
         if am.blocked() or am.out_of_time():
             break
@@ -548,7 +555,7 @@ def sweep_category(am, cat):
         per_scope.append([clean(i, cat=cat, label=lab, icon=ic) for i in items])
         for i in items:
             got[i["asin"]] = clean(i, cat=cat, label=lab, icon=ic)
-    if cat == "ladies":      # round-robin over the search scopes so girls/teen, sarees, kurti, jewellery... all stay in the capped list (not only the highest-% scope)
+    if cat in MIXED_CATS:      # round-robin over the search scopes so girls/teen, sarees, kurti, jewellery... all stay in the capped list (not only the highest-% scope)
         lists = [sorted(l, key=lambda x: (-x["pct"], -(x.get("reviews") or 0))) for l in per_scope if l]
         mixed, seen = [], set()
         for k in range(max((len(l) for l in lists), default=0)):
@@ -582,6 +589,9 @@ TITLE_RULES = [
     ("electronics",     r"earbuds?|headphones?|earphones?|neckband|\btws\b|speakers?|soundbar|dolby|home theat|\bcamera\b"),
     ("mobiles",         r"smartphones?|smart phone|\b5g\b|iphone|smart ?watch|mobile phone"),
     ("smart_home",      r"smart (plug|bulb|light|lock|switch|speaker)|alexa|echo dot|cctv|security camera|video doorbell|extension board|surge"),
+    ("ladies_fashion",  r"\b(women'?s?|womens|ladies|girls?|teen(age)?)\b.{0,40}\b(dress(es)?|frocks?|gowns?|shoes?|sandals?|heels?|flats|bellies|sneakers?|slippers?|flip ?flops?|"
+                        r"loafers?|ballerinas?|wedges?|boots?)\b|\b(dress(es)?|frocks?|gowns?|shoes|sandals|heels|flats|sneakers|slippers|wedges|bellies)\b.{0,25}\b(for )?(women|womens|ladies|girls?)\b|"
+                        r"\b(midi|maxi|bodycon|a-?line|wrap|skater|party|wedding|prom|evening) (dress(es)?|gowns?)\b|\bfrocks?\b"),
     ("ladies",          r"\b(kurtis?|kurta sets?|sarees?|saris?|lehengas?|dupattas?|palazzos?|salwar|anarkali|gowns?|leggings?|jeggings?|tunics?|"
                         r"crop tops?|maxi|midi|skirts?|kaftan|co-?ord sets?|blouse|shrugs?|jumpsuits?|earrings?|necklaces?|bangles?|jhumkas?|"
                         r"mangalsutra|anklets?|chokers?|nose pins?|handbags?|clutch|sling bags?|hair clips?|hair bands?|scrunchies?|bindi)\b|"
@@ -591,6 +601,7 @@ TITLE_RULES = [
     ("beauty_health",   r"serum|shampoo|lotion|cream|\bsoap\b|moisturi[sz]|sunscreen|face ?wash|hair|\bskin\b|trimmer|razor|perfume|deodorant|"
                         r"lipstick|kajal|vitamin|supplement|toothpaste|face mask"),
     ("office_books",    r"stationery|\bpens?\b|diary|\bnovels?\b|\bbooks?\b|\bhow to\b|laminat|shredder|marker|stapler|writing tablet|bulletin board|notice board|paperback|hardcover"),
+    ("kids_mom",        r"\b(baby|babies|infants?|toddlers?|newborns?|kids?|child(ren)?|maternity|nursing|breast ?pumps?|feeding bottles?|sippers?|diapers?|strollers?|prams?|baby ?care|mom|moms|mommy|mother)\b|\b\d{1,2}\s*-\s*\d{1,2}\s*(years?|yrs?|months?|m)\b"),
     ("toys_kids",       r"\btoys?\b|\bkids?\b|\bbaby\b|scooter|\bdoll\b|puzzle|stroller|diaper"),
     ("fitness_outdoor", r"\byoga\b|dumbbell|\bgym\b|treadmill|bicycle|fitness|resistance band|skipping|trekking|camping|\btent\b|cricket|badminton|football"),
     ("furniture_decor", r"\bshelf|\brack\b|\bvase|decor|\bstool|ottoman|\bsofa|\bchair|\btable\b|\bbed\b|mattress|curtain|\blamp|night light|wall art|"
@@ -603,6 +614,10 @@ _TITLE_RULES = [(c, re.compile(rx)) for c, rx in TITLE_RULES]
 
 _LITTLE_KIDS = re.compile(r"\b(baby|babies|infant|toddler|newborn|kids?|boys?)\b|\b\d{1,2}\s*-\s*\d{1,2}\s*(years?|yrs?|months?|m)\b")
 _TEEN_OR_WOMEN = re.compile(r"\b(teen(age)?s?|women'?s?|womens|ladies|juniors?)\b")
+
+
+_DRESS_NOT_WEAR = re.compile(r"dress materials?|dressers?\b|dressing|dress ?up (kit|set)|dress[- ]?shirt")
+_TOYS_WORD = re.compile(r"\btoys?\b|\bdolls?\b|puzzles?|scooter|\bgames?\b|play ?set|building blocks?|lego|rc car|remote control")
 
 
 def classify(item):
@@ -618,6 +633,10 @@ def classify(item):
         return "laptops"
     for cat, rx in _TITLE_RULES:
         if rx.search(t):
+            if cat == "ladies_fashion" and (_DRESS_NOT_WEAR.search(t) or (_LITTLE_KIDS.search(t) and not _TEEN_OR_WOMEN.search(t))):
+                continue                                  # "dress material" / dressing table is not a dress; baby/toddler wear goes to kids_mom
+            if cat == "kids_mom" and _TOYS_WORD.search(t):
+                continue                                  # toys / dolls / puzzles stay in toys_kids
             if cat == "ladies" and _LITTLE_KIDS.search(t) and not _TEEN_OR_WOMEN.search(t):
                 continue                                  # little-kids wear (baby / toddler / "2-3 years") is toys_kids, not Ladies & teen girls
             return cat
