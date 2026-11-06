@@ -26,8 +26,12 @@ PITCH = os.environ.get("REEL_PITCH", "+4Hz")                         # halka upa
 SPEEDUP = float(os.environ.get("REEL_SPEEDUP", "1.16"))           # pitch-preserving tez bolna (atempo)
 FALLBACK_VOICES = ["en-US-AvaMultilingualNeural", "en-US-EmmaMultilingualNeural"]   # sirf female fallbacks
 VOICE_USED = [None]
-PRODUCT_MIN = float(os.environ.get("REEL_PRODUCT_MIN", "10"))      # har product kam se kam itne sec
+PRODUCT_MIN = float(os.environ.get("REEL_PRODUCT_MIN", "8"))       # har product kam se kam itne sec
+MIN_TOTAL = float(os.environ.get("REEL_MIN_TOTAL", "36"))          # reel ki lambai 36-44 sec ke beech rakho
+MAX_TOTAL = float(os.environ.get("REEL_MAX_TOTAL", "43"))
+MAX_EXTRA_SPEED = float(os.environ.get("REEL_MAX_EXTRA_SPEED", "1.14"))   # lambi script ho to awaaz max itni aur tez (SPEEDUP ke upar)
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
+HIND = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "Hind-Bold.ttf")   # Devanagari + Latin
 ACCENT = "#e53935"
 MAX_VIDEO_S = 4.5
 
@@ -64,7 +68,10 @@ def fetch(url, timeout=30):
 def short(title, n=60):
     t = (title or "").strip()
     t = re.split(r"\s[|\-–—]\s|,\s|\s\(", t)[0].strip() or (title or "").strip()
-    return (t[:n].rstrip() + "…") if len(t) > n else t
+    if len(t) <= n:
+        return t
+    cut = t[:n].rsplit(" ", 1)[0] if " " in t[:n] else t[:n]      # shabd ke beech me nahi ('C…' jaisa nahi), pure shabd par ruko
+    return cut.rstrip(" ,.-&|") + "…"
 
 
 def spoken_name(title):
@@ -76,7 +83,10 @@ def inr(v):
 
 
 def text_outline(d, xy, text, fnt, fill="white", stroke="#000000", sw=6, anchor="mm"):
-    d.text(xy, san(text), font=fnt, fill=fill, anchor=anchor, stroke_width=sw, stroke_fill=stroke)
+    t = san(text)
+    if re.search("[\u0900-\u097F]", t) and os.path.exists(HIND):      # safety net: Devanagari kabhi tofu box na bane
+        fnt = ImageFont.truetype(HIND, getattr(fnt, "size", 60))
+    d.text(xy, t, font=fnt, fill=fill, anchor=anchor, stroke_width=sw, stroke_fill=stroke)
 
 
 def fit(d, text, size, maxw, lo=34):
@@ -128,7 +138,21 @@ def price_strip(d, it, pct_badge=True):
     d.text((W - 100, 1605), "DESI CHOICE", font=font(36), fill="#f97316", anchor="rm")
 
 
-def photo_frame(photo, it, caption=None, counter=None, top=250, height=980):
+def title_chip(d, text, y0=110, y1=240):
+    """Product naam ka chip: pehle 1 line (size 56), na aaye to 2 lines (size 46). Dark box (alpha 215) taaki bright photo par bhi saaf padhe."""
+    d.rounded_rectangle((50, y0, W - 50, y1), 40, fill=(0, 0, 0, 215))
+    text = san(text)
+    f, lines = font(56), [text]
+    if d.textlength(text, font=f) > W - 160:
+        f = font(46)
+        lines = wrap(d, text, f, W - 160, 2)
+    cy = (y0 + y1) // 2
+    ys = [cy] if len(lines) == 1 else [cy - 26, cy + 26]
+    for ln, y in zip(lines, ys):
+        text_outline(d, (W // 2, y), ln, f, fill="#ffeb3b", sw=5)
+
+
+def photo_frame(photo, it, caption=None, counter=None, top=250, height=760):
     """Blurred full-bleed bg + white product card + caption + price strip. Returns RGB image."""
     im = blurred_bg(photo).convert("RGBA")
     d = ImageDraw.Draw(im, "RGBA")
@@ -151,7 +175,7 @@ def hook_overlay(head, sub, it):
     """Transparent overlay for the hook shot (drawn over blurred video / photo)."""
     ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     d = ImageDraw.Draw(ov, "RGBA")
-    d.rounded_rectangle((50, 90, W - 50, 380), 46, fill=(0, 0, 0, 160))
+    d.rounded_rectangle((50, 90, W - 50, 380), 46, fill=(0, 0, 0, 215))
     text_outline(d, (W // 2, 200), head, fit(d, head, 120, W - 160, 60), fill="#ffeb3b", sw=7)
     text_outline(d, (W // 2, 320), sub, fit(d, sub, 58, W - 160, 34), sw=5)
     price_strip(d, it)
@@ -161,11 +185,11 @@ def hook_overlay(head, sub, it):
 def outro_frame(photo, it):
     im = blurred_bg(photo).convert("RGBA")
     d = ImageDraw.Draw(im, "RGBA")
-    d.rounded_rectangle((70, 560, W - 70, 1260), 54, fill=(255, 255, 255, 240))
-    d.text((W // 2, 700), "LINK", font=font(120), fill="#f97316", anchor="mm")
-    d.text((W // 2, 850), "COMMENTS me hai", font=font(74), fill="#111111", anchor="mm")
-    d.text((W // 2, 1010), "Follow @DesiChoice", font=font(58), fill="#555555", anchor="mm")
-    d.text((W // 2, 1100), "roz aise sasti deals", font=font(52), fill="#555555", anchor="mm")
+    d.rounded_rectangle((70, 330, W - 70, 960), 54, fill=(255, 255, 255, 240))      # card caption zone (y~1040+) se upar: text overlap nahi
+    d.text((W // 2, 470), "LINK", font=font(120), fill="#f97316", anchor="mm")
+    d.text((W // 2, 620), "COMMENTS me hai", font=font(74), fill="#111111", anchor="mm")
+    d.text((W // 2, 780), "Follow @DesiChoice", font=font(58), fill="#555555", anchor="mm")
+    d.text((W // 2, 870), "roz aise sasti deals", font=font(52), fill="#555555", anchor="mm")
     return im.convert("RGB")
 
 
@@ -344,7 +368,7 @@ def still_clip(png, secs, audio, out, k):
 def video_clip(mp4, overlay_png, secs, audio, out, start=0.0):
     """Product video: blurred cover bg + video fit-to-width in the middle + overlay (hook text, price). Video muted, voice on top."""
     fc = (f"[0:v]fps=25,loop=loop=-1:size=250:start=0,setpts=N/(25*TB),trim=start={start:.2f}:end={start + secs + 0.5:.2f},setpts=PTS-STARTPTS,split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=30:6,eq=brightness=-0.18[bg];"
-          f"[b]scale={W}:-2[fg];[bg][fg]overlay=(W-w)/2:(H-h)/2[m];[m][1:v]overlay=0:0,format=yuv420p[v]")
+          f"[b]scale={W - 100}:760:force_original_aspect_ratio=decrease:force_divisible_by=2[fg];[bg][fg]overlay=(W-w)/2:260+(760-h)/2[m];[m][1:v]overlay=0:0,format=yuv420p[v]")
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", mp4, "-loop", "1", "-i", overlay_png]
     cmd += ["-i", audio] if audio else ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono"]
     cmd += ["-filter_complex", fc, "-map", "[v]", "-map", "2:a", "-r", "25", "-c:v", "libx264", "-preset", "veryfast",
@@ -358,7 +382,7 @@ FONTS_DIR = os.path.join(HERE, "fonts")                     # Hind-Bold.ttf (Dev
 MUSIC = os.environ.get("REEL_MUSIC", os.path.join(HERE, "music", "bed.m4a"))
 MUSIC_VOL = float(os.environ.get("REEL_MUSIC_VOL", "0.42"))   # relative level; ducks further under the voice
 CAPTION_Y = int(os.environ.get("REEL_CAPTION_Y", "1185"))     # baseline (px from top) of the word captions
-XF_D, XF_CUT = 0.25, 0.04
+XF_D, XF_CUT = 0.25, 0.08          # XF_CUT=0.04 (sirf 1 frame) par ffmpeg 6.1 xfade baaki video kaat deta tha (reel beech me ruk jaati) -> 2 frame
 
 
 def _trans(shots, i):
@@ -598,7 +622,7 @@ def item_script(it, k, n):
     sc = dict(it.get("script") or {})
     sc.setdefault("intro", f"ये देखो {name}, सिर्फ़ {rs_voice(price)} में, और पूरे {hindi_num(pct)} परसेंट डिस्काउंट के साथ।")
     sc.setdefault("lines", [{"text": clean_bullet(b), "voice": clean_bullet(b)} for b in (it.get("benefits") or [])[:2] if clean_bullet(b)])
-    sc.setdefault("tag", f"{k + 1}. {short(it.get('title'), 26)}")
+    sc.setdefault("tag", f"{k + 1}. {short(it.get('title'), 44)}")
     return sc
 
 
@@ -659,26 +683,24 @@ def build_multi(payload, items, shots, meta_items):
         if hook_shot:
             if vid:
                 hp = f"{TMP}/hov.png"; hook_overlay(head, sub, it).save(hp)
-                shots.append({"kind": "video", "mp4": vid, "png": hp, "voice": hook_v, "min": 2.8, "pk": k, "lively": True})
+                shots.append({"kind": "video", "mp4": vid, "png": hp, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
             else:
-                f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
+                f = photo_frame(photos[0], it, None, None, top=410, height=600).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
                 hp = f"{TMP}/hov.png"; f.convert("RGB").save(hp)
-                shots.append({"kind": "still", "png": hp, "voice": hook_v, "min": 2.8, "pk": k, "lively": True})
+                shots.append({"kind": "still", "png": hp, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
         # ---- shot A: video clip (ya hero photo) + product intro (hook ke baad wahi clip aage chalti hai)
         if vid:
             ov = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ov, "RGBA")
-            d.rounded_rectangle((50, 110, W - 50, 250), 40, fill=(0, 0, 0, 165))
-            text_outline(d, (W // 2, 180), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
+            title_chip(d, cap)
             price_strip(d, it)
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": intro, "min": 3.5, "pk": k, "vcont": hook_shot})
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": intro, "min": 3.0, "pk": k, "vcont": hook_shot})
         else:
             f = photo_frame(photos[0], it, None, None).convert("RGBA")
             d = ImageDraw.Draw(f, "RGBA")
-            d.rounded_rectangle((50, 110, W - 50, 235), 40, fill=(0, 0, 0, 165))
-            text_outline(d, (W // 2, 172), cap, fit(d, cap, 56, W - 160, 34), fill="#ffeb3b", sw=5)
+            title_chip(d, cap)
             p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
-            shots.append({"kind": "still", "png": p, "voice": intro, "min": 3.5, "pk": k})
+            shots.append({"kind": "still", "png": p, "voice": intro, "min": 3.0, "pk": k})
         # ---- shots B: 2-3 gallery photos, har photo par ek benefit (screen caption + awaaz)
         cnt = max(2, min(3, len(bens))) if bens else 2
         for j in range(cnt):
@@ -686,8 +708,8 @@ def build_multi(payload, items, shots, meta_items):
             ln = bens[j] if j < len(bens) else None
             p = f"{TMP}/b{k}_{j}.png"
             photo_frame(ph, it, ln[0] if ln else None, f"{j + 1}/{cnt}").save(p)
-            shots.append({"kind": "still", "png": p, "voice": with_stop(ln[1]) if ln else None, "min": 2.6, "pk": k})
-        shots[-1]["tail"] = 0.6                  # product khatam: agle product se pehle thoda gap
+            shots.append({"kind": "still", "png": p, "voice": with_stop(ln[1]) if ln else None, "min": 2.2, "pk": k})
+        shots[-1]["tail"] = 0.45                  # product khatam: agle product se pehle thoda gap
         if first_media is None:
             first_media = photos[0]
     outro = (str(payload.get("outro") or "").strip()) or "लिंक कमेंट्स में है। रील सेव कर लो, और ऐसी डील्स के लिए फ़ॉलो ज़रूर करना।"
@@ -718,7 +740,7 @@ def build_single(payload, items, shots, meta_items):
         ovp = f"{TMP}/ov0.png"; ov.save(ovp)
         shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": sc["hook"], "min": 3.6})
     else:
-        f = photo_frame(photos[0], it, None, None, top=410, height=820).convert("RGBA"); f.alpha_composite(ov)
+        f = photo_frame(photos[0], it, None, None, top=410, height=600).convert("RGBA"); f.alpha_composite(ov)
         p = f"{TMP}/h0.png"; f.convert("RGB").save(p)
         shots.append({"kind": "still", "png": p, "voice": sc["hook"], "min": 3.0})
     gal = photos[1:] if len(photos) > 1 else photos
@@ -764,6 +786,55 @@ def voice_test(text):
     print("voice test done", ok)
 
 
+def _set_secs(shots):
+    """Shot ki lambai = poori awaaz + chhota tail (awaaz kabhi kaati nahi jaati); har product kam se kam PRODUCT_MIN sec."""
+    for s_ in shots:
+        a = s_.get("audio")
+        s_["secs"] = max(dur(a) + s_.get("tail", 0.25), s_["min"]) if a else s_["min"]
+    by = {}
+    for s_ in shots:
+        if s_.get("pk") is not None:
+            by.setdefault(s_["pk"], []).append(s_)
+    for pk, grp in by.items():
+        tot = sum(x["secs"] for x in grp)
+        if tot < PRODUCT_MIN:
+            add = (PRODUCT_MIN - tot) / len(grp)
+            for x in grp:
+                x["secs"] += add
+
+
+def _est_total(shots):
+    return sum(s_["secs"] for s_ in shots) - sum(_trans(shots, i)[1] for i in range(1, len(shots)))
+
+
+def _retempo(path, f):
+    out = path[:-4] + f".t{int(f * 100)}.mp3"
+    r = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", path, "-af", f"atempo={f:.3f}", "-ar", "44100", "-ac", "1", out],
+                       capture_output=True, text=True, timeout=60)
+    return out if r.returncode == 0 and os.path.exists(out) and os.path.getsize(out) > 500 else path
+
+
+def fit_length(shots):
+    """Reel 36-44 sec: lambi ho to awaaz thodi tez (max MAX_EXTRA_SPEED), chhoti ho to shots thoda zyada rukte hain."""
+    _set_secs(shots)
+    est = _est_total(shots)
+    if est > MAX_TOTAL and any(s_.get("audio") for s_ in shots):
+        f = min(MAX_EXTRA_SPEED, est / MAX_TOTAL)
+        if f > 1.02:
+            for s_ in shots:
+                if s_.get("audio"):
+                    s_["audio"] = _retempo(s_["audio"], f)
+            _set_secs(shots)
+            print(f"length {est:.1f}s > {MAX_TOTAL:.0f}s -> voice x{f:.2f} -> {_est_total(shots):.1f}s")
+    est = _est_total(shots)
+    if est < MIN_TOTAL:
+        add = (MIN_TOTAL - est) / len(shots)
+        for s_ in shots:
+            s_["secs"] += add
+        print(f"length {est:.1f}s < {MIN_TOTAL:.0f}s -> +{add:.2f}s per shot")
+    print(f"estimated reel length {_est_total(shots):.1f}s")
+
+
 def main():
     try:
         import signal
@@ -786,9 +857,9 @@ def main():
             sc_ = it_.get("script") or {}
             for k_ in ("intro", "tag"):
                 if sc_.get(k_):
-                    sc_[k_] = fill(sc_[k_], items)
+                    sc_[k_] = fill_screen(sc_[k_], items) if k_ == "tag" else fill(sc_[k_], items)
             for ln_ in sc_.get("lines") or []:
-                ln_["text"], ln_["voice"] = fill(ln_.get("text"), items), fill(ln_.get("voice"), items)
+                ln_["text"], ln_["voice"] = fill_screen(ln_.get("text"), items), fill(ln_.get("voice"), items)      # screen text: Hindi shabd nahi (tofu), sirf Rs/%
     except Exception as e:
         print("script fill failed:", e, file=sys.stderr)
     os.makedirs(OUT, exist_ok=True)
@@ -802,21 +873,7 @@ def main():
         a = tts_one(s_["voice"], f"{TMP}/v{k}.mp3", bool(s_.get("lively"))) if s_.get("voice") else None
         voiced += 1 if a else 0
         s_["audio"] = a
-        # shot ki lambai = poori awaaz + chhota tail (awaaz kabhi kaati nahi jaati)
-        secs = max(dur(a) + s_.get("tail", 0.25), s_["min"]) if a else s_["min"]
-        s_["secs"] = secs
-    # har product kam se kam PRODUCT_MIN sec: kami ho to us product ke shots me barabar baant do
-    by = {}
-    for s_ in shots:
-        if s_.get("pk") is not None:
-            by.setdefault(s_["pk"], []).append(s_)
-    for pk, grp in by.items():
-        tot = sum(x["secs"] for x in grp)
-        if tot < PRODUCT_MIN:
-            add = (PRODUCT_MIN - tot) / len(grp)
-            for x in grp:
-                x["secs"] += add
-        print(f"product {pk}: {sum(x['secs'] for x in grp):.1f}s in {len(grp)} shots")
+    fit_length(shots)
     clips, prev_secs = [], 0.0
     for k, s_ in enumerate(shots):
         c, a, secs = f"{TMP}/c{k}.mp4", s_["audio"], s_["secs"]
