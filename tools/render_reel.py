@@ -452,11 +452,23 @@ def still_clip(png, secs, audio, out, k, overlay=None, strip=None, hook=False):
     run(cmd)
 
 
-def video_clip(mp4, overlay_png, secs, audio, out, start=0.0, strip=None):
+def video_clip(mp4, overlay_png, secs, audio, out, start=0.0, strip=None, hook=False):
     """Product video: blurred cover bg + video fit-to-width in the middle + overlay (hook text, price). Video muted, voice on top.
     strip=<png from strip_png()>: price strip pops in at the start instead of being baked into overlay_png."""
+    # landscape clips (16:9 = most Amazon videos) used to be fitted to width -> a thin ~550px band, product looked tiny.
+    # Fill the whole 980x760 box instead (centre crop, ~25% of the width trimmed). Square/portrait clips keep the old fit.
+    top, bh = (385, 630) if hook else (260, 760)      # hook shot: hook text box sits at y 90-380, so the clip box starts below it
+    fill = False
+    try:
+        pr = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", mp4],
+                            capture_output=True, text=True, timeout=30).stdout.strip().split(",")
+        fill = int(pr[0]) / max(1, int(pr[1])) >= 1.2
+    except Exception:
+        pass
+    fg = (f"[b]scale={W - 100}:{bh}:force_original_aspect_ratio=increase,crop={W - 100}:{bh}[fg];" if fill else
+          f"[b]scale={W - 100}:{bh}:force_original_aspect_ratio=decrease:force_divisible_by=2[fg];")
     fc = (f"[0:v]fps=25,loop=loop=-1:size=250:start=0,setpts=N/(25*TB),trim=start={start:.2f}:end={start + secs + 0.5:.2f},setpts=PTS-STARTPTS,split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=30:6,eq=brightness=-0.18[bg];"
-          f"[b]scale={W - 100}:760:force_original_aspect_ratio=decrease:force_divisible_by=2[fg];[bg][fg]overlay=(W-w)/2:260+(760-h)/2[m];")
+          f"{fg}[bg][fg]overlay=(W-w)/2:{top}+({bh}-h)/2[m];")
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", mp4, "-loop", "1", "-i", overlay_png]
     if strip:
         cmd += ["-loop", "1", "-i", strip]
@@ -777,7 +789,7 @@ def build_multi(payload, items, shots, meta_items):
         if hook_shot:
             if vid:
                 hp = f"{TMP}/hov.png"; hook_overlay(head, sub, it).save(hp)
-                shots.append({"kind": "video", "mp4": vid, "png": hp, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
+                shots.append({"kind": "video", "mp4": vid, "png": hp, "hook": True, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
             else:
                 b_, o_ = photo_layers(photos[0], it, None, None, top=410, height=600); o_.alpha_composite(hook_overlay(head, sub, it))
                 hp, hop = save_layers(b_, o_, f"{TMP}/hov")
@@ -976,7 +988,7 @@ def main():
             if s_.get("vcont"):                  # pichla shot isi clip ka tha: wahin se aage chalao
                 L = max(1.0, dur(s_["mp4"]))
                 st = prev_secs % L
-            video_clip(s_["mp4"], s_["png"], secs, a, c, st, s_.get("strip"))
+            video_clip(s_["mp4"], s_["png"], secs, a, c, st, s_.get("strip"), bool(s_.get("hook")))
         else:
             still_clip(s_["png"], secs, a, c, k, s_.get("ov"), s_.get("strip"), bool(s_.get("hook")))
         clips.append(c)
