@@ -1,141 +1,101 @@
 {
- "time": "2026-11-06T02:14:29Z",
+ "time": "2026-11-06T02:16:50Z",
  "mode": "offers",
  "captcha_streak": 0,
- "pages_loaded": 17,
+ "pages_loaded": 12,
  "pages": [
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=baby+clothes&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2241553,
+   "html_len": 2213027,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=baby+clothes&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2101350,
+   "html_len": 2146555,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=girls+dress+frock&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=kids+clothing+set&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2180560,
+   "html_len": 1982355,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=girls+dress+frock&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=kids+clothing+set&i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2094526,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+gown+maxi+dress&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8246,
+   "html_len": 8309,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+gown+maxi+dress&i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=baby&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8098,
-   "has_results": false,
+   "html_len": 894339,
+   "has_results": true,
    "marks": [],
-   "cards": 0
+   "cards": 24
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+gown+maxi+dress&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=baby&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2054818,
+   "html_len": 882132,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=baby+feeding+bottle&i=baby&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1503948,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=baby+feeding+bottle&i=baby&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1596247,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=maternity+nursing+mom&i=baby&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1377649,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=maternity+nursing+mom&i=baby&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1731141,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=kids+shoes+sandals&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1995534,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+gown+maxi+dress&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=kids+shoes+sandals&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8217,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+sandals&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8137,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+sandals&i=shoes&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 2091815,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+sandals&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 2077830,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+heels&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1972178,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+heels&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1951347,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+flats+bellies&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1760676,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+flats+bellies&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1714421,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=girls+sandals+shoes&i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 2061696,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=girls+sandals+shoes&i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 2074718,
+   "html_len": 2061101,
    "has_results": true,
    "marks": [],
    "cards": 48
