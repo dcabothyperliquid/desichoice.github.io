@@ -698,7 +698,7 @@ _LOAN = {w.split("=")[0]: w.split("=")[1] for w in (
     "आपकी=aapki क्या=kya कैसे=kaise क्यों=kyun कुछ=kuch सब=sab बहुत=bahut बस=bas सच=sach सिर्फ़=sirf सिर्फ=sirf ज़रूर=zaroor रोज़=roz "
     "दाम=daam मिलेगा=milega मिलेगी=milegi मिल=mil रहा=raha रही=rahi रहे=rahe सकते=sakte सकती=sakti हो=ho तो=toh भी=bhi पर=par से=se "
     "का=ka की=ki के=ke को=ko एक=ek दो=do तीन=teen चार=chaar पाँच=paanch देखो=dekho देख=dekh घर=ghar काम=kaam आराम=aaram पैसा=paisa "
-    "ज़्यादा=zyada आएगा=aayega आएगी=aayegi लाइफ=life सूटकेस=suitcase सूटकेस=suitcase रात=raat लिंक्स=links शेयर=share भेज=bhej भेजो=bhejo डीलर=dealer").split()}
+    "ईयरबड्स=earbuds ईयरबड=earbud ईयरफ़ोन=earphone इयरफ़ोन=earphone ईयरफोन=earphone इयरफोन=earphone बोट=boAt फिलिप्स=Philips प्लेटाइम=playtime प्लेबैक=playback टेंशन=tension ऑप्शन=option कॉल्स=calls कॉल=call माइक=mic फ़ास्ट=fast फास्ट=fast रेडी=ready गेमिंग=gaming ऑडियो=audio हेडफोन=headphone नेकबैंड=neckband ज़्यादा=zyada आएगा=aayega आएगी=aayegi लाइफ=life सूटकेस=suitcase सूटकेस=suitcase रात=raat लिंक्स=links शेयर=share भेज=bhej भेजो=bhejo डीलर=dealer").split()}
 
 _VOW = {"अ": "a", "आ": "aa", "इ": "i", "ई": "ee", "उ": "u", "ऊ": "oo", "ए": "e", "ऐ": "ai", "ओ": "o", "औ": "au", "ऑ": "o", "ऋ": "ri"}
 _MAT = {"ा": "aa", "ि": "i", "ी": "i", "ु": "u", "ू": "u", "े": "e", "ै": "ai", "ो": "o", "ौ": "au", "ॉ": "o", "ृ": "ri"}
