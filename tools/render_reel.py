@@ -379,12 +379,14 @@ def run(cmd, timeout=240):
         raise RuntimeError("ffmpeg failed")
 
 
-ZOOM_AMT = float(os.environ.get("REEL_ZOOM", "0.24"))        # visible punch-in (24%); old Ken-Burns was 8% and looked like a slideshow
-PUNCH_AMT = float(os.environ.get("REEL_PUNCH", "0.07"))      # extra hard punch-in beat in the middle of longer shots
+ZOOM_AMT = float(os.environ.get("REEL_ZOOM", "0.20"))        # visible punch-in (20%); old Ken-Burns was 8% and looked like a slideshow
+PUNCH_AMT = float(os.environ.get("REEL_PUNCH", "0.05"))      # extra hard punch-in beat in the middle of longer shots
 PUNCH_MIN_S = 3.2                                             # shots shorter than this get no mid-shot punch
+CARD_Y = "(ih-ih/zoom)*0.526"      # zoom pivot = card BOTTOM edge (y=1010/1920): the card grows upward only, so it never runs into
+                                   # the word captions (they sit at y~1020-1185) or the benefit line (y~1290)
 
 
-HOOK_SNAP = float(os.environ.get("REEL_HOOK_SNAP", "0.22"))   # hook shot: sharp snap-zoom in the first ~0.5s (frame-1 visual interrupt)
+HOOK_SNAP = float(os.environ.get("REEL_HOOK_SNAP", "0.20"))   # hook shot: sharp snap-zoom in the first ~0.5s (frame-1 visual interrupt)
 POP_AMT, POP_S = float(os.environ.get("REEL_POP", "0.10")), 0.45   # price strip slams in from +10% to 100% over 0.45s
 
 
@@ -406,7 +408,7 @@ def zoom_exprs(secs, k, layered, hook=False):
     N = max(2, int(secs * 25))
     if layered and hook:
         snap = "(1-pow(1-min(1,on/12),3))"
-        return ("1.0+%.3f*%s+0.05*min(1,on/%d)" % (HOOK_SNAP, snap, N), "(iw-iw/zoom)/2", "(ih-ih/zoom)*0.25")
+        return ("1.0+%.3f*%s+0.05*min(1,on/%d)" % (HOOK_SNAP, snap, N), "(iw-iw/zoom)/2", CARD_Y)
     if not layered:
         c = "(iw-iw/zoom)/2"
         modes = [("1.0+0.08*on/%d" % N, c, "(ih-ih/zoom)/2"),
@@ -418,7 +420,7 @@ def zoom_exprs(secs, k, layered, hook=False):
     p = "min(1,on/%d)" % N                                  # linear 0..1 (for pans)
     punch = ("+%.3f*gte(on,%d)" % (PUNCH_AMT, int(N * 0.55))) if secs >= PUNCH_MIN_S else ""
     a = ZOOM_AMT
-    y = "(ih-ih/zoom)*0.25"                                 # fixed point ~25% down: card grows down/up evenly, never into the caption
+    y = CARD_Y
     modes = [("1.0+%.3f*%s%s" % (a, e, punch), "(iw-iw/zoom)/2", y),                                 # punch in
              ("%.3f-%.3f*%s" % (1.0 + a + 0.02, a, e), "(iw-iw/zoom)/2", y),                           # pull back (reveal)
              ("1.12+%.3f*%s%s" % (a * 0.5, e, punch), "(iw-iw/zoom)*(0.30+0.40*%s)" % p, y),           # zoom + pan left -> right
