@@ -28,7 +28,7 @@ FALLBACK_VOICES = ["en-US-AvaMultilingualNeural", "en-US-EmmaMultilingualNeural"
 VOICE_USED = [None]
 PRODUCT_MIN = float(os.environ.get("REEL_PRODUCT_MIN", "8"))       # har product kam se kam itne sec
 MIN_TOTAL = float(os.environ.get("REEL_MIN_TOTAL", "36"))          # reel ki lambai 36-44 sec ke beech rakho
-MAX_TOTAL = float(os.environ.get("REEL_MAX_TOTAL", "43"))
+MAX_TOTAL = float(os.environ.get("REEL_MAX_TOTAL", "46"))
 MAX_EXTRA_SPEED = float(os.environ.get("REEL_MAX_EXTRA_SPEED", "1.14"))   # lambi script ho to awaaz max itni aur tez (SPEEDUP ke upar)
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
 HIND = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "Hind-Bold.ttf")   # Devanagari + Latin
@@ -120,6 +120,34 @@ def blurred_bg(im):
     return ImageEnhance.Brightness(bg).enhance(0.62)
 
 
+def _rating(it):
+    """-> (rating float, reviews int) ya None (feed me rating nahi / 0)."""
+    try:
+        r = round(float(it.get("rating") or 0), 1)
+        n = int(float(it.get("reviews") or 0))
+    except Exception:
+        return None
+    return (r, n) if 1.0 <= r <= 5.0 else None
+
+
+def fmt_reviews(n):
+    if n >= 100000:
+        return f"{n / 1000:.0f}K"
+    if n >= 1000:
+        return f"{n / 1000:.1f}".rstrip("0").rstrip(".") + "K"
+    return str(n)
+
+
+def _star(d, cx, cy, r, fill):
+    import math
+    pts = []
+    for i in range(10):
+        a = -math.pi / 2 + i * math.pi / 5
+        rr = r if i % 2 == 0 else r * 0.42
+        pts.append((cx + rr * math.cos(a), cy + rr * math.sin(a)))
+    d.polygon(pts, fill=fill)
+
+
 def price_strip(d, it, pct_badge=True):
     """Bottom strip kept clear of the Reels UI (bottom ~230px)."""
     d.rounded_rectangle((50, 1390, W - 50, 1660), 44, fill=(255, 255, 255, 235))
@@ -135,6 +163,14 @@ def price_strip(d, it, pct_badge=True):
     if pct_badge and pct:
         d.rounded_rectangle((100, 1570, 420, 1640), 22, fill=ACCENT)
         d.text((260, 1605), f"{pct}% OFF", font=font(44), fill="white", anchor="mm")
+    rt = _rating(it)
+    if rt:                                    # trust: gold star + rating + (reviews), badge aur DESI CHOICE ke beech
+        r_, n_ = rt
+        x = 446
+        _star(d, x + 20, 1604, 24, "#f59e0b")
+        d.text((x + 52, 1605), f"{r_:.1f}", font=font(44), fill="#111111", anchor="lm")
+        if n_ > 0:
+            d.text((x + 52 + d.textlength(f"{r_:.1f}", font=font(44)) + 8, 1607), f"({fmt_reviews(n_)})", font=font(32), fill="#666666", anchor="lm")
     d.text((W - 100, 1605), "DESI CHOICE", font=font(36), fill="#f97316", anchor="rm")
 
 
@@ -267,6 +303,15 @@ def rs_short(v):
     """Bolne ke liye gol amount: 15998 -> 'सोलह हज़ार रुपये', 2629 -> 'दो हज़ार छह सौ रुपये' (screen par exact price rehta hai)."""
     v = float(v)
     return rs_voice(int(round(v / 100.0) * 100) if v >= 1000 else int(round(v)))
+
+
+def rating_voice(it):
+    """'चार पॉइंट तीन स्टार रेटिंग।' -- sirf jab rating >= 4.0 (kam rating bolke trust nahi banta)."""
+    rt = _rating(it)
+    if not rt or rt[0] < 4.0:
+        return ""
+    whole, dec = int(rt[0]), int(round((rt[0] - int(rt[0])) * 10))
+    return hindi_num(whole) + (" पॉइंट " + hindi_num(dec) if dec else "") + " स्टार रेटिंग।"
 
 
 def price_first(it, tail=""):
@@ -428,25 +473,39 @@ def zoom_exprs(secs, k, layered, hook=False):
     return modes[k % 4]
 
 
-def still_clip(png, secs, audio, out, k, overlay=None, strip=None, hook=False):
+def still_clip(png, secs, audio, out, k, overlay=None, strip=None, hook=False, alts=None):
     """One still shot. overlay=None: png is the full frame (text baked in) -> gentle zoom. overlay=<RGBA png>: png is just the
     photo layer, it zooms hard and the overlay (text/price) is laid on top, static.
-    strip=<RGBA png from strip_png()>: price strip is added on top with a 'pop' instead of being part of the static overlay."""
-    z, x, y = zoom_exprs(secs, k, bool(overlay), hook)
-    zp = f"scale=2160:3840,zoompan=z='{z}':x='{x}':y='{y}':d=1:s={W}x{H}:fps=25"
-    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", png]
+    strip=<RGBA png from strip_png()>: price strip is added on top with a 'pop' instead of being part of the static overlay.
+    alts=[photo layer png, ...]: lambi shot me photos badalti rehti hain (~2 sec har photo), overlay/price wahi static."""
+    bases = [png]
+    if overlay and alts:
+        nseg = max(1, min(1 + len(alts), int(round(secs / 2.0))))
+        bases = [png] + list(alts[:nseg - 1])
+    seg = secs / len(bases)
+    cmd = ["ffmpeg", "-y", "-loglevel", "error"]
+    zparts = []
+    for i, b in enumerate(bases):
+        z, x, y = zoom_exprs(seg, k + i, bool(overlay), hook and i == 0)
+        zparts.append(f"scale=2160:3840,zoompan=z='{z}':x='{x}':y='{y}':d=1:s={W}x{H}:fps=25")
+        cmd += ["-loop", "1", "-framerate", "25", "-t", f"{seg:.3f}", "-i", b]
+    nb = len(bases)
     if overlay:
         cmd += ["-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", overlay]
     if overlay and strip:
         cmd += ["-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", strip]
     cmd += ["-i", audio] if audio else ["-f", "lavfi", "-t", f"{secs:.2f}", "-i", "anullsrc=r=44100:cl=mono"]
-    if overlay and strip:
-        cmd += ["-filter_complex", f"[0:v]{zp}[z];[z][1:v]overlay=0:0[m];{pop_chain('m', 2, 'm2')};[m2]format=yuv420p[v]",
-                "-map", "[v]", "-map", "3:a"]
-    elif overlay:
-        cmd += ["-filter_complex", f"[0:v]{zp}[z];[z][1:v]overlay=0:0,format=yuv420p[v]", "-map", "[v]", "-map", "2:a"]
+    if nb > 1:
+        base_f = ";".join(f"[{i}:v]{zp}[z{i}]" for i, zp in enumerate(zparts)) + ";" + "".join(f"[z{i}]" for i in range(nb)) + f"concat=n={nb}:v=1:a=0[z]"
     else:
-        cmd += ["-vf", f"{zp},format=yuv420p"]
+        base_f = f"[0:v]{zparts[0]}[z]"
+    if overlay and strip:
+        cmd += ["-filter_complex", f"{base_f};[z][{nb}:v]overlay=0:0[m];{pop_chain('m', nb + 1, 'm2')};[m2]format=yuv420p[v]",
+                "-map", "[v]", "-map", f"{nb + 2}:a"]
+    elif overlay:
+        cmd += ["-filter_complex", f"{base_f};[z][{nb}:v]overlay=0:0,format=yuv420p[v]", "-map", "[v]", "-map", f"{nb + 1}:a"]
+    else:
+        cmd += ["-vf", f"{zparts[0]},format=yuv420p"]
     cmd += ["-r", "25", "-c:v", "libx264", "-preset", "veryfast", "-crf", "22", "-c:a", "aac", "-b:a", "128k",
             "-ar", "44100", "-ac", "1", "-af", "apad", "-t", f"{secs:.2f}", out]
     run(cmd)
@@ -778,6 +837,9 @@ def build_cap_map(items):
             _CAP_MAP[rs_short(v)] = inr(v)
             _CAP_MAP[rs_short(v).replace(" रुपये", "")] = inr(v)
         _CAP_MAP[hindi_num(pct) + " परसेंट"] = f"{pct}%"
+        rv = rating_voice(it)
+        if rv:
+            _CAP_MAP[rv.rstrip("।")] = f"{_rating(it)[0]:.1f} star rating"
 
 
 
@@ -871,13 +933,25 @@ def build_multi(payload, items, shots, meta_items):
         meta_items.append({"asin": it.get("asin"), "photos": len(photos), "video": bool(vid)})
         gal = photos[1:] if len(photos) > 1 else photos
         bens = item_benefits(it, sc)
+
+        def _alts(idx, stem):          # isi shot me baad me dikhne wali baaki photos (cyclic, max 2) -> photo-layer PNGs
+            out_ = []
+            for i_ in range(1, len(photos)):
+                if len(out_) >= 2:
+                    break
+                ap = f"{stem}_alt{i_}.png"
+                photo_layers(photos[(idx + i_) % len(photos)], it, None, None, strip=False)[0].save(ap)
+                out_.append(ap)
+            return out_
         cap = sc["tag"]
         hook_v = ""
         if k == 0:
             hook_v = with_stop(str((payload.get("hook") or {}).get("voice") or "").strip())
             intro = (given.get("intro") or "").strip() or price_first(it)    # AI intro (bol-chal); na ho to template
+            intro = (intro + " " + rating_voice(it)).strip() if len(items) > 1 else intro
         else:
             intro = (given.get("intro") or "").strip()                        # AI intro me jod (transition) pehle se hota hai
+            intro = (intro + " " + rating_voice(it)).strip() if intro else intro
             if not intro:                                                     # fallback: har baar alag jod, phir product
                 intro = f"{CONNECT[(k - 1) % len(CONNECT)] if k < n - 1 else CONNECT_LAST} {spoken_name(it.get('title'))}, सिर्फ़ {rs_short(it['price'])} में।"
         # ---- shot H (sirf pehle product par): hook line = AI head/sub screen pe + hook voice, clip/photo ke upar
@@ -902,7 +976,7 @@ def build_multi(payload, items, shots, meta_items):
             title_chip(ImageDraw.Draw(o_, "RGBA"), cap)
             p, op = save_layers(b_, o_, f"{TMP}/a{k}")
             sp = strip_png(it, f"{TMP}/a{k}_strip.png")
-            shots.append({"kind": "still", "png": p, "ov": op, "strip": sp, "voice": intro, "min": 3.0, "pk": k})
+            shots.append({"kind": "still", "png": p, "ov": op, "strip": sp, "voice": intro, "min": 3.0, "pk": k, "alts": _alts(0, f"{TMP}/a{k}")})
         # ---- shots B: 2-3 gallery photos, har photo par ek benefit (screen caption + awaaz)
         cnt = max(2, min(3, len(bens))) if bens else 2
         for j in range(cnt):
@@ -910,7 +984,9 @@ def build_multi(payload, items, shots, meta_items):
             ln = bens[j] if j < len(bens) else None
             b_, o_ = photo_layers(ph, it, ln[0] if ln else None, f"{j + 1}/{cnt}")
             p, op = save_layers(b_, o_, f"{TMP}/b{k}_{j}")
-            shots.append({"kind": "still", "png": p, "ov": op, "voice": with_stop(ln[1]) if ln else None, "min": 2.2, "pk": k})
+            gi = (1 + (j % len(gal))) if len(photos) > 1 else 0
+            shots.append({"kind": "still", "png": p, "ov": op, "voice": with_stop(ln[1]) if ln else None, "min": 2.2, "pk": k,
+                          "alts": _alts(gi, f"{TMP}/b{k}_{j}")})
         shots[-1]["tail"] = 0.45                  # product khatam: agle product se pehle thoda gap
         if first_media is None:
             first_media = photos[0]
@@ -1087,7 +1163,7 @@ def main():
                 st = prev_secs % L
             video_clip(s_["mp4"], s_["png"], secs, a, c, st, s_.get("strip"), bool(s_.get("hook")))
         else:
-            still_clip(s_["png"], secs, a, c, k, s_.get("ov"), s_.get("strip"), bool(s_.get("hook")))
+            still_clip(s_["png"], secs, a, c, k, s_.get("ov"), s_.get("strip"), bool(s_.get("hook")), s_.get("alts"))
         clips.append(c)
         prev_secs = secs
     try:
