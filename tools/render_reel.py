@@ -152,7 +152,18 @@ def title_chip(d, text, y0=110, y1=240):
         text_outline(d, (W // 2, y), ln, f, fill="#ffeb3b", sw=5)
 
 
-def photo_layers(photo, it, caption=None, counter=None, top=250, height=760):
+STRIP_BOX = (50, 1390, W - 50, 1660)      # price_strip() lives exactly here
+
+
+def strip_png(it, path):
+    """Price strip alone, cropped to its box (transparent PNG) so the renderer can 'pop' it (scale slam) without moving it."""
+    ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    price_strip(ImageDraw.Draw(ov, "RGBA"), it)
+    ov.crop(STRIP_BOX).save(path)
+    return path
+
+
+def photo_layers(photo, it, caption=None, counter=None, top=250, height=760, strip=True):
     """Two layers so the PHOTO can zoom hard while text/price stay fixed (old single baked PNG could only zoom 8% before the
     text got cut at the edges -> looked like a slideshow).
     -> (base RGB: blurred bg + white card + photo, overlay RGBA: counter + caption + price strip)."""
@@ -171,7 +182,8 @@ def photo_layers(photo, it, caption=None, counter=None, top=250, height=760):
         f = fit(od, caption, 64, W - 160, 40)
         for k, ln in enumerate(wrap(od, caption, f, W - 160)):
             text_outline(od, (W // 2, 1290 + k * 70), ln, f)
-    price_strip(od, it)
+    if strip:                                  # strip=False -> caller adds the animated strip_png() instead
+        price_strip(od, it)
     return base.convert("RGB"), ov
 
 
@@ -372,12 +384,29 @@ PUNCH_AMT = float(os.environ.get("REEL_PUNCH", "0.07"))      # extra hard punch-
 PUNCH_MIN_S = 3.2                                             # shots shorter than this get no mid-shot punch
 
 
-def zoom_exprs(secs, k, layered):
+HOOK_SNAP = float(os.environ.get("REEL_HOOK_SNAP", "0.22"))   # hook shot: sharp snap-zoom in the first ~0.5s (frame-1 visual interrupt)
+POP_AMT, POP_S = float(os.environ.get("REEL_POP", "0.10")), 0.45   # price strip slams in from +10% to 100% over 0.45s
+
+
+def pop_chain(src, strip_idx, out):
+    """ffmpeg filter text: overlay the price strip (input strip_idx) on [src] with a scale 'pop' at the start of the shot,
+    pivoting on the strip's own centre so it lands exactly where the static strip would be."""
+    s = "(1+%.3f*pow(max(0,1-t/%.2f),2))" % (POP_AMT, POP_S)
+    cx, cy = (STRIP_BOX[0] + STRIP_BOX[2]) // 2, (STRIP_BOX[1] + STRIP_BOX[3]) // 2
+    return (f"[{strip_idx}:v]scale=w='trunc(iw*{s}/2)*2':h='trunc(ih*{s}/2)*2':eval=frame[sp];"
+            f"[{src}][sp]overlay=x='{cx}-w/2':y='{cy}-h/2'[{out}]")
+
+
+def zoom_exprs(secs, k, layered, hook=False):
     """(z, x, y) zoompan expressions for shot k.
     layered=True  -> only the photo layer moves (text/price are a static overlay), so we can zoom hard: ease-out cubic
                      (fast punch at the start, settles) + alternating in / out / pan-left / pan-right + a mid-shot punch-in beat.
-    layered=False -> text is baked into the frame (outro), keep the old gentle <=8% Ken-Burns so nothing gets cut."""
+    layered=False -> text is baked into the frame (outro), keep the old gentle <=8% Ken-Burns so nothing gets cut.
+    hook=True     -> first shot: snap-zoom ~HOOK_SNAP within 0.5s, then a slow creep (the 'sharp zoom on frame 1' pattern interrupt)."""
     N = max(2, int(secs * 25))
+    if layered and hook:
+        snap = "(1-pow(1-min(1,on/12),3))"
+        return ("1.0+%.3f*%s+0.05*min(1,on/%d)" % (HOOK_SNAP, snap, N), "(iw-iw/zoom)/2", "(ih-ih/zoom)*0.25")
     if not layered:
         c = "(iw-iw/zoom)/2"
         modes = [("1.0+0.08*on/%d" % N, c, "(ih-ih/zoom)/2"),
@@ -397,16 +426,22 @@ def zoom_exprs(secs, k, layered):
     return modes[k % 4]
 
 
-def still_clip(png, secs, audio, out, k, overlay=None):
+def still_clip(png, secs, audio, out, k, overlay=None, strip=None, hook=False):
     """One still shot. overlay=None: png is the full frame (text baked in) -> gentle zoom. overlay=<RGBA png>: png is just the
-    photo layer, it zooms hard and the overlay (text/price) is laid on top, static."""
-    z, x, y = zoom_exprs(secs, k, bool(overlay))
+    photo layer, it zooms hard and the overlay (text/price) is laid on top, static.
+    strip=<RGBA png from strip_png()>: price strip is added on top with a 'pop' instead of being part of the static overlay."""
+    z, x, y = zoom_exprs(secs, k, bool(overlay), hook)
     zp = f"scale=2160:3840,zoompan=z='{z}':x='{x}':y='{y}':d=1:s={W}x{H}:fps=25"
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", png]
     if overlay:
         cmd += ["-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", overlay]
+    if overlay and strip:
+        cmd += ["-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", strip]
     cmd += ["-i", audio] if audio else ["-f", "lavfi", "-t", f"{secs:.2f}", "-i", "anullsrc=r=44100:cl=mono"]
-    if overlay:
+    if overlay and strip:
+        cmd += ["-filter_complex", f"[0:v]{zp}[z];[z][1:v]overlay=0:0[m];{pop_chain('m', 2, 'm2')};[m2]format=yuv420p[v]",
+                "-map", "[v]", "-map", "3:a"]
+    elif overlay:
         cmd += ["-filter_complex", f"[0:v]{zp}[z];[z][1:v]overlay=0:0,format=yuv420p[v]", "-map", "[v]", "-map", "2:a"]
     else:
         cmd += ["-vf", f"{zp},format=yuv420p"]
@@ -415,13 +450,20 @@ def still_clip(png, secs, audio, out, k, overlay=None):
     run(cmd)
 
 
-def video_clip(mp4, overlay_png, secs, audio, out, start=0.0):
-    """Product video: blurred cover bg + video fit-to-width in the middle + overlay (hook text, price). Video muted, voice on top."""
+def video_clip(mp4, overlay_png, secs, audio, out, start=0.0, strip=None):
+    """Product video: blurred cover bg + video fit-to-width in the middle + overlay (hook text, price). Video muted, voice on top.
+    strip=<png from strip_png()>: price strip pops in at the start instead of being baked into overlay_png."""
     fc = (f"[0:v]fps=25,loop=loop=-1:size=250:start=0,setpts=N/(25*TB),trim=start={start:.2f}:end={start + secs + 0.5:.2f},setpts=PTS-STARTPTS,split[a][b];[a]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},boxblur=30:6,eq=brightness=-0.18[bg];"
-          f"[b]scale={W - 100}:760:force_original_aspect_ratio=decrease:force_divisible_by=2[fg];[bg][fg]overlay=(W-w)/2:260+(760-h)/2[m];[m][1:v]overlay=0:0,format=yuv420p[v]")
+          f"[b]scale={W - 100}:760:force_original_aspect_ratio=decrease:force_divisible_by=2[fg];[bg][fg]overlay=(W-w)/2:260+(760-h)/2[m];")
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-i", mp4, "-loop", "1", "-i", overlay_png]
+    if strip:
+        cmd += ["-loop", "1", "-i", strip]
+        fc += f"[m][1:v]overlay=0:0[m1];{pop_chain('m1', 2, 'm2')};[m2]format=yuv420p[v]"
+    else:
+        fc += "[m][1:v]overlay=0:0,format=yuv420p[v]"
+    a_idx = 3 if strip else 2
     cmd += ["-i", audio] if audio else ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono"]
-    cmd += ["-filter_complex", fc, "-map", "[v]", "-map", "2:a", "-r", "25", "-c:v", "libx264", "-preset", "veryfast",
+    cmd += ["-filter_complex", fc, "-map", "[v]", "-map", f"{a_idx}:a", "-r", "25", "-c:v", "libx264", "-preset", "veryfast",
             "-crf", "22", "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "1", "-af", "apad", "-t", f"{secs:.2f}", out]
     run(cmd)
 
@@ -737,19 +779,20 @@ def build_multi(payload, items, shots, meta_items):
             else:
                 b_, o_ = photo_layers(photos[0], it, None, None, top=410, height=600); o_.alpha_composite(hook_overlay(head, sub, it))
                 hp, hop = save_layers(b_, o_, f"{TMP}/hov")
-                shots.append({"kind": "still", "png": hp, "ov": hop, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
+                shots.append({"kind": "still", "png": hp, "ov": hop, "hook": True, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
         # ---- shot A: video clip (ya hero photo) + product intro (hook ke baad wahi clip aage chalti hai)
         if vid:
             ov = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ov, "RGBA")
-            title_chip(d, cap)
-            price_strip(d, it)
+            title_chip(d, cap)                                   # price strip comes separately (animated pop)
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
-            shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": intro, "min": 3.0, "pk": k, "vcont": hook_shot})
+            sp = strip_png(it, f"{TMP}/ov{k}_strip.png")
+            shots.append({"kind": "video", "mp4": vid, "png": ovp, "strip": sp, "voice": intro, "min": 3.0, "pk": k, "vcont": hook_shot})
         else:
-            b_, o_ = photo_layers(photos[0], it, None, None)
+            b_, o_ = photo_layers(photos[0], it, None, None, strip=False)
             title_chip(ImageDraw.Draw(o_, "RGBA"), cap)
             p, op = save_layers(b_, o_, f"{TMP}/a{k}")
-            shots.append({"kind": "still", "png": p, "ov": op, "voice": intro, "min": 3.0, "pk": k})
+            sp = strip_png(it, f"{TMP}/a{k}_strip.png")
+            shots.append({"kind": "still", "png": p, "ov": op, "strip": sp, "voice": intro, "min": 3.0, "pk": k})
         # ---- shots B: 2-3 gallery photos, har photo par ek benefit (screen caption + awaaz)
         cnt = max(2, min(3, len(bens))) if bens else 2
         for j in range(cnt):
@@ -791,7 +834,7 @@ def build_single(payload, items, shots, meta_items):
     else:
         b_, o_ = photo_layers(photos[0], it, None, None, top=410, height=600); o_.alpha_composite(ov)
         p, op = save_layers(b_, o_, f"{TMP}/h0")
-        shots.append({"kind": "still", "png": p, "ov": op, "voice": sc["hook"], "min": 3.0})
+        shots.append({"kind": "still", "png": p, "ov": op, "hook": True, "voice": sc["hook"], "min": 3.0})
     gal = photos[1:] if len(photos) > 1 else photos
     for j, ph in enumerate(gal[:3]):
         ln = lines[j] if j < len(lines) else None
@@ -931,9 +974,9 @@ def main():
             if s_.get("vcont"):                  # pichla shot isi clip ka tha: wahin se aage chalao
                 L = max(1.0, dur(s_["mp4"]))
                 st = prev_secs % L
-            video_clip(s_["mp4"], s_["png"], secs, a, c, st)
+            video_clip(s_["mp4"], s_["png"], secs, a, c, st, s_.get("strip"))
         else:
-            still_clip(s_["png"], secs, a, c, k, s_.get("ov"))
+            still_clip(s_["png"], secs, a, c, k, s_.get("ov"), s_.get("strip"), bool(s_.get("hook")))
         clips.append(c)
         prev_secs = secs
     try:
