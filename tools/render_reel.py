@@ -152,23 +152,43 @@ def title_chip(d, text, y0=110, y1=240):
         text_outline(d, (W // 2, y), ln, f, fill="#ffeb3b", sw=5)
 
 
-def photo_frame(photo, it, caption=None, counter=None, top=250, height=760):
-    """Blurred full-bleed bg + white product card + caption + price strip. Returns RGB image."""
-    im = blurred_bg(photo).convert("RGBA")
-    d = ImageDraw.Draw(im, "RGBA")
+def photo_layers(photo, it, caption=None, counter=None, top=250, height=760):
+    """Two layers so the PHOTO can zoom hard while text/price stay fixed (old single baked PNG could only zoom 8% before the
+    text got cut at the edges -> looked like a slideshow).
+    -> (base RGB: blurred bg + white card + photo, overlay RGBA: counter + caption + price strip)."""
+    base = blurred_bg(photo).convert("RGBA")
+    d = ImageDraw.Draw(base, "RGBA")
     d.rounded_rectangle((50, top, W - 50, top + height), 48, fill=(255, 255, 255, 255))
     ph = photo.copy()
     ph.thumbnail((940, height - 40))
-    im.paste(ph, ((W - ph.width) // 2, top + (height - ph.height) // 2))
+    base.paste(ph, ((W - ph.width) // 2, top + (height - ph.height) // 2))
+    ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    od = ImageDraw.Draw(ov, "RGBA")
     if counter:
-        d.rounded_rectangle((W - 230, 190, W - 60, 270), 30, fill=(0, 0, 0, 170))
-        d.text((W - 145, 230), counter, font=font(44), fill="white", anchor="mm")
+        od.rounded_rectangle((W - 230, 190, W - 60, 270), 30, fill=(0, 0, 0, 170))
+        od.text((W - 145, 230), counter, font=font(44), fill="white", anchor="mm")
     if caption:
-        f = fit(d, caption, 64, W - 160, 40)
-        for k, ln in enumerate(wrap(d, caption, f, W - 160)):
-            text_outline(d, (W // 2, 1290 + k * 70), ln, f)
-    price_strip(d, it)
+        f = fit(od, caption, 64, W - 160, 40)
+        for k, ln in enumerate(wrap(od, caption, f, W - 160)):
+            text_outline(od, (W // 2, 1290 + k * 70), ln, f)
+    price_strip(od, it)
+    return base.convert("RGB"), ov
+
+
+def photo_frame(photo, it, caption=None, counter=None, top=250, height=760):
+    """Blurred full-bleed bg + white product card + caption + price strip, flattened. Returns RGB image."""
+    base, ov = photo_layers(photo, it, caption, counter, top, height)
+    im = base.convert("RGBA")
+    im.alpha_composite(ov)
     return im.convert("RGB")
+
+
+def save_layers(base, ov, stem):
+    """Write base/overlay PNGs for a layered still shot -> (base_path, overlay_path)."""
+    bp, op = f"{stem}.png", f"{stem}_ov.png"
+    base.save(bp)
+    ov.save(op)
+    return bp, op
 
 
 def hook_overlay(head, sub, it):
@@ -347,20 +367,50 @@ def run(cmd, timeout=240):
         raise RuntimeError("ffmpeg failed")
 
 
-def still_clip(png, secs, audio, out, k):
-    # smooth Ken-Burns: zoom in / zoom out / zoom + slow pan left->right / right->left. Zoom stays <= 1.08 and pan is small,
-    # so the text + price strip baked into the png never get cut at the edges.
+ZOOM_AMT = float(os.environ.get("REEL_ZOOM", "0.24"))        # visible punch-in (24%); old Ken-Burns was 8% and looked like a slideshow
+PUNCH_AMT = float(os.environ.get("REEL_PUNCH", "0.07"))      # extra hard punch-in beat in the middle of longer shots
+PUNCH_MIN_S = 3.2                                             # shots shorter than this get no mid-shot punch
+
+
+def zoom_exprs(secs, k, layered):
+    """(z, x, y) zoompan expressions for shot k.
+    layered=True  -> only the photo layer moves (text/price are a static overlay), so we can zoom hard: ease-out cubic
+                     (fast punch at the start, settles) + alternating in / out / pan-left / pan-right + a mid-shot punch-in beat.
+    layered=False -> text is baked into the frame (outro), keep the old gentle <=8% Ken-Burns so nothing gets cut."""
     N = max(2, int(secs * 25))
-    c = "(iw-iw/zoom)/2"
-    modes = [("1.0+0.08*on/%d" % N, c, "(ih-ih/zoom)/2"),
-             ("1.08-0.08*on/%d" % N, c, "(ih-ih/zoom)/2"),
-             ("1.05+0.03*on/%d" % N, "(iw-iw/zoom)*(0.38+0.24*on/%d)" % N, "(ih-ih/zoom)*0.45"),
-             ("1.08-0.03*on/%d" % N, "(iw-iw/zoom)*(0.62-0.24*on/%d)" % N, "(ih-ih/zoom)*0.55")]
-    z, x, y = modes[k % 4]
-    vf = f"scale=2160:3840,zoompan=z='{z}':x='{x}':y='{y}':d=1:s={W}x{H}:fps=25,format=yuv420p"
+    if not layered:
+        c = "(iw-iw/zoom)/2"
+        modes = [("1.0+0.08*on/%d" % N, c, "(ih-ih/zoom)/2"),
+                 ("1.08-0.08*on/%d" % N, c, "(ih-ih/zoom)/2"),
+                 ("1.05+0.03*on/%d" % N, "(iw-iw/zoom)*(0.38+0.24*on/%d)" % N, "(ih-ih/zoom)*0.45"),
+                 ("1.08-0.03*on/%d" % N, "(iw-iw/zoom)*(0.62-0.24*on/%d)" % N, "(ih-ih/zoom)*0.55")]
+        return modes[k % 4]
+    e = "(1-pow(1-min(1,on/%d),3))" % N                     # ease-out cubic 0..1
+    p = "min(1,on/%d)" % N                                  # linear 0..1 (for pans)
+    punch = ("+%.3f*gte(on,%d)" % (PUNCH_AMT, int(N * 0.55))) if secs >= PUNCH_MIN_S else ""
+    a = ZOOM_AMT
+    y = "(ih-ih/zoom)*0.25"                                 # fixed point ~25% down: card grows down/up evenly, never into the caption
+    modes = [("1.0+%.3f*%s%s" % (a, e, punch), "(iw-iw/zoom)/2", y),                                 # punch in
+             ("%.3f-%.3f*%s" % (1.0 + a + 0.02, a, e), "(iw-iw/zoom)/2", y),                           # pull back (reveal)
+             ("1.12+%.3f*%s%s" % (a * 0.5, e, punch), "(iw-iw/zoom)*(0.30+0.40*%s)" % p, y),           # zoom + pan left -> right
+             ("1.12+%.3f*%s%s" % (a * 0.5, e, punch), "(iw-iw/zoom)*(0.70-0.40*%s)" % p, y)]           # zoom + pan right -> left
+    return modes[k % 4]
+
+
+def still_clip(png, secs, audio, out, k, overlay=None):
+    """One still shot. overlay=None: png is the full frame (text baked in) -> gentle zoom. overlay=<RGBA png>: png is just the
+    photo layer, it zooms hard and the overlay (text/price) is laid on top, static."""
+    z, x, y = zoom_exprs(secs, k, bool(overlay))
+    zp = f"scale=2160:3840,zoompan=z='{z}':x='{x}':y='{y}':d=1:s={W}x{H}:fps=25"
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", png]
+    if overlay:
+        cmd += ["-loop", "1", "-framerate", "25", "-t", f"{secs:.2f}", "-i", overlay]
     cmd += ["-i", audio] if audio else ["-f", "lavfi", "-t", f"{secs:.2f}", "-i", "anullsrc=r=44100:cl=mono"]
-    cmd += ["-vf", vf, "-r", "25", "-c:v", "libx264", "-preset", "veryfast", "-crf", "22", "-c:a", "aac", "-b:a", "128k",
+    if overlay:
+        cmd += ["-filter_complex", f"[0:v]{zp}[z];[z][1:v]overlay=0:0,format=yuv420p[v]", "-map", "[v]", "-map", "2:a"]
+    else:
+        cmd += ["-vf", f"{zp},format=yuv420p"]
+    cmd += ["-r", "25", "-c:v", "libx264", "-preset", "veryfast", "-crf", "22", "-c:a", "aac", "-b:a", "128k",
             "-ar", "44100", "-ac", "1", "-af", "apad", "-t", f"{secs:.2f}", out]
     run(cmd)
 
@@ -685,9 +735,9 @@ def build_multi(payload, items, shots, meta_items):
                 hp = f"{TMP}/hov.png"; hook_overlay(head, sub, it).save(hp)
                 shots.append({"kind": "video", "mp4": vid, "png": hp, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
             else:
-                f = photo_frame(photos[0], it, None, None, top=410, height=600).convert("RGBA"); f.alpha_composite(hook_overlay(head, sub, it))
-                hp = f"{TMP}/hov.png"; f.convert("RGB").save(hp)
-                shots.append({"kind": "still", "png": hp, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
+                b_, o_ = photo_layers(photos[0], it, None, None, top=410, height=600); o_.alpha_composite(hook_overlay(head, sub, it))
+                hp, hop = save_layers(b_, o_, f"{TMP}/hov")
+                shots.append({"kind": "still", "png": hp, "ov": hop, "voice": hook_v, "min": 2.5, "pk": k, "lively": True})
         # ---- shot A: video clip (ya hero photo) + product intro (hook ke baad wahi clip aage chalti hai)
         if vid:
             ov = Image.new("RGBA", (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(ov, "RGBA")
@@ -696,19 +746,18 @@ def build_multi(payload, items, shots, meta_items):
             ovp = f"{TMP}/ov{k}.png"; ov.save(ovp)
             shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": intro, "min": 3.0, "pk": k, "vcont": hook_shot})
         else:
-            f = photo_frame(photos[0], it, None, None).convert("RGBA")
-            d = ImageDraw.Draw(f, "RGBA")
-            title_chip(d, cap)
-            p = f"{TMP}/a{k}.png"; f.convert("RGB").save(p)
-            shots.append({"kind": "still", "png": p, "voice": intro, "min": 3.0, "pk": k})
+            b_, o_ = photo_layers(photos[0], it, None, None)
+            title_chip(ImageDraw.Draw(o_, "RGBA"), cap)
+            p, op = save_layers(b_, o_, f"{TMP}/a{k}")
+            shots.append({"kind": "still", "png": p, "ov": op, "voice": intro, "min": 3.0, "pk": k})
         # ---- shots B: 2-3 gallery photos, har photo par ek benefit (screen caption + awaaz)
         cnt = max(2, min(3, len(bens))) if bens else 2
         for j in range(cnt):
             ph = gal[j % len(gal)]
             ln = bens[j] if j < len(bens) else None
-            p = f"{TMP}/b{k}_{j}.png"
-            photo_frame(ph, it, ln[0] if ln else None, f"{j + 1}/{cnt}").save(p)
-            shots.append({"kind": "still", "png": p, "voice": with_stop(ln[1]) if ln else None, "min": 2.2, "pk": k})
+            b_, o_ = photo_layers(ph, it, ln[0] if ln else None, f"{j + 1}/{cnt}")
+            p, op = save_layers(b_, o_, f"{TMP}/b{k}_{j}")
+            shots.append({"kind": "still", "png": p, "ov": op, "voice": with_stop(ln[1]) if ln else None, "min": 2.2, "pk": k})
         shots[-1]["tail"] = 0.45                  # product khatam: agle product se pehle thoda gap
         if first_media is None:
             first_media = photos[0]
@@ -740,18 +789,18 @@ def build_single(payload, items, shots, meta_items):
         ovp = f"{TMP}/ov0.png"; ov.save(ovp)
         shots.append({"kind": "video", "mp4": vid, "png": ovp, "voice": sc["hook"], "min": 3.6})
     else:
-        f = photo_frame(photos[0], it, None, None, top=410, height=600).convert("RGBA"); f.alpha_composite(ov)
-        p = f"{TMP}/h0.png"; f.convert("RGB").save(p)
-        shots.append({"kind": "still", "png": p, "voice": sc["hook"], "min": 3.0})
+        b_, o_ = photo_layers(photos[0], it, None, None, top=410, height=600); o_.alpha_composite(ov)
+        p, op = save_layers(b_, o_, f"{TMP}/h0")
+        shots.append({"kind": "still", "png": p, "ov": op, "voice": sc["hook"], "min": 3.0})
     gal = photos[1:] if len(photos) > 1 else photos
     for j, ph in enumerate(gal[:3]):
         ln = lines[j] if j < len(lines) else None
-        p = f"{TMP}/p0_{j}.png"
-        photo_frame(ph, it, ln["text"] if ln else None, f"{j + 1}/{min(len(gal), 3)}").save(p)
-        shots.append({"kind": "still", "png": p, "voice": ln["voice"] if ln else None, "min": 2.0})
-    p = f"{TMP}/pr0.png"
-    photo_frame(photos[0], it, "LINK: COMMENTS me hai", None).save(p)
-    shots.append({"kind": "still", "png": p, "voice": sc["price_voice"] + " " + sc["outro"], "min": 3.0})
+        b_, o_ = photo_layers(ph, it, ln["text"] if ln else None, f"{j + 1}/{min(len(gal), 3)}")
+        p, op = save_layers(b_, o_, f"{TMP}/p0_{j}")
+        shots.append({"kind": "still", "png": p, "ov": op, "voice": ln["voice"] if ln else None, "min": 2.0})
+    b_, o_ = photo_layers(photos[0], it, "LINK: COMMENTS me hai", None)
+    p, op = save_layers(b_, o_, f"{TMP}/pr0")
+    shots.append({"kind": "still", "png": p, "ov": op, "voice": sc["price_voice"] + " " + sc["outro"], "min": 3.0})
 
 
 def _watchdog(signum, frame):
@@ -884,7 +933,7 @@ def main():
                 st = prev_secs % L
             video_clip(s_["mp4"], s_["png"], secs, a, c, st)
         else:
-            still_clip(s_["png"], secs, a, c, k)
+            still_clip(s_["png"], secs, a, c, k, s_.get("ov"))
         clips.append(c)
         prev_secs = secs
     try:
