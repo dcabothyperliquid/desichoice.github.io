@@ -35,6 +35,11 @@ class T(unittest.TestCase):
         self.assertFalse(S.credible(S.card_to_item(card(reviews="12")), 10, 49))
         self.assertFalse(S.credible(S.card_to_item(card(price="₹100", was="₹900", reviews="100")), 10, 49))   # 89% / suspicious
         self.assertFalse(S.credible(ok, 10, 5000))                     # too cheap for this list
+        self.assertFalse(S.credible(S.card_to_item(card(rating="")), 10, 49))      # unknown rating -> rejected
+        self.assertFalse(S.credible(S.card_to_item(card(reviews="")), 10, 49))     # unknown reviews -> rejected
+        self.assertFalse(S.credible(S.card_to_item(card(price="₹250", was="₹1,000", reviews="5K")), 10, 49))    # 75% > 70% cap
+        self.assertFalse(S.credible(S.card_to_item(card(price="₹300", was="₹1,000", reviews="500")), 10, 49))   # 70% needs 1000 reviews
+        self.assertTrue(S.credible(S.card_to_item(card(price="₹300", was="₹1,000", reviews="1.5K")), 10, 49))
 
     def test_parsers(self):
         self.assertEqual(S.parse_reviews("1.2K"), 1200); self.assertEqual(S.parse_reviews("(3,456)"), 3456); self.assertEqual(S.parse_reviews(""), 0)

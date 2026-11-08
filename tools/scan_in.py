@@ -53,8 +53,8 @@ CAPTCHA_STOP = 2
 # gates (same spirit as Zoe / Naami credibility gate)
 MIN_RATING = 4.0
 MIN_REVIEWS = 50
-MAX_PCT = 85
-SUSPICIOUS_PCT, SUSPICIOUS_REVIEWS = 70, 300
+MAX_PCT = 70                 # India MRP is often inflated: nothing above 70% off is posted
+SUSPICIOUS_PCT, SUSPICIOUS_REVIEWS = 70, 1000
 MIN_PRICE_ESS, MIN_PRICE_HOT, MIN_PRICE_OFFER = 49, 1500, 299     # rupees
 LADIES_MIN_PRICE, LADIES_MIN_RATING = 149, 3.8                      # ladies / ladies_fashion / kids_mom only
 MIXED_CATS = ("ladies", "ladies_fashion", "kids_mom")                # cheap, mixed-scope categories: relaxed gates + round-robin over scopes
@@ -268,15 +268,15 @@ def card_to_item(c, now=None):
 
 
 def credible(it, min_pct, min_price, min_rating=MIN_RATING):
-    """same gates as Naami: real discount, rating >= 4.0 (unknown skipped), reviews >= 50 (unknown skipped), suspicious-discount gate."""
+    """same gates as Naami: real discount, rating >= 4.0 (unknown = rejected), reviews >= 50 (unknown = rejected), suspicious-discount gate."""
     if not it or not it.get("name"):
         return False
     pct, price = it["pct"], it["_price"]
     if pct < min_pct or pct > MAX_PCT or price < min_price:
         return False
-    if 0 < it["rating"] < min_rating:
+    if it["rating"] < min_rating:                      # unknown rating (0) is rejected too
         return False
-    if 0 < it["reviews"] < MIN_REVIEWS:
+    if it["reviews"] < MIN_REVIEWS:                    # unknown review count (0) is rejected too
         return False
     if pct >= SUSPICIOUS_PCT and it["reviews"] < SUSPICIOUS_REVIEWS:
         return False
