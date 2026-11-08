@@ -1,293 +1,325 @@
 {
- "time": "2026-11-08T07:44:19Z",
- "mode": "feed",
+ "time": "2026-11-08T08:07:43Z",
+ "mode": "offers",
  "captcha_streak": 0,
- "pages_loaded": 61,
+ "pages_loaded": 125,
  "pages": [
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=diwali+gift+hamper&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=kitchen&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1850418,
+   "html_len": 912591,
    "has_results": true,
    "marks": [],
-   "cards": 48
+   "cards": 24
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=diwali+decoration+lights&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=kitchen&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1948745,
+   "html_len": 919225,
    "has_results": true,
    "marks": [],
-   "cards": 48
+   "cards": 24
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=dry+fruits+gift+box&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1855952,
+   "html_len": 930798,
    "has_results": true,
    "marks": [],
-   "cards": 48
+   "cards": 24
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=diya+candles+rangoli&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=appliances&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1695728,
+   "html_len": 8093,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 946154,
    "has_results": true,
    "marks": [],
-   "cards": 48
+   "cards": 24
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=chhath+puja+samagri&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=electronics&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 951732,
+   "html_len": 1436378,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=headphones&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1640976,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=headphones&i=electronics&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1628311,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laptop&i=computers&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8101,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laptop&i=computers&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1626645,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laptop&i=computers&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1356861,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=smartphone&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1577460,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=smartphone&i=electronics&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1518716,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=smartwatch&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1399501,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=smartwatch&i=electronics&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1807180,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=monitor&i=computers&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1304275,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=monitor&i=computers&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1331241,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=smart+tv&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1389234,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=smart+tv&i=electronics&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1419886,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=projector&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1446823,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=projector&i=electronics&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1478366,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=keyboard+mouse&i=computers&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1423307,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=keyboard+mouse&i=computers&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1325360,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=power+bank&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1529482,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=power+bank&i=electronics&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8275,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=beauty&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1357363,
    "has_results": true,
    "marks": [],
    "cards": 6
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=puja+thali+set&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=beauty&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1656913,
+   "html_len": 1373650,
    "has_results": true,
    "marks": [],
    "cards": 48
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=copper+kalash+puja&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=hpc&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1531751,
+   "html_len": 926764,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=hpc&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1087489,
+   "has_results": true,
+   "marks": [],
+   "cards": 24
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=sports&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1333724,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=sports&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1430199,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1489257,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=apparel&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1590054,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1563213,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1504484,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=toys&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1156699,
    "has_results": true,
    "marks": [],
    "cards": 33
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=bamboo+soop+dala&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=toys&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 796512,
+   "html_len": 949407,
    "has_results": true,
    "marks": [],
-   "cards": 1
+   "cards": 24
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=room+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=baby&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1145912,
+   "html_len": 872134,
    "has_results": true,
    "marks": [],
-   "cards": 12
+   "cards": 24
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=geyser+water+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=baby&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1157766,
+   "html_len": 910295,
    "has_results": true,
    "marks": [],
-   "cards": 16
+   "cards": 24
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=blanket+quilt&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2424942,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=woolen+jacket+sweater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1925913,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=wheat+flour+atta&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1626846,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=basmati+rice&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1532932,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=toor+dal+pulses&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1735544,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=cooking+oil+ghee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1678014,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1977729,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=biscuits+namkeen+snacks&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1506282,
-   "has_results": true,
-   "marks": [],
-   "cards": 39
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=almonds+cashews+dry+fruits&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1665067,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=masala+spices&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1692612,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=laundry+detergent&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8060,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=laundry+detergent&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7912,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=dishwash+liquid&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1498692,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=floor+cleaner+toilet+cleaner&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1803568,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=handwash+sanitizer&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8072,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=handwash+sanitizer&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1670070,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=shampoo+conditioner&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8080,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=shampoo+conditioner&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1924154,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=soap+body+wash&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1747149,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=toothpaste&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1711109,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=face+wash+moisturizer&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1857236,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=baby+diapers&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8014,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=baby+diapers&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1743142,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=sanitary+pads&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8023,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=sanitary+pads&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1894669,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=AA+AAA+batteries&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1167778,
+   "html_len": 743414,
    "has_results": true,
    "marks": [],
    "cards": 16
