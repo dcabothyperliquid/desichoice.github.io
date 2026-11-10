@@ -1,13 +1,13 @@
 {
- "time": "2026-11-10T04:05:06Z",
+ "time": "2026-11-10T04:32:38Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 158,
+ "pages_loaded": 161,
  "pages": [
   {
    "url": "https://www-amazon-in.translate.goog/s?i=kitchen&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7956,
+   "html_len": 7955,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -15,7 +15,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=kitchen&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7808,
+   "html_len": 7803,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -23,7 +23,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8072,
+   "html_len": 8067,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -31,7 +31,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7921,
+   "html_len": 7919,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -39,7 +39,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7985,
+   "html_len": 7984,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -47,7 +47,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7837,
+   "html_len": 7832,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -55,7 +55,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8072,
+   "html_len": 8067,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -63,7 +63,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7921,
+   "html_len": 7919,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -71,7 +71,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7997,
+   "html_len": 7992,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -79,7 +79,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7846,
+   "html_len": 7844,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -87,7 +87,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7997,
+   "html_len": 7991,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -95,7 +95,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7846,
+   "html_len": 7844,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -103,7 +103,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=headphones&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8159,
+   "html_len": 8158,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -111,7 +111,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=headphones&i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8011,
+   "html_len": 8006,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -119,7 +119,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=headphones&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7985,
+   "html_len": 7984,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -127,7 +127,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=headphones&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7837,
+   "html_len": 7832,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -135,7 +135,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=laptop&i=computers&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8101,
+   "html_len": 8100,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -151,7 +151,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=laptop&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7948,
+   "html_len": 7941,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -159,7 +159,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=laptop&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7796,
+   "html_len": 7795,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -167,7 +167,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=beauty&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7948,
+   "html_len": 7946,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -175,7 +175,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=beauty&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7796,
+   "html_len": 7795,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -183,7 +183,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=skin+care&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7985,
+   "html_len": 7980,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -191,7 +191,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=skin+care&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7834,
+   "html_len": 7832,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -199,7 +199,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=hpc&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7919,
+   "html_len": 7917,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -207,7 +207,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=hpc&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7767,
+   "html_len": 7766,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -215,7 +215,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=skin+care&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7985,
+   "html_len": 7980,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -223,7 +223,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=skin+care&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7834,
+   "html_len": 7832,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -231,15 +231,31 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=sports&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1392628,
-   "has_results": true,
+   "html_len": 7946,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=sports&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=sports&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8055,
+   "html_len": 7795,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=fitness&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7955,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=fitness&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7803,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -247,7 +263,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7956,
+   "html_len": 7955,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -255,7 +271,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 312625,
+   "html_len": 7803,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -263,7 +279,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=men+shoes+clothing&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8077,
+   "html_len": 8076,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -279,47 +295,31 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1562543,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=shoes&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8043,
+   "html_len": 7934,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=shoes&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8043,
+   "html_len": 7786,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=men+shoes+clothing&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7895,
+   "html_len": 8076,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=car+accessories+tools&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=men+shoes+clothing&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8106,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=car+accessories+tools&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7958,
+   "html_len": 7924,
    "has_results": false,
    "marks": [],
    "cards": 0
