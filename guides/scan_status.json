@@ -1,8 +1,8 @@
 {
- "time": "2026-11-10T04:32:38Z",
+ "time": "2026-11-10T04:43:24Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 161,
+ "pages_loaded": 63,
  "pages": [
   {
    "url": "https://www-amazon-in.translate.goog/s?i=kitchen&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
@@ -229,89 +229,33 @@
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=sports&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7946,
+   "html_len": 732880,
+   "has_results": true,
+   "marks": [],
+   "cards": 16
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8151,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=sports&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=automotive&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7795,
+   "html_len": 7985,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=fitness&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=automotive&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7955,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=fitness&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7803,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7955,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7803,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=men+shoes+clothing&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8076,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=men+shoes+clothing&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7929,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=shoes&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7934,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=shoes&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7786,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=men+shoes+clothing&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8076,
+   "html_len": 7837,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -323,6 +267,54 @@
    "has_results": false,
    "marks": [],
    "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=musical-instruments&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1387516,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=musical-instruments&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8179,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8139,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7987,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8002,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 2140899,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
   }
  ]
 }
