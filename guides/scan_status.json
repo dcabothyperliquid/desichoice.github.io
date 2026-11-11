@@ -1,13 +1,109 @@
 {
- "time": "2026-11-11T02:30:05Z",
+ "time": "2026-11-11T02:50:27Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 116,
+ "pages_loaded": 119,
  "pages": [
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=kitchen&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7955,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=kitchen&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7808,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8072,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7920,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7985,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?i=appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7837,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8072,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7921,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laptop&i=computers&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8101,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laptop&i=computers&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7953,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laptop&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7948,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laptop&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7796,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
   {
    "url": "https://www-amazon-in.translate.goog/s?i=beauty&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7946,
+   "html_len": 7948,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -15,7 +111,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=beauty&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7795,
+   "html_len": 7796,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -23,15 +119,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=skin+care&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1934510,
-   "has_results": true,
+   "html_len": 7985,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=skin+care&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=skin+care&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8088,
+   "html_len": 7834,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -39,7 +135,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=hpc&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7917,
+   "html_len": 7919,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -47,7 +143,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=hpc&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7766,
+   "html_len": 7767,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -55,87 +151,23 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=skin+care&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1930620,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=skin+care&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8087,
+   "html_len": 7985,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=smartphone&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=skin+care&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8158,
+   "html_len": 7834,
    "has_results": false,
    "marks": [],
    "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=smartphone&i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8006,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=smartphone&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7984,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=smartphone&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7832,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=smartwatch&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8158,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=smartwatch&i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8006,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=smartwatch&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1365643,
-   "has_results": true,
-   "marks": [],
-   "cards": 16
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=smartwatch&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1407496,
-   "has_results": true,
-   "marks": [],
-   "cards": 16
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=monitor&i=computers&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8108,
+   "html_len": 8113,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -143,7 +175,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=monitor&i=computers&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7955,
+   "html_len": 7962,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -151,7 +183,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=monitor&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7955,
+   "html_len": 7956,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -159,7 +191,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=monitor&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7803,
+   "html_len": 7808,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -167,7 +199,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=smart+tv&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8146,
+   "html_len": 8147,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -175,7 +207,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=smart+tv&i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7992,
+   "html_len": 7999,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -183,7 +215,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=smart+tv&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7972,
+   "html_len": 7973,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -191,7 +223,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=smart+tv&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7820,
+   "html_len": 7825,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -199,7 +231,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=projector&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8149,
+   "html_len": 8151,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -207,7 +239,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=projector&i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7998,
+   "html_len": 7999,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -215,15 +247,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=projector&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 1374577,
-   "has_results": true,
+   "html_len": 7977,
+   "has_results": false,
    "marks": [],
-   "cards": 16
+   "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=projector&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=projector&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8079,
+   "html_len": 7825,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -231,31 +263,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=office-products&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 866261,
-   "has_results": true,
-   "marks": [],
-   "cards": 24
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=office-products&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 866479,
-   "has_results": true,
-   "marks": [],
-   "cards": 24
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=stripbooks&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7984,
+   "html_len": 8035,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=stripbooks&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=office-products&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7832,
+   "html_len": 7883,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -263,7 +279,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=stationery+books&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8050,
+   "html_len": 8052,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -271,55 +287,39 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=stationery+books&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7899,
+   "html_len": 7900,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=sports&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=stripbooks&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7946,
+   "html_len": 7985,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=sports&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?i=stripbooks&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7795,
+   "html_len": 7837,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=fitness&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=stationery+books&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7955,
+   "html_len": 8052,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=fitness&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=stationery+books&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7803,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7955,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7803,
+   "html_len": 7900,
    "has_results": false,
    "marks": [],
    "cards": 0
