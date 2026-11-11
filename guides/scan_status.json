@@ -1,13 +1,13 @@
 {
- "time": "2026-11-11T01:29:56Z",
+ "time": "2026-11-11T02:10:24Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 231,
+ "pages_loaded": 234,
  "pages": [
   {
    "url": "https://www-amazon-in.translate.goog/s?k=chhath+puja+samagri&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8089,
+   "html_len": 8084,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -15,7 +15,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=chhath+puja+samagri&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7938,
+   "html_len": 7936,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -23,47 +23,31 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=puja+thali+set&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8040,
-   "has_results": false,
+   "html_len": 1813009,
+   "has_results": true,
    "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=puja+thali+set&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7887,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
+   "cards": 48
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=copper+kalash+puja&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8077,
-   "has_results": false,
+   "html_len": 1261951,
+   "has_results": true,
    "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=copper+kalash+puja&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7929,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
+   "cards": 28
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=bamboo+soop+dala&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8060,
-   "has_results": false,
+   "html_len": 693526,
+   "has_results": true,
    "marks": [],
    "cards": 0
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=bamboo+soop+dala&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7909,
+   "html_len": 7907,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -71,18 +55,10 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=room+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8002,
-   "has_results": false,
+   "html_len": 1067616,
+   "has_results": true,
    "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=room+heater&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7854,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
+   "cards": 8
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=geyser+water+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
@@ -95,7 +71,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=geyser+water+heater&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7938,
+   "html_len": 7936,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -103,7 +79,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=blanket+quilt&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8022,
+   "html_len": 8021,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -111,7 +87,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=blanket+quilt&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7871,
+   "html_len": 7870,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -119,7 +95,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=woolen+jacket+sweater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8106,
+   "html_len": 8105,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -127,7 +103,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=woolen+jacket+sweater&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7952,
+   "html_len": 7953,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -135,7 +111,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=wedding+gift&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8014,
+   "html_len": 8009,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -143,7 +119,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=wedding+gift&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7863,
+   "html_len": 7861,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -151,7 +127,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=ethnic+wear&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8002,
+   "html_len": 8001,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -159,15 +135,15 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=ethnic+wear&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7854,
-   "has_results": false,
+   "html_len": 2246419,
+   "has_results": true,
    "marks": [],
-   "cards": 0
+   "cards": 48
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=jewellery+set&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8023,
+   "html_len": 8021,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -191,7 +167,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=gift+set&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7825,
+   "html_len": 7820,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -199,7 +175,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=wheat+flour+atta&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8060,
+   "html_len": 8055,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -207,7 +183,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=wheat+flour+atta&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7909,
+   "html_len": 7907,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -215,7 +191,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=basmati+rice&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8014,
+   "html_len": 8009,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -223,7 +199,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=basmati+rice&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7863,
+   "html_len": 7856,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -231,7 +207,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=toor+dal+pulses&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8048,
+   "html_len": 8047,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -239,7 +215,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=toor+dal+pulses&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7900,
+   "html_len": 7895,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -247,7 +223,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=cooking+oil+ghee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8060,
+   "html_len": 8055,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -255,7 +231,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=cooking+oil+ghee&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7908,
+   "html_len": 7907,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -263,7 +239,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7994,
+   "html_len": 7992,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -271,7 +247,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7842,
+   "html_len": 7841,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -279,7 +255,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=biscuits+namkeen+snacks&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8127,
+   "html_len": 8125,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -287,7 +263,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=biscuits+namkeen+snacks&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7975,
+   "html_len": 7974,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -295,7 +271,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=almonds+cashews+dry+fruits&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8164,
+   "html_len": 8158,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -303,7 +279,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=almonds+cashews+dry+fruits&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8013,
+   "html_len": 8011,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -311,7 +287,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=masala+spices&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8023,
+   "html_len": 8021,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -319,7 +295,31 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=masala+spices&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7869,
+   "html_len": 7870,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laundry+detergent&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8059,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=laundry+detergent&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7907,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=dishwash+liquid&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8037,
    "has_results": false,
    "marks": [],
    "cards": 0
