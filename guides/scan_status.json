@@ -1,307 +1,75 @@
 {
- "time": "2026-11-10T04:43:24Z",
+ "time": "2026-11-11T01:29:56Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 63,
+ "pages_loaded": 231,
  "pages": [
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=kitchen&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=chhath+puja+samagri&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7955,
+   "html_len": 8089,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=kitchen&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=chhath+puja+samagri&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7803,
+   "html_len": 7938,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=puja+thali+set&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8067,
+   "html_len": 8040,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=puja+thali+set&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7919,
+   "html_len": 7887,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=copper+kalash+puja&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7984,
+   "html_len": 8077,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=copper+kalash+puja&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7832,
+   "html_len": 7929,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=bamboo+soop+dala&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8067,
+   "html_len": 8060,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=bamboo+soop+dala&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7919,
+   "html_len": 7909,
    "has_results": false,
    "marks": [],
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7992,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7844,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7991,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7844,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=headphones&i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8158,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=headphones&i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8006,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=headphones&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7984,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=headphones&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7832,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=laptop&i=computers&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8100,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=laptop&i=computers&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7948,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=laptop&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7941,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=laptop&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7795,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=beauty&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7946,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=beauty&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7795,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=skin+care&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7980,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=skin+care&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7832,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=hpc&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7917,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=hpc&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7766,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=skin+care&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7980,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=skin+care&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7832,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 732880,
-   "has_results": true,
-   "marks": [],
-   "cards": 16
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8151,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=automotive&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7985,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=automotive&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7837,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=men+shoes+clothing&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7924,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=musical-instruments&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 1387516,
-   "has_results": true,
-   "marks": [],
-   "cards": 48
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?i=musical-instruments&rh=p_8%3A25-&page=2&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8179,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&i=apparel&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 8139,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&i=apparel&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7987,
-   "has_results": false,
-   "marks": [],
-   "cards": 0
-  },
-  {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=room+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
    "html_len": 8002,
    "has_results": false,
@@ -309,12 +77,252 @@
    "cards": 0
   },
   {
-   "url": "https://www-amazon-in.translate.goog/s?k=women+dress&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "url": "https://www-amazon-in.translate.goog/s?k=room+heater&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 2140899,
-   "has_results": true,
+   "html_len": 7854,
+   "has_results": false,
    "marks": [],
-   "cards": 48
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=geyser+water+heater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8084,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=geyser+water+heater&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7938,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=blanket+quilt&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8022,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=blanket+quilt&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7871,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=woolen+jacket+sweater&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8106,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=woolen+jacket+sweater&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7952,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=wedding+gift&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8014,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=wedding+gift&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7863,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=ethnic+wear&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8002,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=ethnic+wear&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7854,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=jewellery+set&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8023,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=jewellery+set&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7870,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=gift+set&rh=p_8%3A20-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7972,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=gift+set&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7825,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=wheat+flour+atta&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8060,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=wheat+flour+atta&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7909,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=basmati+rice&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8014,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=basmati+rice&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7863,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=toor+dal+pulses&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8048,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=toor+dal+pulses&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7900,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=cooking+oil+ghee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8060,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=cooking+oil+ghee&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7908,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7994,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=tea+coffee&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7842,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=biscuits+namkeen+snacks&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8127,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=biscuits+namkeen+snacks&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7975,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=almonds+cashews+dry+fruits&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8164,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=almonds+cashews+dry+fruits&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8013,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=masala+spices&rh=p_8%3A10-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 8023,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=masala+spices&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 7869,
+   "has_results": false,
+   "marks": [],
+   "cards": 0
   }
  ]
 }
