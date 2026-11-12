@@ -1,5 +1,5 @@
 {
- "time": "2026-11-12T03:55:26Z",
+ "time": "2026-11-12T04:33:28Z",
  "mode": "auto",
  "captcha_streak": 0,
  "pages_loaded": 216,
@@ -15,7 +15,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=office-products&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7883,
+   "html_len": 7881,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -143,7 +143,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7890,
+   "html_len": 7895,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -207,7 +207,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=musical-instruments&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7928,
+   "html_len": 7922,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -215,7 +215,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=guitar+keyboard+instrument&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8156,
+   "html_len": 8154,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -223,7 +223,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=guitar+keyboard+instrument&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8004,
+   "html_len": 8002,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -231,7 +231,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=kitchen&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7956,
+   "html_len": 7954,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -239,7 +239,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=kitchen&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7808,
+   "html_len": 7806,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -247,7 +247,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8072,
+   "html_len": 8070,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -255,7 +255,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7921,
+   "html_len": 7919,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -263,7 +263,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7985,
+   "html_len": 7983,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -271,7 +271,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7837,
+   "html_len": 7835,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -279,7 +279,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8072,
+   "html_len": 8065,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -287,7 +287,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7921,
+   "html_len": 7919,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -295,7 +295,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7992,
+   "html_len": 7995,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -303,7 +303,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7846,
+   "html_len": 7844,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -311,7 +311,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7997,
+   "html_len": 7995,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -319,7 +319,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7846,
+   "html_len": 7844,
    "has_results": false,
    "marks": [],
    "cards": 0
