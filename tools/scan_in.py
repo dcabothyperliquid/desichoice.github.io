@@ -827,7 +827,11 @@ def credible_deal(it, min_price):
 DEALS_API = BASE + "/d2b/api/v1/products/search"
 DEAL_DEPTS = [("grocery", "2454179031"), ("health", "1350385031"), ("beauty", "1355017031"), ("baby", "1571275031"),
               ("home_kitchen", "976443031"), ("pets", "4740420031")]      # essentials-type departments (cheap daily-use stuff)
-DEAL_API_PAGES = 3                                                        # 3 x 30 per department
+# Bigger-ticket / seasonal departments (winter wear, heaters, geysers, wedding jewellery, gadgets): no 999 price cap. A wrong id just returns
+# no products (the loop below stops on an empty page), so this is safe.
+DEAL_DEPTS_WIDE = [("home_improvement", "3704992031"), ("clothing", "1571271031"), ("shoes", "1571283031"), ("jewellery", "1951048031"),
+                   ("electronics", "976419031"), ("toys", "1350380031"), ("sports", "1984443031"), ("car_bike", "4772060031")]
+DEAL_API_PAGES = 5                                                        # up to 5 x 30 per department
 
 
 def _deals_api_url(dept, start, max_price):
@@ -843,7 +847,7 @@ def _deals_api_url(dept, start, max_price):
 def fetch_deals_api(am):
     """-> list of raw cards from the deals API (department by department). Never raises; traced into scan_status.json."""
     cards, seen = [], set()
-    plan = [(None, 100000, "all")] + [(d, 999, k) for k, d in DEAL_DEPTS]
+    plan = [(None, 100000, "all")] + [(d, 999, k) for k, d in DEAL_DEPTS] + [(d, 100000, k) for k, d in DEAL_DEPTS_WIDE]
     for dept, max_price, key in plan:
         got_dept = 0
         for pg in range(DEAL_API_PAGES):
