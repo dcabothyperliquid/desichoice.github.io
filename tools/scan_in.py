@@ -722,25 +722,176 @@ def selftest(am):
     log("scopes with 0 cards:", bad, "(they auto-fall-back to FALLBACK_KW during the sweep)")
 
 
+
+# =====================================================================================================================
+# DIRECT DEALS source (2026-11): Google's translate proxy now answers 429 and amazon.in/s (+ /dp) answer a JS challenge / captcha /
+# 503 to GitHub runner IPs, but https://www.amazon.in/deals and /gp/goldbox are served normally (verified from the runner,
+# guides/probe3.json + probe4.json). Deal cards carry: title (image alt), price, MRP, "xx% off", image, asin (in the link).
+# They carry NO rating / review count, so these items are "unrated" and judged by credible_deal() instead of credible().
+DEAL_URLS = [BASE + "/deals", BASE + "/gp/goldbox"]
+
+
+def parse_deal_cards(html):
+    """deal page html -> raw cards (asin,title,img,price,was,rating,reviews,text) like parse_cards()."""
+    from bs4 import BeautifulSoup
+    try:
+        soup = BeautifulSoup(html, "lxml")
+    except Exception:
+        soup = BeautifulSoup(html, "html.parser")
+    out, seen = [], set()
+    for d in soup.select(".dcl-product-detail"):
+        anc, a, asin = d, None, ""
+        for _ in range(5):
+            anc = anc.parent
+            if anc is None:
+                break
+            a = anc if (anc.name == "a" and anc.get("href")) else anc.find("a", href=True)
+            m = re.search(r"/dp/([A-Z0-9]{10})|pd_rd_i=([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})", (a.get("href") if a else "") or "")
+            if m:
+                asin = next(g for g in m.groups() if g)
+                break
+        if not asin or asin in seen:
+            continue
+        seen.add(asin)
+        im = anc.select_one("img")
+        pe = anc.select_one(".a-price:not(.a-text-price) .a-offscreen")
+        we = anc.select_one(".a-text-price .a-offscreen")
+        ttl = (im.get("alt") or "").strip() if im else ""
+        out.append({"asin": asin, "title": ttl, "img": (im.get("src") if im else "") or "",
+                    "price": pe.get_text(strip=True) if pe else "", "was": we.get_text(strip=True) if we else "",
+                    "rating": "", "reviews": "", "text": anc.get_text(" ", strip=True)[:900]})
+    return out
+
+
+def credible_deal(it, min_price):
+    """unrated deal card: real MRP-based discount, sane price, no absurd discount, a real product title."""
+    if not it or not _usable_name(it.get("name")):
+        return False
+    if it["pct"] < MIN_PCT or it["pct"] >= SUSPICIOUS_PCT or it["_price"] < min_price:
+        return False
+    if it["rating"] and it["rating"] < MIN_RATING:
+        return False
+    return True
+
+
+def fetch_deals(am):
+    """-> list of items (unrated allowed). Never raises; every page is traced into scan_status.json."""
+    items, seen = [], set()
+    for i, url in enumerate(DEAL_URLS):
+        if i:
+            time.sleep(random.uniform(*PAUSE))
+        try:
+            r = am.s.get(url, timeout=45)
+            html = r.text
+        except Exception as e:
+            log("  deals fetch error:", str(e)[:100])
+            am.trace.append({"url": url, "error": str(e)[:160]})
+            continue
+        am.pages_loaded += 1
+        cards = parse_deal_cards(html) if r.status_code == 200 else []
+        am.trace.append({"url": url, "http": r.status_code, "html_len": len(html), "cards": len(cards),
+                         "marks": [m for m in _MARKS if m in html]})
+        for c in cards:
+            it = card_to_item(c)
+            if it and it["asin"] not in seen:
+                seen.add(it["asin"])
+                items.append(it)
+        log(f"  deals {url}: {len(cards)} cards, {len(items)} with real discount so far")
+    return items
+
+
+def run_direct(am):
+    """deals pool -> offers.json (re-filed by title, per category) + hot.json (ess / hot / trend). -> True if anything written."""
+    pool = fetch_deals(am)
+    if not pool:
+        log("direct: no deal cards (page changed or blocked)")
+        return False
+    # ---- offers.json
+    data = read_json(OFFERS_PATH, {})
+    cats = dict(data.get("cats") or {})
+    swept = dict(data.get("swept") or {})
+    for it in pool:
+        if credible_deal(it, MIN_PRICE_OFFER):
+            cats.setdefault("home_kitchen", [])
+    flat_new = [clean(it, tier=None) for it in pool if credible_deal(it, MIN_PRICE_OFFER)]
+    for o in flat_new:
+        o["unrated"] = True
+    # file every new item under the category its title points to (regroup() does the title classification)
+    staged = {c: list(l) for c, l in cats.items()}
+    for o in flat_new:
+        c = classify(o) or "home_kitchen"
+        staged.setdefault(c, [])
+        if not any(x.get("asin") == o["asin"] for x in staged[c]):
+            staged[c].append(dict(o, cat=c))
+    cats = regroup(_drop_stale(staged))
+    now_iso = iso()
+    touched = {classify(o) or "home_kitchen" for o in flat_new}
+    for c in touched:
+        swept[c] = now_iso
+    write_json(OFFERS_PATH, {"v": 3, "updated": now_iso, "fresh_h": FRESH_H, "cats": cats, "swept": swept})
+    log("direct offers:", {c: len(l) for c, l in cats.items() if l})
+    # ---- hot.json
+    old = read_json(HOT_PATH, {})
+    used, trend = set(), []
+    themes = active_themes()
+    per = {}
+    for key, label, icon, kws in themes:
+        rx = re.compile("|".join(re.escape(k.lower()) for k in kws))
+        lst = [clean(i, theme=key, label=label, icon=icon) for i in pool if credible_deal(i, MIN_PRICE_ESS) and rx.search(i["name"].lower())]
+        lst.sort(key=lambda x: -x["pct"])
+        if lst:
+            per[key] = lst[:PER_THEME]
+    trend = round_robin(per, MAX_TREND)
+    used |= {i["asin"] for i in trend}
+    groups = {}
+    for key, label, icon, kw, rx in ESS:
+        good = [i for i in pool if credible_deal(i, MIN_PRICE_ESS) and re.search(rx, i["name"], re.I)
+                and not ACCESSORY.search(i["name"]) and i["asin"] not in used]
+        good.sort(key=lambda x: -x["pct"])
+        if good:
+            groups[key] = [clean(i, cat=key, label=label, icon=icon, unrated=True) for i in good[:4]]
+    ess = round_robin(groups, MAX_ESS)
+    used |= {i["asin"] for i in ess}
+    hot = sorted([clean(i, unrated=True) for i in pool if credible_deal(i, MIN_PRICE_HOT) and i["asin"] not in used],
+                 key=lambda x: -x["pct"])[:MAX_HOT]
+
+    def keep(new, key):
+        if new:
+            return new
+        return [i for i in (old.get(key) or []) if (time.time() - float(i.get("t") or 0)) < FRESH_H * 3600]
+    out = {"v": 3, "updated": now_iso, "hot": keep(hot, "hot"), "ess": keep(ess, "ess"), "trend": keep(trend, "trend"),
+           "themes": [{"key": k, "label": l, "icon": i} for k, l, i, _ in themes]}
+    write_json(HOT_PATH, out)
+    log(f"direct feed: hot={len(out['hot'])} ess={len(out['ess'])} trend={len(out['trend'])}")
+    return True
+
+
 def main():
     mode = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("SCAN_MODE") or "auto").strip().lower()
     log("mode:", mode, "| tag:", TAG or "(none)", "| budget:", BUDGET_MIN, "min")
     feed_due = mode == "feed" or (mode == "auto" and age_h(read_json(HOT_PATH, {}).get("updated")) >= FEED_EVERY_H)
     offers_due = mode in ("offers", "auto")
-    if mode == "auto" and not feed_due:
-        d = read_json(OFFERS_PATH, {})
-        if all(age_h((d.get("swept") or {}).get(c)) < SWEEP_EVERY_H for c, _, _ in CATEGORIES):
-            log("nothing due - exit")
-            return 0
+    # (no "nothing due" early exit: the direct deals pass is 2 requests and keeps the feed fresh every run)
     am = Amazon()
     try:
         if mode == "selftest":
             selftest(am)
             return 0
-        if feed_due:
-            build_feed(am)
-        if offers_due and not am.blocked() and not am.out_of_time():
-            run_offers(am, force=(mode == "offers"))
+        direct_ok = False
+        try:
+            direct_ok = run_direct(am)                     # amazon.in/deals + /gp/goldbox: works from runner IPs
+        except Exception as e:                             # noqa
+            log("direct deals failed:", str(e)[:160])
+        # the old search route (translate proxy) is dead while Google answers 429 -> probe once, never burn the budget on it
+        am.search("kitchen tools", None, 1, MIN_PCT, False)
+        last = am.trace[-1] if am.trace else {}
+        search_ok = bool(last.get("cards")) and not am.blocked()
+        log("search route alive:", search_ok, "| direct deals ok:", direct_ok)
+        if search_ok:
+            if feed_due:
+                build_feed(am)
+            if offers_due and not am.blocked() and not am.out_of_time():
+                run_offers(am, force=(mode == "offers"))
     finally:
         try:   # always leave a small status file so a run can be diagnosed without opening Actions logs
             write_json(os.path.join(os.path.dirname(HOT_PATH), "scan_status.json"),
