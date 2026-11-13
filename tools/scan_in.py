@@ -789,6 +789,12 @@ def fetch_deals(am):
             continue
         am.pages_loaded += 1
         cards = parse_deal_cards(html) if r.status_code == 200 else []
+        if not cards and html:                    # keep the live html so the parser can be fixed against reality
+            try:
+                os.makedirs(os.path.join(ROOT, "guides", "samples"), exist_ok=True)
+                open(os.path.join(ROOT, "guides", "samples", "deals_direct_%d.html" % i), "w", encoding="utf8").write(html[:700000])
+            except Exception:
+                pass
         am.trace.append({"url": url, "http": r.status_code, "html_len": len(html), "cards": len(cards),
                          "marks": [m for m in _MARKS if m in html]})
         for c in cards:
