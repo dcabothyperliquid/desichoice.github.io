@@ -925,7 +925,10 @@ def run_direct(am):
 def main():
     mode = (sys.argv[1] if len(sys.argv) > 1 else os.environ.get("SCAN_MODE") or "auto").strip().lower()
     log("mode:", mode, "| tag:", TAG or "(none)", "| budget:", BUDGET_MIN, "min")
-    feed_due = mode == "feed" or (mode == "auto" and age_h(read_json(HOT_PATH, {}).get("updated")) >= FEED_EVERY_H)
+    _hot = read_json(HOT_PATH, {})
+    # a feed with an EMPTY Daily Essentials list is never "fresh": retry it on every run until the search route fills it again
+    # (2026-11: hot.json was re-stamped by a degraded run, ess stayed empty for 20 h even while the proxy worked again)
+    feed_due = mode == "feed" or (mode == "auto" and (age_h(_hot.get("updated")) >= FEED_EVERY_H or not _hot.get("ess")))
     offers_due = mode in ("offers", "auto")
     # (no "nothing due" early exit: the direct deals pass is 2 requests and keeps the feed fresh every run)
     am = Amazon()

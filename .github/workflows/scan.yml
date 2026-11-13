@@ -17,6 +17,8 @@ on:
     - cron: '22 21 * * *'
     - cron: '7 22 * * *'
     - cron: '52 22 * * *'
+    # Daytime retries (IST 08:xx..23:xx, every 3 h): cheap - a run only does what is DUE (empty Daily Essentials list / category older than 20 h).
+    - cron: '17 2,5,8,11,14,17 * * *'
   workflow_dispatch:
     inputs:
       mode:
