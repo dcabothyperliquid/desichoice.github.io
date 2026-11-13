@@ -1,0 +1,86 @@
+{
+ "time": "2026-11-13T06:55:11Z",
+ "routes": {
+  "direct": {
+   "url": "https://www.amazon.in/s?k=kitchen+tools&rh=p_8%3A25-",
+   "http": 200,
+   "len": 2299,
+   "title": "&nbsp;",
+   "has_results": false,
+   "asins": 0,
+   "text": " &nbsp; var i = 1794552911; var j = i + Number(\"9199\" + \"35114\"); function triggerInterstitialChallenge() {var xhr = new XMLHttpRequest(); xhr.withCredentials = true; xhr.addEventListener(\"loadend\", function() { try { var data = JSON.parse(xhr.responseText); if (data.hasOwnProperty('reload')) { if ("
+  },
+  "translate_now": {
+   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+tools&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 429,
+   "len": 5920,
+   "title": "Google Translate",
+   "has_results": false,
+   "asins": 0,
+   "text": " window['ppConfig'] = {productName: 'a89246f01efa04d48da2a721ccb48e84', deleteIsEnforced: false , sealIsEnforced: false , heartbeatRate: 0.5 , periodicReportingRateMillis: 60000.0 , disableAllReporting: false };(function(){'use strict';function k(a){var b=0;return function(){return b Google Translat"
+  },
+  "translate_hi": {
+   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+tools&rh=p_8%3A25-&_x_tr_sl=en&_x_tr_tl=hi&_x_tr_hl=hi&_x_tr_pto=wapp",
+   "http": 429,
+   "len": 5937,
+   "title": "Google Translate",
+   "has_results": false,
+   "asins": 0,
+   "text": " window['ppConfig'] = {productName: 'a89246f01efa04d48da2a721ccb48e84', deleteIsEnforced: false , sealIsEnforced: false , heartbeatRate: 0.5 , periodicReportingRateMillis: 60000.0 , disableAllReporting: false };(function(){'use strict';function k(a){var b=0;return function(){return b Google Translat"
+  },
+  "jina": {
+   "url": "https://r.jina.ai/https://www.amazon.in/s?k=kitchen+tools&rh=p_8%3A25-",
+   "http": 200,
+   "len": 424,
+   "title": "",
+   "has_results": false,
+   "asins": 0,
+   "text": "Title: https://m.media-amazon.com/images/S/sash/6Uh4bsAwUkB3vJb.gif URL Source: https://www.amazon.in/s?k=kitchen+tools&rh=p_8:25- Final URL: https://m.media-amazon.com/images/S/sash/6Uh4bsAwUkB3vJb.gif Published Time: Tue, 28 Jan 2025 01:17:07 GMT Warning: This is a cached snapshot of the original "
+  },
+  "allorigins": {
+   "url": "https://api.allorigins.win/raw?url=https%3A%2F%2Fwww.amazon.in%2Fs%3Fk%3Dkitchen%2Btools%26rh%3Dp_8%253A25-",
+   "http": 520,
+   "len": 7359,
+   "title": "allorigins.win | 520: Web server is returning an unknown error",
+   "has_results": false,
+   "asins": 0,
+   "text": " allorigins.win | 520: Web server is returning an unknown error Web server is returning an unknown error Error code 520 Visit cloudflare.com for more information. 2026-11-13 06:55:31 UTC You Browser Working San Jose Cloudflare Working api.allorigins.win Host Error What happened? There is an unknown "
+  },
+  "corsproxy": {
+   "url": "https://corsproxy.io/?url=https%3A%2F%2Fwww.amazon.in%2Fs%3Fk%3Dkitchen%2Btools%26rh%3Dp_8%253A25-",
+   "http": 401,
+   "len": 81,
+   "title": "",
+   "has_results": false,
+   "asins": 0,
+   "text": "{\"error\":\"A valid API key is required. Get one at https://console.corsproxy.io/\"}"
+  },
+  "codetabs": {
+   "url": "https://api.codetabs.com/v1/proxy/?quest=https%3A%2F%2Fwww.amazon.in%2Fs%3Fk%3Dkitchen%2Btools%26rh%3Dp_8%253A25-",
+   "http": 522,
+   "len": 7246,
+   "title": "codetabs.com | 522: Connection timed out",
+   "has_results": false,
+   "asins": 0,
+   "text": " codetabs.com | 522: Connection timed out Connection timed out Error code 522 Visit cloudflare.com for more information. 2026-11-13 06:55:55 UTC You Browser Working Los Angeles Cloudflare Working api.codetabs.com Host Error What happened? The initial connection between Cloudflare's network and the o"
+  },
+  "bestsellers_direct": {
+   "url": "https://www.amazon.in/gp/bestsellers/kitchen",
+   "http": 200,
+   "len": 451445,
+   "title": "Amazon.in Bestsellers: The most popular items in Home &amp; Kitchen",
+   "has_results": false,
+   "asins": 30,
+   "text": " var aPageStart = (new Date()).getTime(); var ue_t0=ue_t0||+new Date(); window.ue_ihb = (window.ue_ihb || window.ueinit || 0) + 1; if (window.ue_ihb === 1) { var ue_csm = window, ue_hob = +new Date(); (function(d){var e=d.ue=d.ue||{},f=Date.now||function(){return+new Date};e.d=function(b){return f()"
+  },
+  "bestsellers_jina": {
+   "url": "https://r.jina.ai/https://www.amazon.in/gp/bestsellers/kitchen",
+   "http": 200,
+   "len": 47035,
+   "title": "",
+   "has_results": false,
+   "asins": 30,
+   "text": "Title: The most popular items in Home & Kitchen URL Source: https://www.amazon.in/gp/bestsellers/kitchen Markdown Content: ![Image 1](https://fls-eu.amazon.in/1/batch/1/OP/A21TJRUUN4KGV:520-0401260-9870828:GX0G9BCK5CQ58Y12043D$uedata=s:%2Frd%2Fuedata%3Fstaticb%26id%3DGX0G9BCK5CQ58Y12043D:0)![Image 2"
+  }
+ }
+}
