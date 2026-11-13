@@ -14,7 +14,7 @@ FONTS = [HIND, "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/sha
 MUSIC = os.environ.get("REEL_MUSIC", os.path.join(HERE, "music", "bed.m4a"))
 MUSIC_VOL = float(os.environ.get("REEL_MUSIC_VOL", "0.8"))          # final loudness is set by loudnorm (-14 LUFS), this just balances bed vs sfx
 ACCENT = "#e53935"
-T_INTRO, T_ITEM, T_OUTRO, T_X = 1.7, 2.7, 2.3, 0.25          # ~12s for 3 products: fast cuts hold retention
+T_INTRO, T_ITEM, T_OUTRO, T_X = 2.0, 4.2, 3.0, 0.25          # 4.2s per product = time to actually read it; 5 products ~26s, 3 products ~18s
 
 
 def font(size):
@@ -112,7 +112,7 @@ def hook_text(items):
     mn, mx = min(pr), max(pr)
     n = len(pr)
     if n >= 2 and mx <= 1.6 * mn:
-        word = {2: "Dono", 3: "Teeno"}.get(n, f"Sab {n}")
+        word = {2: "Dono", 3: "Teeno", 4: "Chaaron", 5: "Paanchon"}.get(n, f"Sab {n}")
         return f"{word} {inr(nice_ceil(mx))} ke andar"
     return f"{inr(mn)} se shuru!"
 
@@ -312,12 +312,15 @@ class HookSlide:
             pd.rounded_rectangle((0, 0, 559, 129), 40, fill=ACCENT)
             pd.text((280, 65), f"upto {best}% OFF", font=font(72), fill="white", anchor="mm")
         self.thumbs = []
+        n = len(photos)
+        self.cw = min(290, (W - 100 - (n - 1) * 20) // max(1, n))         # 3 thumbs = 290px, 5 thumbs = 176px: always inside the screen
+        cw = self.cw
         for p in photos:
-            c = layer((290, 290))
-            ImageDraw.Draw(c).rounded_rectangle((0, 0, 289, 289), 36, fill=(255, 255, 255, 255))
+            c = layer((cw, cw))
+            ImageDraw.Draw(c).rounded_rectangle((0, 0, cw - 1, cw - 1), 36 if cw > 220 else 24, fill=(255, 255, 255, 255))
             q = autocrop(p)
-            q.thumbnail((250, 250))
-            c.paste(q, ((290 - q.width) // 2, (290 - q.height) // 2))
+            q.thumbnail((cw - 40, cw - 40))
+            c.paste(q, ((cw - q.width) // 2, (cw - q.height) // 2))
             self.thumbs.append(c)
         self.last = text_layer("Aakhri deal sabse best!", font(60), "white") if len(photos) >= 2 else None
 
@@ -328,12 +331,13 @@ class HookSlide:
         put(img, self.hook, W / 2, 640, 1 + 0.10 * (1 - e_out(prog(t, 0, 0.28))))
         if self.pill is not None:
             put(img, self.pill, W / 2, 835, 0.6 + 0.4 * e_back(prog(t, 0.12, 0.3)))
-        n = len(self.thumbs)
-        x = (W - (n * 290 + (n - 1) * 30)) // 2
+        n, cw = len(self.thumbs), self.cw
+        gap = 30 if cw >= 290 else 20
+        x = (W - (n * cw + (n - 1) * gap)) // 2
         for k, c in enumerate(self.thumbs):
             pk = prog(t, 0.3 + 0.12 * k, 0.3)
-            put(img, c, x + 145, 1145, 0.5 + 0.5 * e_back(pk), clamp(pk * 3))
-            x += 320
+            put(img, c, x + cw / 2, 1145, 0.5 + 0.5 * e_back(pk), clamp(pk * 3))
+            x += cw + gap
         if self.last is not None:
             put(img, self.last, W / 2, 1450, 1.0, prog(t, 0.9, 0.4))
         return img
@@ -344,7 +348,7 @@ class OutroSlide:
         self.bg = blurred_bg(photo)
         self.static = layer((W, H))
         header(ImageDraw.Draw(self.static, "RGBA"), label)
-        pick = "1, 2 ya 3" if n == 3 else ("1 ya 2" if n == 2 else "number")
+        pick = {2: "1 ya 2", 3: "1, 2 ya 3"}.get(n, f"1 se {n} tak number")
         self.l1 = text_layer("Saare links", font(110), "#ffeb3b")
         self.l2 = text_layer("COMMENT me hain", font(110), "#ffeb3b")
         self.arrow = layer((200, 140))

@@ -13,6 +13,10 @@ class T(unittest.TestCase):
         self.assertNotIn(t.split()[-1].lower(), C._STOP)
         self.assertEqual(C.short_title(""), "")
 
+    def test_hook_words_for_4_and_5_products(self):
+        self.assertEqual(C.hook_text([{"price": 500}] * 5), "Paanchon ₹500 ke andar")
+        self.assertEqual(C.hook_text([{"price": 500}] * 4), "Chaaron ₹500 ke andar")
+
     def test_hook_uses_real_prices(self):
         self.assertEqual(C.hook_text([{"price": 649}, {"price": 649}, {"price": 599}]), "Teeno ₹650 ke andar")
         self.assertEqual(C.hook_text([{"price": 649}, {"price": 3058}]), "₹649 se shuru!")       # far apart -> no false 'andar' claim
@@ -32,8 +36,9 @@ class T(unittest.TestCase):
     def test_no_swipe_cta_on_a_reel_and_pace_is_fast(self):
         src = open(C.__file__).read()
         self.assertNotIn("Swipe karke", src)                                  # reels cannot be swiped
-        total = C.T_INTRO + 3 * C.T_ITEM + C.T_OUTRO + C.T_X
-        self.assertTrue(10 <= total <= 14, total)
+        self.assertGreaterEqual(C.T_ITEM, 4.0)                               # a product must stay long enough to be read
+        five = C.T_INTRO + 5 * C.T_ITEM + C.T_OUTRO + C.T_X
+        self.assertTrue(22 <= five <= 30, five)                              # 5-product reel ~26s
 
 
 if __name__ == "__main__":
@@ -53,10 +58,10 @@ class Motion(unittest.TestCase):
         self.assertGreater(C.e_back(0.8), 1.0)                      # overshoot = pop
 
     def test_all_slides_render_at_start_and_end(self):
-        items = [dict(self.ITEM, asin=str(i)) for i in range(3)]
-        slides = [C.HookSlide(items, self.photos(), "Daily Essentials"),
+        items = [dict(self.ITEM, asin=str(i)) for i in range(5)]
+        slides = [C.HookSlide(items, self.photos() + self.photos()[:2], "Daily Essentials"),
                   C.ProductSlide(items[0], self.photos()[0], "Daily Essentials", 1, 3, 2.95),
-                  C.OutroSlide(self.photos()[0], "Daily Essentials", 3)]
+                  C.OutroSlide(self.photos()[0], "Daily Essentials", 5)]
         for sl in slides:
             for t in (0.0, 0.5, 2.0, None):
                 self.assertEqual(sl.frame(t).size, (C.W, C.H))
@@ -73,16 +78,16 @@ class Motion(unittest.TestCase):
 
 class Audio(unittest.TestCase):
     def test_sfx_land_on_transitions_and_product_slides(self):
-        durs = [C.T_INTRO, C.T_ITEM, C.T_ITEM, C.T_ITEM, C.T_OUTRO]
+        durs = [C.T_INTRO] + [C.T_ITEM] * 5 + [C.T_OUTRO]
         ev = C.sfx_events(durs)
-        self.assertEqual(sum(1 for k, _ in ev if k == "whoosh"), 4)           # one per transition
-        self.assertEqual(sum(1 for k, _ in ev if k == "pop"), 3)              # one badge pop per product
-        self.assertEqual(sum(1 for k, _ in ev if k == "ding"), 3)
+        self.assertEqual(sum(1 for k, _ in ev if k == "whoosh"), 6)           # one per transition
+        self.assertEqual(sum(1 for k, _ in ev if k == "pop"), 5)              # one badge pop per product
+        self.assertEqual(sum(1 for k, _ in ev if k == "ding"), 5)
         self.assertTrue(all(0 <= t < sum(durs) for _, t in ev))
 
     def test_audio_graph_normalises_loudness_with_or_without_music(self):
         for midx in (5, None):
-            parts, label = C.audio_graph([1.7, 2.7, 2.7, 2.7, 2.3], 12.35, midx)
+            parts, label = C.audio_graph([2.0, 4.2, 4.2, 4.2, 3.0], 17.65, midx)
             g = ";".join(parts)
             self.assertIn("loudnorm=I=-14", g)
             self.assertEqual(label, "[a]")
