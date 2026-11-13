@@ -1,0 +1,47 @@
+name: Render Card Reel
+
+# Xbot (Render) dispatches this with a JSON payload; renders a 1080x1920 swipe-style carousel reel from deal cards
+# (photo, % OFF, price, stars + ratings) and publishes it as a GitHub Release asset (tag cardreel-<job_id>).
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: 'unique job id (tag will be cardreel-<job_id>)'
+        required: true
+      payload:
+        description: 'JSON: {"label": "...", "items": [{"asin","title","price","list_price","pct","rating","reviews","image"}]}'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render-cards-reel-${{ github.event.inputs.job_id }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ffmpeg, fonts, deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
+          pip install -q pillow
+      - name: Render card reel
+        env:
+          PAYLOAD: ${{ github.event.inputs.payload }}
+        run: python tools/render_cards_reel.py
+      - name: Publish release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_ID: ${{ github.event.inputs.job_id }}
+        run: |
+          gh release create "cardreel-${JOB_ID}" "out/reel.mp4#reel.mp4" "out/meta.json#meta.json" \
+            --title "cardreel-${JOB_ID}" --notes "auto-rendered card reel" --repo "${GITHUB_REPOSITORY}"
