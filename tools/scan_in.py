@@ -309,6 +309,31 @@ def active_themes(now=None):
     return [(k, l, i, kws) for _, k, l, i, kws in out]
 
 
+# Theme matching: the keywords above are SEARCH phrases ("geyser water heater"); a deal title almost never contains the whole phrase, so the
+# deals-pool match used to find ~nothing (Trending shrank to 2 items, no tabs, no auto-scroll). Match on the individual words instead.
+_THEME_STOP = {"set", "water", "home", "offers", "party", "festive", "gifts", "gift", "sale", "puja", "light", "colours", "wear", "room", "ethnic"}
+THEME_EXTRA = {
+    "winter": ["thermal", "muffler", "gloves", "hoodie", "fleece", "heating", "immersion", "woollen", "wool", "cardigan", "sweatshirt", "moisturiser", "moisturizer", "lip balm", "cold cream", "woolen"],
+    "chhath": ["kalash", "thali", "soop", "dala", "diya", "pooja", "puja", "incense", "agarbatti", "dhoop", "copper"],
+    "diwali": ["diya", "rangoli", "fairy light", "led light", "candle", "dry fruit", "hamper", "torana", "lantern"],
+    "wedding": ["gift set", "jewellery", "jewelry", "saree", "lehenga", "kurta", "ethnic", "necklace", "earring", "bangle", "sherwani"],
+    "christmas": ["christmas", "santa", "xmas", "tree"], "newyear": ["party", "balloon", "photo frame", "fairy light"],
+    "valentine": ["teddy", "chocolate", "couple", "rose", "perfume"], "holi": ["gulal", "pichkari", "holi", "colour"],
+    "summer": ["cooler", "fan", "air conditioner", "ac", "bottle", "sunscreen"], "monsoon": ["umbrella", "raincoat", "dehumidifier"],
+    "rakhi": ["rakhi", "chocolate"], "festive": ["decor", "light", "lamp"],
+}
+
+
+def theme_regex(key, kws):
+    words = set()
+    for k in kws:
+        for w in re.findall(r"[a-z]+", k.lower()):
+            if len(w) >= 4 and w not in _THEME_STOP:
+                words.add(w)
+    words |= {w.lower() for w in THEME_EXTRA.get(key, [])}
+    return re.compile(r"\b(?:" + "|".join(sorted(re.escape(w) for w in words)) + r")(?:e?s)?\b", re.I)
+
+
 def round_robin(groups, limit):
     """groups = {key: [items best first]} -> best-discount-first interleave across keys, up to limit."""
     keys = sorted(groups, key=lambda k: -(groups[k][0]["pct"] if groups[k] else 0))
@@ -991,7 +1016,7 @@ def run_direct(am):
     pool_ht = pool + extra
     per = {}
     for key, label, icon, kws in themes:
-        rx = re.compile("|".join(re.escape(k.lower()) for k in kws))
+        rx = theme_regex(key, kws)
         lst = [clean(i, theme=key, label=label, icon=icon) for i in pool_ht if credible_any(i, MIN_PRICE_ESS) and rx.search(i["name"].lower())]
         lst = _dedupe_names(sorted(lst, key=lambda x: -x["pct"]))
         if lst:
