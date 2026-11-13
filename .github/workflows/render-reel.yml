@@ -52,3 +52,20 @@ jobs:
         run: |
           gh release create "reel-${JOB_ID}" "out/reel.mp4#reel.mp4" "out/meta.json#meta.json" \
             --title "reel-${JOB_ID}" --notes "auto-rendered deal reel" --repo "${GITHUB_REPOSITORY}"
+
+      - name: Record music used (no-repeat window)
+        if: success()
+        continue-on-error: true      # the reel is already published; a failed record only weakens the no-repeat rule
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for i in 1 2 3 4 5 6; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python tools/jamendo_music.py --record out/meta.json
+            git add tools/music/used.json
+            git diff --cached --quiet && exit 0
+            git commit -q -m "music: track used [skip ci]"
+            git push -q origin HEAD:main && exit 0
+            sleep $((RANDOM % 6 + 2))
+          done
+          echo "could not record music id" >&2; exit 1

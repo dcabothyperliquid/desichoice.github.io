@@ -460,13 +460,13 @@ def main():
     pl = json.loads(os.environ["PAYLOAD"])
     label = str(pl.get("label") or "Daily Essentials")
     os.makedirs(OUT, exist_ok=True); os.makedirs(TMP, exist_ok=True)
-    credit = None
+    credit = mid = None
     if not os.environ.get("REEL_MUSIC"):                       # explicit REEL_MUSIC override wins; otherwise a fresh Jamendo track per reel
         try:
             import jamendo_music
             jm = jamendo_music.pick(TMP, os.environ.get("JOB_ID"))
             if jm:
-                MUSIC, credit = jm["path"], jm["credit"]
+                MUSIC, credit, mid = jm["path"], jm["credit"], jm["id"]
         except Exception as e:
             print("jamendo music skipped:", e, file=sys.stderr)
     good, photos = [], []
@@ -494,7 +494,7 @@ def main():
         if os.environ.get("REEL_KEEP_PNG"):
             sl.frame(None).save(os.path.join(TMP, f"clip_{k}.png"))
     assemble(slides, durs, os.path.join(OUT, "reel.mp4"))
-    json.dump({"asins": [i.get("asin") for i in good], "kind": "cards", "music_credit": credit}, open(os.path.join(OUT, "meta.json"), "w"))
+    json.dump({"asins": [i.get("asin") for i in good], "kind": "cards", "music_credit": credit, "music_id": mid}, open(os.path.join(OUT, "meta.json"), "w"))
 
 
 if __name__ == "__main__":

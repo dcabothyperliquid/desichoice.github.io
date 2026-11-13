@@ -48,6 +48,42 @@ class JamendoTests(unittest.TestCase):
         self.assertTrue(os.path.exists(r["path"]))
         self.assertIn("CC BY", r["credit"])
 
+    def test_choose_never_picks_recently_used_track(self):
+        from datetime import datetime, timezone, timedelta
+        now = datetime(2026, 11, 13, tzinfo=timezone.utc)
+        iso = lambda d: (now - timedelta(days=d)).strftime("%Y-%m-%dT%H:%M:%SZ")
+        pool = [T(i, BY) for i in range(1, 11)]
+        used = {"1": iso(2), "2": iso(10), "3": iso(34), "4": iso(36), "5": iso(90)}      # 1,2,3 are inside the 35-day window
+        for n in range(30):
+            first = jm.choose(pool, used, f"seed{n}", now)[0]["id"]
+            self.assertNotIn(first, {"1", "2", "3"})
+
+    def test_choose_when_pool_exhausted_uses_least_recently_used(self):
+        from datetime import datetime, timezone, timedelta
+        now = datetime(2026, 11, 13, tzinfo=timezone.utc)
+        pool = [T(i, BY) for i in range(1, 7)]
+        used = {str(i): (now - timedelta(days=i)).strftime("%Y-%m-%dT%H:%M:%SZ") for i in range(1, 7)}     # all within 35 days
+        got = {t["id"] for t in jm.choose(pool, used, "s", now)}
+        self.assertTrue(got <= {"6", "5"})                                                 # oldest third only
+        self.assertTrue(got)
+
+    def test_record_writes_id_and_prunes_old(self):
+        import json
+        from datetime import datetime, timezone
+        d = tempfile.mkdtemp(); meta = os.path.join(d, "meta.json"); up = os.path.join(d, "used.json")
+        json.dump({"music_id": "77"}, open(meta, "w"))
+        json.dump({"1": "2020-01-01T00:00:00Z", "2": "2026-11-01T00:00:00Z"}, open(up, "w"))
+        self.assertEqual(jm.record(meta, up, datetime(2026, 11, 13, tzinfo=timezone.utc)), "77")
+        u = json.load(open(up))
+        self.assertEqual(set(u), {"2", "77"})                                              # "1" is older than 120 days -> dropped
+
+    def test_record_without_music_keeps_file_valid(self):
+        import json
+        d = tempfile.mkdtemp(); meta = os.path.join(d, "meta.json"); up = os.path.join(d, "used.json")
+        json.dump({"asins": []}, open(meta, "w"))
+        self.assertIsNone(jm.record(meta, up))
+        self.assertEqual(json.load(open(up)), {})
+
     def test_api_error_returns_none(self):
         def boom(*a, **k): raise RuntimeError("down")
         with mock.patch.dict(os.environ, {"JAMENDO_CLIENT_ID": "k"}), mock.patch.object(jm.requests, "get", boom):

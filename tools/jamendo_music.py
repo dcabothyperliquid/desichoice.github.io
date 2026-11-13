@@ -6,13 +6,18 @@ Env: JAMENDO_CLIENT_ID (GitHub Actions secret).
 Licence filter: only CC BY and CC0 / public domain (no NC = no non-commercial, no ND, no SA). CC BY needs credit, so `credit`
 is returned and written to meta.json (Xbot adds it to the post caption).
 """
-import hashlib, os, re, sys, time
+import hashlib, json, os, re, sys, time
+from datetime import datetime, timedelta, timezone
 import requests
 
 API = "https://api.jamendo.com/v3.0/tracks/"
 MIN_SEC, MAX_SEC = 60, 400          # long enough to cover a 30 s reel
-ORDERS = ("popularity_week", "popularity_month")
-TAGS = ("upbeat", "happy", "energetic", "dance", "pop", "groove")   # one tag per query, results merged (avoids AND/OR ambiguity of multi-tag search)
+ORDERS = ("popularity_week", "popularity_month", "popularity_total")
+TAGS = ("upbeat", "happy", "energetic", "dance", "pop", "groove", "funk", "electronic", "positive", "fun", "summer", "party")
+HERE = os.path.dirname(os.path.abspath(__file__))
+USED_PATH = os.path.join(HERE, "music", "used.json")          # {track_id: iso time last used}, committed back to the repo by the workflow
+NOREPEAT_DAYS = int(os.environ.get("REEL_MUSIC_NOREPEAT_DAYS") or 35)   # a track is not used again for at least this long
+FRESH_TARGET = 25                                              # stop querying once this many not-recently-used tracks are known   # one tag per query, results merged (avoids AND/OR ambiguity of multi-tag search)
 
 
 def license_ok(url):
@@ -25,9 +30,9 @@ def license_ok(url):
     return bool(m) and m.group(1) == "by"
 
 
-def _query(cid, tags, order):
+def _query(cid, tags, order, offset=0):
     r = requests.get(API, params={
-        "client_id": cid, "format": "json", "limit": 200, "order": order, "fuzzytags": tags,
+        "client_id": cid, "format": "json", "limit": 200, "offset": offset, "order": order, "fuzzytags": tags,
         "vocalinstrumental": "instrumental",
     }, timeout=25)
     r.raise_for_status()
@@ -55,33 +60,92 @@ def credit_line(t):
     return f"🎵 Music: {t.get('name', '').strip()} - {t.get('artist_name', '').strip()} (Jamendo, CC BY)"
 
 
+def load_used(path=None):
+    try:
+        d = json.load(open(path or USED_PATH))
+        return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+
+def recent_ids(used, days=None, now=None):
+    now = now or datetime.now(timezone.utc)
+    cut = now - timedelta(days=NOREPEAT_DAYS if days is None else days)
+    out = set()
+    for tid, ts in used.items():
+        try:
+            if datetime.fromisoformat(str(ts).replace("Z", "+00:00")) >= cut:
+                out.add(str(tid))
+        except ValueError:
+            out.add(str(tid))                      # unreadable time -> treat as recent (safe side)
+    return out
+
+
+def record(meta_path, used_path=None, now=None):
+    """After a successful render: remember meta.json's music_id (and drop entries older than 120 days). -> id or None."""
+    used_path = used_path or USED_PATH
+    try:
+        mid = json.load(open(meta_path)).get("music_id")
+    except Exception:
+        mid = None
+    used = load_used(used_path)
+    now = now or datetime.now(timezone.utc)
+    if mid:
+        used[str(mid)] = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    used = {k: v for k, v in used.items() if k in recent_ids(used, 120, now)}
+    os.makedirs(os.path.dirname(used_path), exist_ok=True)
+    json.dump(used, open(used_path, "w"), indent=0, sort_keys=True)
+    return mid
+
+
+def choose(pool, used, seed, now=None):
+    """Pick one track from pool: not used within NOREPEAT_DAYS (hash of seed picks which); if every known track is recent,
+    the least recently used one (and a loud warning), so a reel never ends up without music because of the no-repeat rule."""
+    recent = recent_ids(used, None, now)
+    fresh = [t for t in pool if str(t.get("id")) not in recent]
+    cand = fresh
+    if not cand:
+        print(f"jamendo: WARNING pool exhausted ({len(pool)} tracks all used in the last {NOREPEAT_DAYS} days) -> least recently used", file=sys.stderr)
+        cand = sorted(pool, key=lambda t: str(used.get(str(t.get("id")), "")))[:max(1, len(pool) // 3)]
+    return sorted(cand, key=lambda t: hashlib.sha1(f"{seed}:{t.get('id')}".encode()).hexdigest())
+
+
 def pick(dest_dir, seed=None):
     cid = (os.environ.get("JAMENDO_CLIENT_ID") or "").strip()
     if not cid:
         print("jamendo: JAMENDO_CLIENT_ID not set -> old bed music", file=sys.stderr)
         return None
     seed = str(seed or time.time())
-    pool = []
+    used = load_used()
+    recent = recent_ids(used)
     try:
-        seen = {}
+        seen, fresh = {}, 0
         for tag in TAGS:
             for order in ORDERS:
-                try:
-                    for t in usable(_query(cid, tag, order)):
-                        seen.setdefault(str(t.get("id")), t)
-                except Exception as e:
-                    print(f"jamendo query {tag}/{order} failed: {e}", file=sys.stderr)
-            if len(seen) >= 40:
+                for offset in (0, 200):
+                    try:
+                        res = _query(cid, tag, order, offset)
+                    except Exception as e:
+                        print(f"jamendo query {tag}/{order}/{offset} failed: {e}", file=sys.stderr)
+                        break
+                    for t in usable(res):
+                        tid = str(t.get("id"))
+                        if tid not in seen:
+                            seen[tid] = t
+                            fresh += tid not in recent
+                    if len(res) < 200:
+                        break
+                if fresh >= FRESH_TARGET:
+                    break
+            if fresh >= FRESH_TARGET:
                 break
         pool = list(seen.values())
         if not pool:
             print("jamendo: no usable track -> old bed music", file=sys.stderr)
             return None
-        pool.sort(key=lambda t: str(t.get("id")))
-        order = sorted(range(len(pool)), key=lambda i: hashlib.sha1(f"{seed}:{pool[i].get('id')}".encode()).hexdigest())
+        print(f"jamendo: pool {len(pool)} tracks, {fresh} not used in the last {NOREPEAT_DAYS} days")
         os.makedirs(dest_dir, exist_ok=True)
-        for i in order[:4]:                                   # a few tries if one download fails
-            t = pool[i]
+        for t in choose(pool, used, seed)[:4]:                 # a few tries if one download fails
             url = t.get("audiodownload") or t.get("audio")
             path = os.path.join(dest_dir, f"jamendo_{t.get('id')}.mp3")
             try:
@@ -99,3 +163,8 @@ def pick(dest_dir, seed=None):
     except Exception as e:
         print(f"jamendo failed: {e}", file=sys.stderr)
     return None
+
+
+if __name__ == "__main__":
+    if len(sys.argv) >= 3 and sys.argv[1] == "--record":
+        print("recorded music id:", record(sys.argv[2]))

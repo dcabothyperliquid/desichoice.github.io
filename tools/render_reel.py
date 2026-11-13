@@ -1114,7 +1114,7 @@ def fit_length(shots):
 
 
 MUSIC_NORM = False          # True when a Jamendo track is used: real tracks are much louder than the synthesized bed -> level them first
-MUSIC_CREDIT = [None]
+MUSIC_CREDIT = [None, None]            # [credit line, jamendo track id]
 
 
 def main():
@@ -1135,7 +1135,7 @@ def main():
             os.makedirs(TMP, exist_ok=True)
             jm = jamendo_music.pick(TMP, os.environ.get("JOB_ID"))
             if jm:
-                MUSIC, MUSIC_NORM, MUSIC_CREDIT[0] = jm["path"], True, jm["credit"]
+                MUSIC, MUSIC_NORM, MUSIC_CREDIT[0], MUSIC_CREDIT[1] = jm["path"], True, jm["credit"], jm["id"]
         except Exception as e:
             print("jamendo music skipped:", e, file=sys.stderr)
     label = payload.get("label") or "Top Deals"
@@ -1192,7 +1192,7 @@ def main():
              "-movflags", "+faststart", f"{OUT}/reel.mp4"])
     total = dur(f"{OUT}/reel.mp4")
     json.dump({"label": label, "items": len(meta_items), "media": meta_items, "seconds": round(total, 1), "voice": voiced > 0,
-               "voice_name": VOICE, "voice_used": VOICE_USED[0], "shots": len(shots), "music_credit": MUSIC_CREDIT[0]}, open(f"{OUT}/meta.json", "w"))
+               "voice_name": VOICE, "voice_used": VOICE_USED[0], "shots": len(shots), "music_credit": MUSIC_CREDIT[0], "music_id": MUSIC_CREDIT[1]}, open(f"{OUT}/meta.json", "w"))
     print("done", round(total, 1), "s, shots", len(shots), "voice shots", voiced, meta_items, VOICE)
 
 
