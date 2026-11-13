@@ -731,6 +731,30 @@ def selftest(am):
 DEAL_URLS = [BASE + "/deals", BASE + "/gp/goldbox"]
 
 
+def _product_to_card(p):
+    """one deals-API product (same shape as the page-embedded JSON) -> raw card like parse_cards(), or None."""
+    asin = str(p.get("asin") or "").strip().upper()
+    if not re.fullmatch(r"[A-Z0-9]{10}", asin):
+        return None
+    pr = p.get("price") or {}
+    price = (pr.get("priceToPay") or {}).get("price")
+    was = (pr.get("basisPrice") or {}).get("price")
+    im = p.get("image") or {}
+    low = im.get("lowRes") or im.get("hiRes") or {}
+    img = (low.get("baseUrl") + "." + (low.get("extension") or "jpg")) if low.get("baseUrl") else ""
+    cr = p.get("customerReviews") or {}
+    rs = ((cr.get("rating") or {}).get("shortDisplayString")) or ""
+    rv = (cr.get("count") or {}).get("value") or 0
+    db = p.get("dealBadge") or {}
+    frags = []
+    for part in (db.get("label"), db.get("messaging")):
+        frags += [str(f.get("text") or "") for f in (((part or {}).get("content") or {}).get("fragments") or [])]
+    return {"asin": asin, "title": str(p.get("title") or im.get("altText") or "").strip(), "img": img,
+            "price": str(price or ""), "was": str(was or ""),
+            "rating": (rs + " out of 5 stars") if rs else "", "reviews": str(rv or ""),
+            "text": " ".join(f for f in frags if f)}
+
+
 def parse_deal_json(html):
     """2026-11 markup: the deals page ships its cards as JSON ("productSearchResponse":{"products":[...]}) incl. rating + review count
     (the old .dcl-product DOM is gone from the live page). -> raw cards like parse_cards()."""
@@ -743,29 +767,12 @@ def parse_deal_json(html):
             continue
         for p in (obj.get("products") if isinstance(obj, dict) else None) or []:
             try:
-                asin = str(p.get("asin") or "").strip().upper()
-                if not re.fullmatch(r"[A-Z0-9]{10}", asin) or asin in seen:
-                    continue
-                pr = p.get("price") or {}
-                price = (pr.get("priceToPay") or {}).get("price")
-                was = (pr.get("basisPrice") or {}).get("price")
-                im = p.get("image") or {}
-                low = im.get("lowRes") or im.get("hiRes") or {}
-                img = (low.get("baseUrl") + "." + (low.get("extension") or "jpg")) if low.get("baseUrl") else ""
-                cr = p.get("customerReviews") or {}
-                rs = ((cr.get("rating") or {}).get("shortDisplayString")) or ""
-                rv = (cr.get("count") or {}).get("value") or 0
-                db = p.get("dealBadge") or {}
-                frags = []
-                for part in (db.get("label"), db.get("messaging")):
-                    frags += [str(f.get("text") or "") for f in (((part or {}).get("content") or {}).get("fragments") or [])]
-                seen.add(asin)
-                out.append({"asin": asin, "title": str(p.get("title") or im.get("altText") or "").strip(), "img": img,
-                            "price": str(price or ""), "was": str(was or ""),
-                            "rating": (rs + " out of 5 stars") if rs else "", "reviews": str(rv or ""),
-                            "text": " ".join(f for f in frags if f)})
+                c = _product_to_card(p)
             except Exception:
                 continue
+            if c and c["asin"] not in seen:
+                seen.add(c["asin"])
+                out.append(c)
     return out
 
 
@@ -815,6 +822,59 @@ def credible_deal(it, min_price):
     return True
 
 
+# The deals page loads more cards through its own public JSON endpoint while you scroll (GET /d2b/api/v1/products/search,
+# 30 per call, department filter + startIndex). Verified from the runner with a real browser (guides/probe6.json).
+DEALS_API = BASE + "/d2b/api/v1/products/search"
+DEAL_DEPTS = [("grocery", "2454179031"), ("health", "1350385031"), ("beauty", "1355017031"), ("baby", "1571275031"),
+              ("home_kitchen", "976443031"), ("pets", "4740420031")]      # essentials-type departments (cheap daily-use stuff)
+DEAL_API_PAGES = 3                                                        # 3 x 30 per department
+
+
+def _deals_api_url(dept, start, max_price):
+    flt = {"includedDepartments": [dept] if dept else [], "excludedDepartments": [], "includedTags": [], "excludedTags": [],
+           "promotionTypes": [], "accessTypes": [], "maxPrice": {"amount": str(max_price), "currencyCode": "INR"},
+           "brandIds": [], "unifiedIds": []}
+    q = {"pageSize": "30", "startIndex": str(start), "calculateRefinements": "false",
+         "rankingContext": json.dumps({"pageTypeId": "deals", "rankGroup": "CITADEL_ESPEON_BLEND_RANKING"}, separators=(",", ":")),
+         "filters": json.dumps(flt, separators=(",", ":"))}
+    return DEALS_API + "?" + urllib.parse.urlencode(q)
+
+
+def fetch_deals_api(am):
+    """-> list of raw cards from the deals API (department by department). Never raises; traced into scan_status.json."""
+    cards, seen = [], set()
+    plan = [(None, 100000, "all")] + [(d, 999, k) for k, d in DEAL_DEPTS]
+    for dept, max_price, key in plan:
+        got_dept = 0
+        for pg in range(DEAL_API_PAGES):
+            time.sleep(random.uniform(1.0, 2.2))
+            url = _deals_api_url(dept, pg * 30, max_price)
+            try:
+                r = am.s.get(url, timeout=40, headers={"Accept": "application/json, text/plain, */*", "Referer": BASE + "/deals",
+                                                       "X-Requested-With": "XMLHttpRequest"})
+                data = r.json() if r.status_code == 200 else {}
+            except Exception as e:
+                am.trace.append({"url": "deals-api:" + key, "page": pg, "error": str(e)[:120]})
+                break
+            prods = (data.get("products") if isinstance(data, dict) else None) or []
+            am.trace.append({"url": "deals-api:" + key, "page": pg, "http": r.status_code, "products": len(prods)})
+            if not prods:
+                break
+            for p in prods:
+                try:
+                    c = _product_to_card(p)
+                except Exception:
+                    c = None
+                if c and c["asin"] not in seen:
+                    seen.add(c["asin"])
+                    cards.append(c)
+                    got_dept += 1
+            if len(prods) < 30:
+                break
+        log(f"  deals-api {key}: {got_dept} new cards")
+    return cards
+
+
 def credible_any(it, min_price):
     """a deal card that carries rating + reviews is judged by the full credible() gates (no quality drop); only a card with
     no rating/review data at all falls back to credible_deal()."""
@@ -850,6 +910,15 @@ def fetch_deals(am):
                 seen.add(it["asin"])
                 items.append(it)
         log(f"  deals {url}: {len(cards)} cards, {len(items)} with real discount so far")
+    try:
+        for c in fetch_deals_api(am):
+            it = card_to_item(c)
+            if it and it["asin"] not in seen:
+                seen.add(it["asin"])
+                items.append(it)
+    except Exception as e:                                   # noqa
+        log("deals api failed:", str(e)[:160])
+    log(f"  deals total with real discount: {len(items)}")
     return items
 
 
