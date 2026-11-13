@@ -151,91 +151,237 @@ def header(d, label, idx=None, total=None):
     d.text((W - 100, 140), label if idx is None else f"{idx}/{total}", font=font(44), fill="#111111", anchor="rm")
 
 
-def product_slide(it, photo, label, idx, total, path):
-    img = blurred_bg(photo).convert("RGBA")
-    d = ImageDraw.Draw(img, "RGBA")
-    header(d, label, idx, total)
-    cta_pill(d)
-    d.rounded_rectangle((50, 290, W - 50, 1150), 56, fill=(255, 255, 255, 255))
-    p = autocrop(photo)
-    sc = min(880 / p.width, 740 / p.height, 2.5)                      # enlarge small photos too, not only shrink
-    p = p.resize((max(1, int(p.width * sc)), max(1, int(p.height * sc))), Image.LANCZOS)
-    img.paste(p, ((W - p.width) // 2, 290 + (860 - p.height) // 2))
-    pct = int(it.get("pct") or 0)
-    if pct:
-        d.rounded_rectangle((80, 320, 420, 420), 28, fill=ACCENT)
-        d.text((250, 370), f"{pct}% OFF", font=font(58), fill="white", anchor="mm")
-    # short punchy title (never cut mid-sentence)
-    f = font(58)
-    lines = wrap(d, short_title(it.get("title")), f, W - 160, 2)
-    d.rounded_rectangle((50, 1180, W - 50, 1340), 40, fill=(0, 0, 0, 200))
-    ys = [1260] if len(lines) == 1 else [1235, 1295]
-    for ln, y in zip(lines, ys):
-        d.text((W // 2, y), ln, font=f, fill="#ffeb3b", anchor="mm")
-    # price strip (kept clear of the Reels UI at the bottom)
-    d.rounded_rectangle((50, 1370, W - 50, 1650), 44, fill=(255, 255, 255, 240))
-    price, lp = it.get("price"), it.get("list_price")
-    d.text((100, 1470), inr(price), font=font(124), fill="#111111", anchor="lm")
-    if lp:
-        x0 = 100 + d.textlength(inr(price), font=font(124)) + 30
-        t = inr(lp)
-        d.text((x0, 1482), t, font=font(56), fill="#888888", anchor="lm")
-        d.line((x0, 1477, x0 + d.textlength(t, font=font(56)), 1477), fill="#888888", width=5)
+# ── motion helpers (everything is rendered per frame; t=None means "final resting state") ──────────────────────
+FPS = 30
+LEAD = 0.15          # product/outro slides start animating just after the slide-left transition has begun
+
+
+def clamp(x):
+    return 0.0 if x < 0 else 1.0 if x > 1 else x
+
+
+def prog(t, a, d):
+    return 1.0 if t is None else clamp((t - a) / d)
+
+
+def e_out(x):
+    return 1 - (1 - x) ** 3
+
+
+def e_back(x, s=1.70158):
+    x -= 1
+    return 1 + (s + 1) * x ** 3 + s * x ** 2          # small overshoot = the "pop"
+
+
+def layer(size):
+    return Image.new("RGBA", size, (0, 0, 0, 0))
+
+
+def put(img, lay, cx, cy, scale=1.0, alpha=1.0):
+    if alpha <= 0.003 or scale <= 0.003:
+        return
+    if abs(scale - 1) > 1e-3:
+        lay = lay.resize((max(1, int(lay.width * scale)), max(1, int(lay.height * scale))), Image.BILINEAR)
+    if alpha < 0.999:
+        lay = lay.copy()
+        lay.putalpha(lay.getchannel("A").point(lambda v: int(v * alpha)))
+    img.paste(lay, (int(round(cx - lay.width / 2)), int(round(cy - lay.height / 2))), lay)
+
+
+def text_layer(text, f, fill, pad=8):
+    m = ImageDraw.Draw(layer((4, 4)))
+    w = int(m.textlength(text, font=f)) + 2 * pad
+    lay = layer((w, int(f.size * 1.5) + 2 * pad))
+    ImageDraw.Draw(lay).text((lay.width // 2, lay.height // 2), text, font=f, fill=fill, anchor="mm")
+    return lay
+
+
+class ProductSlide:
+    def __init__(self, it, photo, label, idx, total, dur):
+        self.it, self.dur = it, dur
+        self.bg = blurred_bg(photo)
+        self.static = layer((W, H))
+        sd = ImageDraw.Draw(self.static, "RGBA")
+        header(sd, label, idx, total)
+        cta_pill(sd)
+        self.card = layer((W - 100, 860))
+        ImageDraw.Draw(self.card).rounded_rectangle((0, 0, W - 101, 859), 56, fill=(255, 255, 255, 255))
+        p = autocrop(photo)
+        sc = min(880 / p.width, 740 / p.height, 2.5)
+        self.photo = p.resize((max(1, int(p.width * sc)), max(1, int(p.height * sc))), Image.LANCZOS)
+        pct = int(it.get("pct") or 0)
+        self.badge = None
+        if pct:
+            self.badge = layer((340, 100))
+            bd = ImageDraw.Draw(self.badge)
+            bd.rounded_rectangle((0, 0, 339, 99), 28, fill=ACCENT)
+            bd.text((170, 50), f"{pct}% OFF", font=font(58), fill="white", anchor="mm")
+        f = font(58)
+        lines = wrap(ImageDraw.Draw(layer((4, 4))), short_title(it.get("title")), f, W - 160, 2)
+        self.title = layer((W - 100, 160))
+        td = ImageDraw.Draw(self.title)
+        td.rounded_rectangle((0, 0, W - 101, 159), 40, fill=(0, 0, 0, 200))
+        for ln, y in zip(lines, [80] if len(lines) == 1 else [55, 115]):
+            td.text(((W - 100) // 2, y), ln, font=f, fill="#ffeb3b", anchor="mm")
+        self.price_base = layer((W - 100, 280))
+        ImageDraw.Draw(self.price_base).rounded_rectangle((0, 0, W - 101, 279), 44, fill=(255, 255, 255, 240))
+        try:
+            self.price = float(it.get("price"))
+        except Exception:
+            self.price = None
+        try:
+            self.lp = float(it.get("list_price") or 0)
+        except Exception:
+            self.lp = 0.0
+        try:
+            self.rating, self.n = float(it.get("rating") or 0), int(float(it.get("reviews") or 0))
+        except Exception:
+            self.rating, self.n = 0.0, 0
+
+    def price_strip(self, tt):
+        lay = self.price_base.copy()
+        d = ImageDraw.Draw(lay)
+        big = font(124)
+        final = inr(self.it.get("price"))
+        shown = final
+        if self.price is not None and self.lp > self.price:         # price DROP: counts down from the MRP to the deal price
+            k = e_out(prog(tt, 0.35, 0.7))
+            shown = inr(round(self.lp + (self.price - self.lp) * k))
+        d.text((50, 100), shown, font=big, fill="#111111", anchor="lm")
+        if self.lp:
+            x0 = 50 + d.textlength(final, font=big) + 30
+            t = inr(self.lp)
+            d.text((x0, 112), t, font=font(56), fill="#888888", anchor="lm")
+            sl = prog(tt, 1.0, 0.18)                                # the slash through the MRP
+            if sl > 0:
+                d.line((x0, 107, x0 + d.textlength(t, font=font(56)) * sl, 107), fill="#888888", width=5)
+        if self.rating >= 1:
+            fade = prog(tt, 0.8, 0.3)
+            if fade > 0:
+                ov = layer(lay.size)
+                od = ImageDraw.Draw(ov)
+                for k in range(5):
+                    star(od, 80 + k * 66, 215, 28, "#f59e0b" if self.rating >= k + 0.75 else ("#fbcf72" if self.rating >= k + 0.25 else "#d4d4d4"))
+                lab = f"{self.rating:.1f}" + (f"  ({fmt_n(self.n)} ratings)" if self.n else "")
+                od.text((80 + 5 * 66 + 8, 216), lab, font=font(46), fill="#333333", anchor="lm")
+                ov.putalpha(ov.getchannel("A").point(lambda v: int(v * fade)))
+                lay.alpha_composite(ov)
+        return lay
+
+    def frame(self, t=None):
+        tt = None if t is None else max(0.0, t - LEAD)
+        img = self.bg.copy()
+        img.paste(self.static, (0, 0), self.static)
+        # card: pops in, then the photo drifts in slowly (Ken Burns)
+        pc = prog(tt, 0, 0.3)
+        zoom = 1.0 if tt is None else 1.0 + 0.07 * clamp(tt / self.dur)
+        ph = self.photo if zoom == 1.0 else self.photo.resize((int(self.photo.width * zoom), int(self.photo.height * zoom)), Image.BICUBIC)
+        card = self.card.copy()
+        card.paste(ph, ((card.width - ph.width) // 2, (card.height - ph.height) // 2))
+        put(img, card, W / 2, 720, 0.92 + 0.08 * e_back(pc), clamp(pc * 3))
+        if self.badge is not None:
+            pb = prog(tt, 0.25, 0.3)
+            pulse = 1.0 if (tt is None or tt < 1.0) else 1 + 0.04 * math.sin((tt - 1.0) * 2 * math.pi * 1.6)
+            put(img, self.badge, 250, 370, (0.3 + 0.7 * e_back(pb)) * pulse, clamp(pb * 3))
+        pt = e_out(prog(tt, 0.2, 0.3))
+        put(img, self.title, W / 2 - (1 - pt) * W, 1260)
+        pp = e_out(prog(tt, 0.35, 0.3))
+        put(img, self.price_strip(tt), W / 2, 1510 + (1 - pp) * 70, 1.0, pp)
+        return img
+
+
+class HookSlide:
+    """Opening slide. Already fully readable at t=0 (it becomes the thumbnail); elements pop on top of that."""
+    def __init__(self, items, photos, label):
+        self.bg = blurred_bg(photos[0])
+        self.static = layer((W, H))
+        sd = ImageDraw.Draw(self.static, "RGBA")
+        header(sd, label)
+        cta_pill(sd)
+        best = max([int(i.get("pct") or 0) for i in items] + [0])
+        self.label = text_layer(label.upper(), font(60), "white")
+        hook = hook_text(items)
+        hf = font(150)
+        while ImageDraw.Draw(layer((4, 4))).textlength(hook, font=hf) > 930 and hf.size > 80:      # 930 * 1.1 pop scale still fits 1080
+            hf = font(hf.size - 8)
+        self.hook = text_layer(hook, hf, "#ffeb3b", pad=20)
+        self.pill = None
+        if best:
+            self.pill = layer((560, 130))
+            pd = ImageDraw.Draw(self.pill)
+            pd.rounded_rectangle((0, 0, 559, 129), 40, fill=ACCENT)
+            pd.text((280, 65), f"upto {best}% OFF", font=font(72), fill="white", anchor="mm")
+        self.thumbs = []
+        for p in photos:
+            c = layer((290, 290))
+            ImageDraw.Draw(c).rounded_rectangle((0, 0, 289, 289), 36, fill=(255, 255, 255, 255))
+            q = autocrop(p)
+            q.thumbnail((250, 250))
+            c.paste(q, ((290 - q.width) // 2, (290 - q.height) // 2))
+            self.thumbs.append(c)
+        self.last = text_layer("Aakhri deal sabse best!", font(60), "white") if len(photos) >= 2 else None
+
+    def frame(self, t=None):
+        img = self.bg.copy()
+        img.paste(self.static, (0, 0), self.static)
+        put(img, self.label, W / 2, 470)
+        put(img, self.hook, W / 2, 640, 1 + 0.10 * (1 - e_out(prog(t, 0, 0.28))))
+        if self.pill is not None:
+            put(img, self.pill, W / 2, 835, 0.6 + 0.4 * e_back(prog(t, 0.12, 0.3)))
+        n = len(self.thumbs)
+        x = (W - (n * 290 + (n - 1) * 30)) // 2
+        for k, c in enumerate(self.thumbs):
+            pk = prog(t, 0.3 + 0.12 * k, 0.3)
+            put(img, c, x + 145, 1145, 0.5 + 0.5 * e_back(pk), clamp(pk * 3))
+            x += 320
+        if self.last is not None:
+            put(img, self.last, W / 2, 1450, 1.0, prog(t, 0.9, 0.4))
+        return img
+
+
+class OutroSlide:
+    def __init__(self, photo, label, n):
+        self.bg = blurred_bg(photo)
+        self.static = layer((W, H))
+        header(ImageDraw.Draw(self.static, "RGBA"), label)
+        pick = "1, 2 ya 3" if n == 3 else ("1 ya 2" if n == 2 else "number")
+        self.l1 = text_layer("Saare links", font(110), "#ffeb3b")
+        self.l2 = text_layer("COMMENT me hain", font(110), "#ffeb3b")
+        self.arrow = layer((200, 140))
+        ImageDraw.Draw(self.arrow).polygon([(10, 5), (190, 5), (100, 135)], fill="white")
+        self.ask = text_layer(f"Kaunsi leni hai? {pick} likho", font(60), "white")
+        self.follow = text_layer("Follow karo Desi Choice", font(58), "white")
+        self.sub = text_layer("roz ki best Amazon deals", font(46), (255, 255, 255, 200))
+        self.disc = text_layer("Affiliate links  •  As an Amazon Associate I earn from qualifying purchases", font(30), (255, 255, 255, 170))
+
+    def frame(self, t=None):
+        tt = None if t is None else max(0.0, t - LEAD)
+        img = self.bg.copy()
+        img.paste(self.static, (0, 0), self.static)
+        put(img, self.l1, W / 2, 600, 0.85 + 0.15 * e_back(prog(tt, 0, 0.3)), clamp(prog(tt, 0, 0.2) * 2))
+        put(img, self.l2, W / 2, 740, 0.85 + 0.15 * e_back(prog(tt, 0.1, 0.3)), clamp(prog(tt, 0.1, 0.2) * 2))
+        bounce = 0 if tt is None else 16 * abs(math.sin(tt * math.pi * 1.8))     # arrow keeps pointing down at the comments
+        put(img, self.arrow, W / 2, 945 + bounce, 1.0, prog(tt, 0.25, 0.2))
+        put(img, self.ask, W / 2, 1150, 1.0, prog(tt, 0.45, 0.3))
+        put(img, self.follow, W / 2, 1290, 1.0, prog(tt, 0.6, 0.3))
+        put(img, self.sub, W / 2, 1375, 1.0, prog(tt, 0.7, 0.3))
+        put(img, self.disc, W / 2, 1520, 1.0, prog(tt, 0.8, 0.3))
+        return img
+
+
+def render_clip(slide, dur, path):
+    """Stream the slide's frames (dur + the transition tail) straight into ffmpeg as one h264 clip."""
+    n = int(round((dur + T_X) * FPS))
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
+           "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "20", "-r", str(FPS), path]
+    pr = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     try:
-        rating, n = float(it.get("rating") or 0), int(float(it.get("reviews") or 0))
-    except Exception:
-        rating, n = 0.0, 0
-    if rating >= 1:
-        gap = 66
-        for k in range(5):
-            star(d, 130 + k * gap, 1585, 28, "#f59e0b" if rating >= k + 0.75 else ("#fbcf72" if rating >= k + 0.25 else "#d4d4d4"))
-        lab = f"{rating:.1f}" + (f"  ({fmt_n(n)} ratings)" if n else "")
-        d.text((130 + 5 * gap + 8, 1586), lab, font=font(46), fill="#333333", anchor="lm")
-    img.convert("RGB").save(path)
-
-
-def intro_slide(items, photos, label, path):
-    """Hook slide: the first second must already say why to stay (price hook + biggest discount + 'last one is best')."""
-    img = blurred_bg(photos[0]).convert("RGBA")
-    d = ImageDraw.Draw(img, "RGBA")
-    header(d, label)
-    cta_pill(d)
-    best = max([int(i.get("pct") or 0) for i in items] + [0])
-    d.text((W // 2, 470), label.upper(), font=font(60), fill="white", anchor="mm")
-    hook = hook_text(items)
-    hf = font(150)
-    while d.textlength(hook, font=hf) > W - 100 and hf.size > 80:
-        hf = font(hf.size - 8)
-    d.text((W // 2, 640), hook, font=hf, fill="#ffeb3b", anchor="mm")
-    if best:
-        d.rounded_rectangle((W // 2 - 280, 770, W // 2 + 280, 900), 40, fill=ACCENT)
-        d.text((W // 2, 835), f"upto {best}% OFF", font=font(72), fill="white", anchor="mm")
-    n = len(photos)
-    cw = 290
-    x = (W - (n * cw + (n - 1) * 30)) // 2
-    for p in photos:
-        d.rounded_rectangle((x, 1000, x + cw, 1000 + cw), 36, fill=(255, 255, 255, 255))
-        q = autocrop(p); q.thumbnail((cw - 40, cw - 40))
-        img.paste(q, (x + (cw - q.width) // 2, 1000 + (cw - q.height) // 2))
-        x += cw + 30
-    if n >= 2:
-        d.text((W // 2, 1450), "Aakhri deal sabse best!", font=font(60), fill="white", anchor="mm")
-    img.convert("RGB").save(path)
-
-
-def outro_slide(photo, label, n, path):
-    img = blurred_bg(photo).convert("RGBA")
-    d = ImageDraw.Draw(img, "RGBA")
-    header(d, label)
-    d.text((W // 2, 600), "Saare links", font=font(110), fill="#ffeb3b", anchor="mm")
-    d.text((W // 2, 740), "COMMENT me hain", font=font(110), fill="#ffeb3b", anchor="mm")
-    d.polygon([(W // 2 - 90, 880), (W // 2 + 90, 880), (W // 2, 1010)], fill="white")
-    pick = "1, 2 ya 3" if n == 3 else ("1 ya 2" if n == 2 else "number")
-    d.text((W // 2, 1150), f"Kaunsi leni hai? {pick} likho", font=font(60), fill="white", anchor="mm")
-    d.text((W // 2, 1290), "Follow karo Desi Choice", font=font(58), fill="white", anchor="mm")
-    d.text((W // 2, 1375), "roz ki best Amazon deals", font=font(46), fill=(255, 255, 255, 200), anchor="mm")
-    d.text((W // 2, 1520), "Affiliate links  •  As an Amazon Associate I earn from qualifying purchases", font=font(30), fill=(255, 255, 255, 170), anchor="mm")
-    img.convert("RGB").save(path)
+        for k in range(n):
+            pr.stdin.write(slide.frame(k / FPS).convert("RGB").tobytes())
+    finally:
+        pr.stdin.close()
+    if pr.wait():
+        raise SystemExit("ffmpeg clip failed")
 
 
 def run(cmd):
@@ -249,7 +395,7 @@ def assemble(slides, durs, out_path):
     n = len(slides)
     cmd = ["ffmpeg", "-y", "-loglevel", "error"]
     for s, t in zip(slides, durs):
-        cmd += ["-loop", "1", "-framerate", "30", "-t", f"{t + T_X:.2f}", "-i", s]
+        cmd += ["-i", s]
     parts, last, off = [], "[0:v]", 0.0
     for i in range(1, n):
         off += durs[i - 1]
@@ -289,10 +435,15 @@ def main():
     if not good:
         raise SystemExit("no usable product photo")
     slides, durs = [], []
-    p = os.path.join(TMP, "s_intro.png"); intro_slide(good, photos, label, p); slides.append(p); durs.append(T_INTRO)
-    for i, (it, ph) in enumerate(zip(good, photos), 1):
-        p = os.path.join(TMP, f"s_{i}.png"); product_slide(it, ph, label, i, len(good), p); slides.append(p); durs.append(T_ITEM)
-    p = os.path.join(TMP, "s_outro.png"); outro_slide(photos[-1], label, len(good), p); slides.append(p); durs.append(T_OUTRO)
+    jobs = [(HookSlide(good, photos, label), T_INTRO)]
+    jobs += [(ProductSlide(it, ph, label, i, len(good), T_ITEM + T_X), T_ITEM) for i, (it, ph) in enumerate(zip(good, photos), 1)]
+    jobs += [(OutroSlide(photos[-1], label, len(good)), T_OUTRO)]
+    for k, (sl, dur) in enumerate(jobs):
+        p = os.path.join(TMP, f"clip_{k}.mp4")
+        render_clip(sl, dur, p)
+        slides.append(p); durs.append(dur)
+        if os.environ.get("REEL_KEEP_PNG"):
+            sl.frame(None).save(os.path.join(TMP, f"clip_{k}.png"))
     assemble(slides, durs, os.path.join(OUT, "reel.mp4"))
     json.dump({"asins": [i.get("asin") for i in good], "kind": "cards"}, open(os.path.join(OUT, "meta.json"), "w"))
 

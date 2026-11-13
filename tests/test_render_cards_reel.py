@@ -38,3 +38,34 @@ class T(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Motion(unittest.TestCase):
+    ITEM = {"asin": "A", "title": "Test Product for Home", "price": 649, "list_price": 1999, "pct": 68, "rating": 4.1, "reviews": 314}
+
+    def photos(self):
+        return [Image.new("RGB", (600, 500), "white") for _ in range(3)]
+
+    def test_easing_bounds(self):
+        self.assertEqual(C.prog(None, 1, 1), 1.0)
+        self.assertEqual(C.prog(0.0, 1, 1), 0.0)
+        self.assertEqual(C.prog(5.0, 1, 1), 1.0)
+        self.assertGreater(C.e_back(0.8), 1.0)                      # overshoot = pop
+
+    def test_all_slides_render_at_start_and_end(self):
+        items = [dict(self.ITEM, asin=str(i)) for i in range(3)]
+        slides = [C.HookSlide(items, self.photos(), "Daily Essentials"),
+                  C.ProductSlide(items[0], self.photos()[0], "Daily Essentials", 1, 3, 2.95),
+                  C.OutroSlide(self.photos()[0], "Daily Essentials", 3)]
+        for sl in slides:
+            for t in (0.0, 0.5, 2.0, None):
+                self.assertEqual(sl.frame(t).size, (C.W, C.H))
+
+    def test_hook_text_fits_screen_even_at_pop_scale(self):
+        h = C.HookSlide([{"price": 649, "pct": 68}, {"price": 649, "pct": 68}, {"price": 599, "pct": 69}], self.photos(), "Daily Essentials")
+        self.assertLessEqual(h.hook.width * 1.1, C.W)
+
+    def test_price_counts_down_to_the_real_price(self):
+        sl = C.ProductSlide(self.ITEM, self.photos()[0], "Daily Essentials", 1, 3, 2.95)
+        early, late = sl.price_strip(0.35).tobytes(), sl.price_strip(None).tobytes()
+        self.assertNotEqual(early, late)                            # early frame shows the MRP, final frame the deal price
