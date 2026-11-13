@@ -1,0 +1,148 @@
+{
+ "time": "2026-11-13T08:07:49Z",
+ "results": {
+  "base": {
+   "url": "https://www.amazon.in/deals",
+   "http": 200,
+   "len": 523506,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "departments": {
+   "url": "https://www.amazon.in/deals?departments=2454179031",
+   "http": 200,
+   "len": 514182,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "department": {
+   "url": "https://www.amazon.in/deals?department=2454179031",
+   "http": 200,
+   "len": 485259,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "rh_n": {
+   "url": "https://www.amazon.in/deals?rh=n%3A2454179031",
+   "http": 200,
+   "len": 514137,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "node": {
+   "url": "https://www.amazon.in/deals?node=2454179031",
+   "http": 200,
+   "len": 523628,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "goldbox_departments": {
+   "url": "https://www.amazon.in/gp/goldbox?departments=2454179031",
+   "http": 200,
+   "len": 495942,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "alldeals_departments": {
+   "url": "https://www.amazon.in/gp/goldbox/all-deals/?departments=2454179031",
+   "http": 200,
+   "len": 514237,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "startIndex30": {
+   "url": "https://www.amazon.in/deals?startIndex=30",
+   "http": 200,
+   "len": 514084,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "nextIndex30": {
+   "url": "https://www.amazon.in/deals?nextIndex=30",
+   "http": 200,
+   "len": 485211,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "page2": {
+   "url": "https://www.amazon.in/deals?page=2",
+   "http": 200,
+   "len": 494665,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  },
+  "dealsPage2": {
+   "url": "https://www.amazon.in/deals?dealsPage=2",
+   "http": 200,
+   "len": 495949,
+   "cards": 30,
+   "new_vs_base": 0,
+   "titles": [
+    "Pampers Baby Complete Skin Comfort Pants, Anti-ras",
+    "GRENARO Mic for YouTube Wireless, 3-Level Adjustab",
+    "AGARO Rechargeable 3-in-1 Multi Trimmer for Women,",
+    "Amazon Brand - Solimo Microfibre Reversible Comfor"
+   ]
+  }
+ }
+}
