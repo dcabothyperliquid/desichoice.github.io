@@ -1,5 +1,5 @@
 {
- "time": "2026-11-13T03:22:06Z",
+ "time": "2026-11-13T03:58:44Z",
  "mode": "auto",
  "captcha_streak": 0,
  "pages_loaded": 216,
@@ -7,7 +7,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=office-products&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8034,
+   "html_len": 8035,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -15,7 +15,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=office-products&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7882,
+   "html_len": 7883,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -23,7 +23,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=stationery+books&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8051,
+   "html_len": 8052,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -31,7 +31,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=stationery+books&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7899,
+   "html_len": 7900,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -39,7 +39,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=stripbooks&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7984,
+   "html_len": 7985,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -47,7 +47,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=stripbooks&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7836,
+   "html_len": 7837,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -55,7 +55,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=stationery+books&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8051,
+   "html_len": 8052,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -63,7 +63,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=stationery+books&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7899,
+   "html_len": 7900,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -71,7 +71,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=sports&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7947,
+   "html_len": 7948,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -79,7 +79,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=sports&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7795,
+   "html_len": 7796,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -87,7 +87,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=fitness&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7955,
+   "html_len": 7956,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -95,7 +95,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=fitness&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7807,
+   "html_len": 7808,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -111,7 +111,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=videogames&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7836,
+   "html_len": 7837,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -119,7 +119,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=gaming&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7947,
+   "html_len": 7948,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -127,7 +127,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=gaming&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7795,
+   "html_len": 7796,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -135,7 +135,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8042,
+   "html_len": 8043,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -143,7 +143,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=home-improvement&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7894,
+   "html_len": 7895,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -151,7 +151,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=car+accessories+tools&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8105,
+   "html_len": 8106,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -159,7 +159,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=car+accessories+tools&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7957,
+   "html_len": 7958,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -167,7 +167,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=automotive&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7984,
+   "html_len": 7985,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -175,7 +175,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=automotive&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7836,
+   "html_len": 7837,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -183,7 +183,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=car+accessories+tools&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8105,
+   "html_len": 8106,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -191,7 +191,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=car+accessories+tools&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7957,
+   "html_len": 7958,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -199,7 +199,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=musical-instruments&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8071,
+   "html_len": 8072,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -207,7 +207,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=musical-instruments&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7923,
+   "html_len": 7924,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -223,7 +223,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=guitar+keyboard+instrument&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8003,
+   "html_len": 8004,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -231,7 +231,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=kitchen&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7955,
+   "html_len": 7956,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -239,7 +239,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=kitchen&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7807,
+   "html_len": 7808,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -247,7 +247,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8071,
+   "html_len": 8072,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -255,7 +255,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7920,
+   "html_len": 7921,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -263,7 +263,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7984,
+   "html_len": 7985,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -271,7 +271,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7836,
+   "html_len": 7837,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -279,7 +279,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 8071,
+   "html_len": 8072,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -287,7 +287,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+appliances&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7920,
+   "html_len": 7921,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -295,7 +295,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7996,
+   "html_len": 7997,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -303,7 +303,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?i=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7845,
+   "html_len": 7846,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -311,7 +311,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=electronics&rh=p_8%3A25-&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7996,
+   "html_len": 7997,
    "has_results": false,
    "marks": [],
    "cards": 0
@@ -319,7 +319,7 @@
   {
    "url": "https://www-amazon-in.translate.goog/s?k=electronics&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
    "http": 200,
-   "html_len": 7845,
+   "html_len": 7846,
    "has_results": false,
    "marks": [],
    "cards": 0
