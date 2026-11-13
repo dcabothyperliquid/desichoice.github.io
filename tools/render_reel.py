@@ -622,7 +622,7 @@ def assemble(clips, shots, out_path):
     have_music = os.path.exists(MUSIC)
     if have_music:
         af.append(f"{a_prev}asplit=2[vo][sc]")
-        af.append(f"[{n}:a]volume={MUSIC_VOL},aformat=sample_rates=44100:channel_layouts=mono[mu]")
+        af.append(f"[{n}:a]{'loudnorm=I=-24:TP=-2:LRA=7,' if MUSIC_NORM else ''}volume={MUSIC_VOL},aformat=sample_rates=44100:channel_layouts=mono[mu]")
         af.append("[mu][sc]sidechaincompress=threshold=0.03:ratio=9:attack=15:release=400[du]")
         af.append(f"[vo][du]amix=inputs=2:duration=first:normalize=0,afade=t=out:st={max(0, L - 1.3):.2f}:d=1.2,alimiter=limit=0.95[aout]")
     else:
@@ -1113,7 +1113,12 @@ def fit_length(shots):
     print(f"estimated reel length {_est_total(shots):.1f}s")
 
 
+MUSIC_NORM = False          # True when a Jamendo track is used: real tracks are much louder than the synthesized bed -> level them first
+MUSIC_CREDIT = [None]
+
+
 def main():
+    global MUSIC, MUSIC_NORM
     try:
         import signal
         signal.signal(signal.SIGALRM, _watchdog)
@@ -1123,6 +1128,16 @@ def main():
     payload = json.loads(os.environ["PAYLOAD"])
     if "voice_test" in payload:
         return voice_test(payload["voice_test"])
+    if not os.environ.get("REEL_MUSIC"):                       # explicit REEL_MUSIC override wins; otherwise a fresh Jamendo track per reel
+        try:
+            sys.path.insert(0, HERE)
+            import jamendo_music
+            os.makedirs(TMP, exist_ok=True)
+            jm = jamendo_music.pick(TMP, os.environ.get("JOB_ID"))
+            if jm:
+                MUSIC, MUSIC_NORM, MUSIC_CREDIT[0] = jm["path"], True, jm["credit"]
+        except Exception as e:
+            print("jamendo music skipped:", e, file=sys.stderr)
     label = payload.get("label") or "Top Deals"
     items = [i for i in payload.get("items", []) if i.get("price")][:3]
     if not items:
@@ -1177,7 +1192,7 @@ def main():
              "-movflags", "+faststart", f"{OUT}/reel.mp4"])
     total = dur(f"{OUT}/reel.mp4")
     json.dump({"label": label, "items": len(meta_items), "media": meta_items, "seconds": round(total, 1), "voice": voiced > 0,
-               "voice_name": VOICE, "voice_used": VOICE_USED[0], "shots": len(shots)}, open(f"{OUT}/meta.json", "w"))
+               "voice_name": VOICE, "voice_used": VOICE_USED[0], "shots": len(shots), "music_credit": MUSIC_CREDIT[0]}, open(f"{OUT}/meta.json", "w"))
     print("done", round(total, 1), "s, shots", len(shots), "voice shots", voiced, meta_items, VOICE)
 
 

@@ -33,10 +33,12 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ffmpeg fonts-dejavu-core
-          pip install -q pillow
+          pip install -q pillow requests
       - name: Render card reel
         env:
           PAYLOAD: ${{ github.event.inputs.payload }}
+          JOB_ID: ${{ github.event.inputs.job_id }}
+          JAMENDO_CLIENT_ID: ${{ secrets.JAMENDO_CLIENT_ID }}
         run: python tools/render_cards_reel.py
       - name: Publish release asset
         env:

@@ -42,6 +42,7 @@ jobs:
         env:
           JOB_ID: ${{ github.event.inputs.job_id }}
           PAYLOAD: ${{ github.event.inputs.payload }}
+          JAMENDO_CLIENT_ID: ${{ secrets.JAMENDO_CLIENT_ID }}
         run: python tools/render_reel.py
 
       - name: Publish release asset
