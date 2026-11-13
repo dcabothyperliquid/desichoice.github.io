@@ -1,0 +1,173 @@
+{
+ "steps": [
+  {
+   "step": "loaded",
+   "title": "Amazon.in - Deals",
+   "len": 739128,
+   "asins": 141
+  },
+  {
+   "step": "scroll1",
+   "asins": 213,
+   "len": 1090334
+  },
+  {
+   "step": "scroll2",
+   "asins": 241,
+   "len": 1094092
+  },
+  {
+   "step": "scroll3",
+   "asins": 212,
+   "len": 1064590
+  },
+  {
+   "step": "scroll4",
+   "asins": 224,
+   "len": 1078659
+  },
+  {
+   "step": "scroll5",
+   "asins": 213,
+   "len": 1067606
+  },
+  {
+   "step": "click-fail Grocery & Gourmet Foods",
+   "err": "Locator.scroll_into_view_if_needed: Timeout 3968.0040000000154ms exceeded.\nCall log:\n  - attempting scroll into view action\n    2 \u00d7 waiting for elemen"
+  },
+  {
+   "step": "click-fail Grocery",
+   "err": "Locator.scroll_into_view_if_needed: Timeout 3984.339000000007ms exceeded.\nCall log:\n  - attempting scroll into view action\n    2 \u00d7 waiting for element"
+  },
+  {
+   "step": "click-fail Health & Personal Care",
+   "err": "Locator.scroll_into_view_if_needed: Timeout 3985.3790000000154ms exceeded.\nCall log:\n  - attempting scroll into view action\n    2 \u00d7 waiting for elemen"
+  },
+  {
+   "step": "click-fail Beauty",
+   "err": "Locator.scroll_into_view_if_needed: Timeout 3978.4619999999995ms exceeded.\nCall log:\n  - attempting scroll into view action\n    2 \u00d7 waiting for elemen"
+  }
+ ],
+ "xhr": [
+  {
+   "t": 1.5,
+   "url": "https://m.media-amazon.com/images/G/01/csm/showads.v2.js?adspot_=1",
+   "status": 200,
+   "ct": "application/x-javascript",
+   "len": 23,
+   "asin_count": 0,
+   "method": "GET",
+   "post": ""
+  },
+  {
+   "t": 1.8,
+   "url": "https://www.amazon.in/portal-migration/hz/glow/get-rendered-toaster?storeName=goldbox&pageType=HighVelocityEvent&aisTransitionState=null&rancorLocationSource=REALM_DEFAULT&isB2B=false&_=1794558208864",
+   "status": 200,
+   "ct": "text/html;charset=UTF-8",
+   "len": 0,
+   "asin_count": 0,
+   "method": "GET",
+   "post": ""
+  },
+  {
+   "t": 2.3,
+   "url": "https://unagi.amazon.in/1/events/com.amazon.csm.csa.prod",
+   "status": 200,
+   "ct": "application/json",
+   "len": 2,
+   "asin_count": 0,
+   "method": "POST",
+   "post": "{\"events\":[{\"data\":{\"id\":\"b48iss-yvruzi-d33grs-z4gsu\",\"producerId\":\"csa\",\"schemaId\":\"csa.PageEntity.2\",\"version\":1,\"attributes\":{\"id\":\"b48iss-yvruzi-d33grs-z4gsu\",\"requestId\":\"CC8F49NS2XD35AB73D0E\",\"meaningful\":\"interactive\",\"url\":\"https://www.amazon.in/deals\",\"server\":\"www.amazon.in\",\"path\":\"/deals"
+  },
+  {
+   "t": 6.9,
+   "url": "https://unagi.amazon.in/1/events/com.amazon.csm.csa.prod",
+   "status": 200,
+   "ct": "application/json",
+   "len": 2,
+   "asin_count": 0,
+   "method": "POST",
+   "post": "{\"events\":[{\"data\":{\"messageId\":\"2myf9l-ykbbg0-r5ema5-lda43t\",\"schemaId\":\"csa.Metric.4\",\"metrics\":{\"discounts:assets:skippedRegistration:app\":0},\"dimensions\":{},\"timestamp\":\"2026-11-13T08:23:28.903Z\",\"application\":\"Retail:Prod:www.amazon.in\",\"obfuscatedMarketplaceId\":\"A21TJRUUN4KGV\",\"lob\":\"1\",\"produ"
+  },
+  {
+   "t": 8.2,
+   "url": "https://www.amazon.in/d2b/api/v1/products/search?pageSize=30&startIndex=30&calculateRefinements=false&rankingContext=%7B%22pageTypeId%22%3A%22deals%22%2C%22rankGroup%22%3A%22CITADEL_ESPEON_BLEND_RANKING%22%7D&filters=%7B%22includedDepartments%22%3A%5B%5D%2C%22",
+   "status": 200,
+   "ct": "application/json;charset=UTF-8",
+   "len": 190106,
+   "asin_count": 230,
+   "method": "GET",
+   "post": ""
+  },
+  {
+   "t": 10.9,
+   "url": "https://www.amazon.in/d2b/api/v1/products/search?pageSize=30&startIndex=60&calculateRefinements=false&rankingContext=%7B%22pageTypeId%22%3A%22deals%22%2C%22rankGroup%22%3A%22CITADEL_ESPEON_BLEND_RANKING%22%7D&filters=%7B%22includedDepartments%22%3A%5B%5D%2C%22",
+   "status": 200,
+   "ct": "application/json;charset=UTF-8",
+   "len": 173021,
+   "asin_count": 296,
+   "method": "GET",
+   "post": ""
+  },
+  {
+   "t": 13.0,
+   "url": "https://unagi.amazon.in/1/events/com.amazon.csm.csa.prod",
+   "status": 200,
+   "ct": "application/json",
+   "len": 2,
+   "asin_count": 0,
+   "method": "POST",
+   "post": "{\"events\":[{\"data\":{\"messageId\":\"5lv2q2-vnq346-fkxh2c-9uzlsp\",\"schemaId\":\"csa.Metric.4\",\"metrics\":{\"discounts:gridItemSkeleton\":0},\"dimensions\":{},\"timestamp\":\"2026-11-13T08:23:34.662Z\",\"application\":\"Retail:Prod:www.amazon.in\",\"obfuscatedMarketplaceId\":\"A21TJRUUN4KGV\",\"lob\":\"1\",\"producerId\":\"goldbo"
+  },
+  {
+   "t": 13.2,
+   "url": "https://www.amazon.in/d2b/api/v1/products/search?pageSize=30&startIndex=90&calculateRefinements=false&rankingContext=%7B%22pageTypeId%22%3A%22deals%22%2C%22rankGroup%22%3A%22CITADEL_ESPEON_BLEND_RANKING%22%7D&filters=%7B%22includedDepartments%22%3A%5B%5D%2C%22",
+   "status": 200,
+   "ct": "application/json;charset=UTF-8",
+   "len": 121845,
+   "asin_count": 129,
+   "method": "GET",
+   "post": ""
+  },
+  {
+   "t": 15.9,
+   "url": "https://www.amazon.in/d2b/api/v1/products/search?pageSize=30&startIndex=120&calculateRefinements=false&rankingContext=%7B%22pageTypeId%22%3A%22deals%22%2C%22rankGroup%22%3A%22CITADEL_ESPEON_BLEND_RANKING%22%7D&filters=%7B%22includedDepartments%22%3A%5B%5D%2C%2",
+   "status": 200,
+   "ct": "application/json;charset=UTF-8",
+   "len": 148817,
+   "asin_count": 226,
+   "method": "GET",
+   "post": ""
+  },
+  {
+   "t": 18.2,
+   "url": "https://unagi.amazon.in/1/events/com.amazon.csm.csa.prod",
+   "status": 200,
+   "ct": "application/json",
+   "len": 2,
+   "asin_count": 0,
+   "method": "POST",
+   "post": "{\"events\":[{\"data\":{\"messageId\":\"irzeuy-aqfz7b-skb73i-iqly4f\",\"schemaId\":\"csa.Metric.4\",\"metrics\":{\"discounts:gridItemSkeleton\":0},\"dimensions\":{},\"timestamp\":\"2026-11-13T08:23:39.837Z\",\"application\":\"Retail:Prod:www.amazon.in\",\"obfuscatedMarketplaceId\":\"A21TJRUUN4KGV\",\"lob\":\"1\",\"producerId\":\"goldbo"
+  },
+  {
+   "t": 18.4,
+   "url": "https://www.amazon.in/d2b/api/v1/products/search?pageSize=30&startIndex=150&calculateRefinements=false&rankingContext=%7B%22pageTypeId%22%3A%22deals%22%2C%22rankGroup%22%3A%22CITADEL_ESPEON_BLEND_RANKING%22%7D&filters=%7B%22includedDepartments%22%3A%5B%5D%2C%2",
+   "status": 200,
+   "ct": "application/json;charset=UTF-8",
+   "len": 142691,
+   "asin_count": 150,
+   "method": "GET",
+   "post": ""
+  },
+  {
+   "t": 23.2,
+   "url": "https://unagi.amazon.in/1/events/com.amazon.csm.csa.prod",
+   "status": 200,
+   "ct": "application/json",
+   "len": 2,
+   "asin_count": 0,
+   "method": "POST",
+   "post": "{\"events\":[{\"data\":{\"messageId\":\"o7qa2e-cjmh80-kb76fr-3e1rx5\",\"schemaId\":\"csa.Metric.4\",\"metrics\":{\"discounts:gridItemSkeleton\":0},\"dimensions\":{},\"timestamp\":\"2026-11-13T08:23:45.016Z\",\"application\":\"Retail:Prod:www.amazon.in\",\"obfuscatedMarketplaceId\":\"A21TJRUUN4KGV\",\"lob\":\"1\",\"producerId\":\"goldbo"
+  }
+ ]
+}
