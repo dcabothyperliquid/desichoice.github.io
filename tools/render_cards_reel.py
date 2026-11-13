@@ -12,7 +12,7 @@ OUT, TMP = os.environ.get("REEL_OUT", "out"), os.environ.get("REEL_TMP", "tmp")
 HIND = os.path.join(HERE, "fonts", "Hind-Bold.ttf")
 FONTS = [HIND, "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
 MUSIC = os.environ.get("REEL_MUSIC", os.path.join(HERE, "music", "bed.m4a"))
-MUSIC_VOL = float(os.environ.get("REEL_MUSIC_VOL", "0.55"))
+MUSIC_VOL = float(os.environ.get("REEL_MUSIC_VOL", "0.8"))          # final loudness is set by loudnorm (-14 LUFS), this just balances bed vs sfx
 ACCENT = "#e53935"
 T_INTRO, T_ITEM, T_OUTRO, T_X = 1.7, 2.7, 2.3, 0.25          # ~12s for 3 products: fast cuts hold retention
 
@@ -391,10 +391,46 @@ def run(cmd):
         raise SystemExit("ffmpeg failed")
 
 
+def sfx_events(durs):
+    """(kind, seconds) for the little sound effects: whoosh on every slide-left, pop when the % badge lands, ding when the price lands."""
+    ev, start = [], 0.0
+    for i, d in enumerate(durs):
+        if i > 0:
+            ev.append(("whoosh", max(0.0, start - 0.05)))
+        if 0 < i < len(durs) - 1:                                  # product slides
+            ev.append(("pop", start + LEAD + 0.25))
+            ev.append(("ding", start + LEAD + 1.0))
+        start += d
+    return ev
+
+
+def audio_graph(durs, total, music_idx=None):
+    """Music bed (or silence) + sfx, mixed, then loudness-normalised so the reel is not quiet next to other reels. -> (filter parts, label)."""
+    st = "aformat=sample_rates=44100:channel_layouts=stereo"
+    if music_idx is not None:
+        base = f"[{music_idx}:a]volume={MUSIC_VOL},{st},atrim=0:{total:.2f}[bed]"
+    else:
+        base = f"anullsrc=r=44100:cl=stereo,atrim=0:{total:.2f}[bed]"
+    parts, labels = [base], ["[bed]"]
+    for k, (kind, at) in enumerate(sfx_events(durs)):
+        ms = int(at * 1000)
+        if kind == "whoosh":
+            g = "anoisesrc=color=pink:duration=0.40:sample_rate=44100:amplitude=0.6,highpass=f=400,lowpass=f=5000,afade=t=in:d=0.18,afade=t=out:st=0.18:d=0.22,volume=0.45"
+        elif kind == "pop":
+            g = "sine=frequency=880:duration=0.12:sample_rate=44100,afade=t=out:st=0.03:d=0.09,volume=0.35"
+        else:
+            g = "sine=frequency=1318:duration=0.22:sample_rate=44100,afade=t=out:st=0.05:d=0.17,volume=0.28"
+        parts.append(f"{g},{st},adelay={ms}:all=1[e{k}]")
+        labels.append(f"[e{k}]")
+    parts.append("".join(labels) + f"amix=inputs={len(labels)}:duration=first:normalize=0,loudnorm=I=-14:TP=-1.5:LRA=7,"
+                 f"afade=t=out:st={max(0, total - 1.0):.2f}:d=1.0,atrim=0:{total:.2f}[a]")
+    return parts, "[a]"
+
+
 def assemble(slides, durs, out_path):
     n = len(slides)
     cmd = ["ffmpeg", "-y", "-loglevel", "error"]
-    for s, t in zip(slides, durs):
+    for s in slides:
         cmd += ["-i", s]
     parts, last, off = [], "[0:v]", 0.0
     for i in range(1, n):
@@ -402,18 +438,17 @@ def assemble(slides, durs, out_path):
         parts.append(f"{last}[{i}:v]xfade=transition=slideleft:duration={T_X}:offset={off:.2f}[x{i}]")
         last = f"[x{i}]"
     total = sum(durs) + T_X
-    fg = ";".join(parts) if parts else "[0:v]null[x0]"
+    fg = parts[:] if parts else ["[0:v]null[x0]"]
     last = last if parts else "[x0]"
     have_music = os.path.exists(MUSIC)
     if have_music:
         cmd += ["-stream_loop", "-1", "-i", MUSIC]
-        fg += f";[{n}:a]volume={MUSIC_VOL},atrim=0:{total:.2f},afade=t=out:st={max(0, total - 1.2):.2f}:d=1.2[a]"
-    cmd += ["-filter_complex", fg, "-map", last]
-    if have_music:
-        cmd += ["-map", "[a]", "-c:a", "aac", "-b:a", "128k"]
+    ap, alabel = audio_graph(durs, total, n if have_music else None)
+    fg += ap
+    cmd += ["-filter_complex", ";".join(fg), "-map", last, "-map", alabel, "-c:a", "aac", "-b:a", "128k"]
     cmd += ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "22", "-r", "30", "-movflags", "+faststart", "-t", f"{total:.2f}", out_path]
     run(cmd)
-    print(f"assembled {n} slides, {total:.1f}s, music={have_music}")
+    print(f"assembled {n} slides, {total:.1f}s, music={have_music}, sfx={len(sfx_events(durs))}")
 
 
 def main():

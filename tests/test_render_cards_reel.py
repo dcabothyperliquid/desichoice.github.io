@@ -69,3 +69,21 @@ class Motion(unittest.TestCase):
         sl = C.ProductSlide(self.ITEM, self.photos()[0], "Daily Essentials", 1, 3, 2.95)
         early, late = sl.price_strip(0.35).tobytes(), sl.price_strip(None).tobytes()
         self.assertNotEqual(early, late)                            # early frame shows the MRP, final frame the deal price
+
+
+class Audio(unittest.TestCase):
+    def test_sfx_land_on_transitions_and_product_slides(self):
+        durs = [C.T_INTRO, C.T_ITEM, C.T_ITEM, C.T_ITEM, C.T_OUTRO]
+        ev = C.sfx_events(durs)
+        self.assertEqual(sum(1 for k, _ in ev if k == "whoosh"), 4)           # one per transition
+        self.assertEqual(sum(1 for k, _ in ev if k == "pop"), 3)              # one badge pop per product
+        self.assertEqual(sum(1 for k, _ in ev if k == "ding"), 3)
+        self.assertTrue(all(0 <= t < sum(durs) for _, t in ev))
+
+    def test_audio_graph_normalises_loudness_with_or_without_music(self):
+        for midx in (5, None):
+            parts, label = C.audio_graph([1.7, 2.7, 2.7, 2.7, 2.3], 12.35, midx)
+            g = ";".join(parts)
+            self.assertIn("loudnorm=I=-14", g)
+            self.assertEqual(label, "[a]")
+            self.assertEqual(("anullsrc" in g), midx is None)
