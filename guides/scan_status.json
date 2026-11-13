@@ -1,33 +1,29 @@
 {
- "time": "2026-11-13T08:11:42Z",
+ "time": "2026-11-13T08:14:12Z",
  "mode": "feed",
- "captcha_streak": 0,
+ "captcha_streak": 1,
  "pages_loaded": 3,
  "pages": [
   {
    "url": "https://www.amazon.in/deals",
-   "http": 503,
-   "html_len": 1283,
-   "cards": 0,
-   "marks": [
-    "To discuss automated access",
-    "api-services-support@amazon.com"
-   ]
+   "http": 200,
+   "html_len": 516132,
+   "cards": 30,
+   "marks": []
   },
   {
    "url": "https://www.amazon.in/gp/goldbox",
    "http": 200,
-   "html_len": 478832,
+   "html_len": 470322,
    "cards": 30,
    "marks": []
   },
   {
    "url": "https://www-amazon-in.translate.goog/s?k=kitchen+tools&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
-   "http": 200,
-   "html_len": 7876,
+   "http": 429,
+   "html_len": 5905,
    "has_results": false,
-   "marks": [],
-   "cards": 0
+   "marks": []
   }
  ]
 }
