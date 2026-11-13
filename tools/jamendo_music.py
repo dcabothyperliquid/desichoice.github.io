@@ -12,7 +12,7 @@ import requests
 API = "https://api.jamendo.com/v3.0/tracks/"
 MIN_SEC, MAX_SEC = 60, 400          # long enough to cover a 30 s reel
 ORDERS = ("popularity_week", "popularity_month")
-TAG_SETS = ("upbeat+happy+energetic", "pop+dance+happy", "groove+energetic")   # fuzzytags, tried in order until a query returns usable tracks
+TAGS = ("upbeat", "happy", "energetic", "dance", "pop", "groove")   # one tag per query, results merged (avoids AND/OR ambiguity of multi-tag search)
 
 
 def license_ok(url):
@@ -28,7 +28,7 @@ def license_ok(url):
 def _query(cid, tags, order):
     r = requests.get(API, params={
         "client_id": cid, "format": "json", "limit": 200, "order": order, "fuzzytags": tags,
-        "vocalinstrumental": "instrumental", "audiodownload_allowed": "true", "include": "licenses",
+        "vocalinstrumental": "instrumental",
     }, timeout=25)
     r.raise_for_status()
     j = r.json()
@@ -42,6 +42,7 @@ def usable(tracks):
     for t in tracks:
         try:
             ok = (MIN_SEC <= int(t.get("duration") or 0) <= MAX_SEC and license_ok(t.get("license_ccurl"))
+                  and t.get("audiodownload_allowed") is not False
                   and (t.get("audiodownload") or t.get("audio")))
         except (TypeError, ValueError):
             ok = False
@@ -62,17 +63,17 @@ def pick(dest_dir, seed=None):
     seed = str(seed or time.time())
     pool = []
     try:
-        for tags in TAG_SETS:
+        seen = {}
+        for tag in TAGS:
             for order in ORDERS:
                 try:
-                    pool = usable(_query(cid, tags, order))
+                    for t in usable(_query(cid, tag, order)):
+                        seen.setdefault(str(t.get("id")), t)
                 except Exception as e:
-                    print(f"jamendo query {tags}/{order} failed: {e}", file=sys.stderr)
-                    pool = []
-                if len(pool) >= 8:
-                    break
-            if len(pool) >= 8:
+                    print(f"jamendo query {tag}/{order} failed: {e}", file=sys.stderr)
+            if len(seen) >= 40:
                 break
+        pool = list(seen.values())
         if not pool:
             print("jamendo: no usable track -> old bed music", file=sys.stderr)
             return None
