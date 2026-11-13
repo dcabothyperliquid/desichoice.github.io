@@ -1,6 +1,6 @@
 {
  "v": 3,
- "updated": "2026-11-13T08:15:57Z",
+ "updated": "2026-11-13T08:18:57Z",
  "fresh_h": 48,
  "cats": {
   "home_kitchen": [
@@ -6217,25 +6217,25 @@
   ]
  },
  "swept": {
-  "home_kitchen": "2026-11-13T08:15:57Z",
+  "home_kitchen": "2026-11-13T08:18:57Z",
   "electronics": "2026-11-13T07:11:52Z",
   "laptops": "2026-11-13T07:12:17Z",
   "mobiles": "2026-11-13T07:20:23Z",
   "monitors": "2026-11-13T07:21:26Z",
-  "accessories": "2026-11-13T08:15:57Z",
-  "beauty_health": "2026-11-13T08:15:57Z",
+  "accessories": "2026-11-13T08:18:57Z",
+  "beauty_health": "2026-11-13T08:18:57Z",
   "fitness_outdoor": "2026-11-13T07:08:31Z",
-  "fashion": "2026-11-13T08:15:57Z",
+  "fashion": "2026-11-13T08:18:57Z",
   "toys_kids": "2026-11-13T07:13:49Z",
-  "tools_auto": "2026-11-13T08:15:57Z",
+  "tools_auto": "2026-11-13T08:18:57Z",
   "pets": "2026-11-13T07:24:02Z",
   "office_books": "2026-11-13T07:08:09Z",
   "gaming": "2026-11-13T07:08:50Z",
   "smart_home": "2026-11-13T07:22:10Z",
-  "furniture_decor": "2026-11-13T08:15:57Z",
+  "furniture_decor": "2026-11-13T08:18:57Z",
   "hobby_music": "2026-11-13T07:10:11Z",
   "ladies": "2026-11-13T07:18:38Z",
-  "kids_mom": "2026-11-13T08:15:57Z",
+  "kids_mom": "2026-11-13T08:18:57Z",
   "ladies_fashion": "2026-11-13T07:30:03Z"
  }
 }
