@@ -1,49 +1,26 @@
 {
  "v": 3,
- "updated": "2026-11-13T01:41:57Z",
- "hot": [
+ "updated": "2026-11-13T07:33:00Z",
+ "hot": [],
+ "ess": [
   {
-   "asin": "B0F3JM1YP5",
-   "name": "Xiaomi 80 cm (32 inch) Smartchoice F Series HD Ready Smart LED Fire",
-   "pct": 44,
-   "rating": 4.0,
-   "t": 1794361385,
-   "img": "https://m.media-amazon.com/images/I/71kjAokz-yL.jpg",
-   "now": "13999",
-   "was": "24999",
-   "link": "https://www.amazon.in/dp/B0F3JM1YP5?tag=desichoice06-21",
+   "asin": "B07Y8RFJCF",
+   "name": "Sofy AntiBacteria XL - 290mm | 51 Count pads | For Women Sanitary",
+   "pct": 46,
+   "rating": 4.4,
+   "t": 1794555180,
+   "img": "https://m.media-amazon.com/images/I/41buWFfAwPL.jpg",
+   "now": "259",
+   "was": "480",
+   "link": "https://www.amazon.in/dp/B07Y8RFJCF?tag=desichoice06-21",
    "deal": "Limited time deal",
-   "reviews": 1400,
-   "tier": "premium"
-  },
-  {
-   "asin": "B0FBW5S6H2",
-   "name": "PHILIPS 108 cm (43 inches) 6100 Series Frameless Full HD Smart LED",
-   "pct": 37,
-   "rating": 4.1,
-   "t": 1794361385,
-   "img": "https://m.media-amazon.com/images/I/81TsKWtySuL.jpg",
-   "now": "21999",
-   "was": "34999",
-   "link": "https://www.amazon.in/dp/B0FBW5S6H2?tag=desichoice06-21",
-   "reviews": 1100,
-   "tier": "premium"
-  },
-  {
-   "asin": "B0GTZ27TH9",
-   "name": "LG 80 cms (32 inches) LB650 AI Series HD Smart webOS VA LED TV",
-   "pct": 34,
-   "rating": 4.2,
-   "t": 1794361385,
-   "img": "https://m.media-amazon.com/images/I/81M+hXhzjLL.jpg",
-   "now": "16199.1",
-   "was": "24490",
-   "link": "https://www.amazon.in/dp/B0GTZ27TH9?tag=desichoice06-21",
-   "reviews": 18300,
-   "tier": "premium"
+   "reviews": 12110,
+   "tier": "budget",
+   "cat": "pads",
+   "label": "Sanitary pads",
+   "icon": "🌸"
   }
  ],
- "ess": [],
  "trend": [],
  "themes": [
   {
