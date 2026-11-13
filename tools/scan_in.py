@@ -818,9 +818,7 @@ def credible_deal(it, min_price):
 def credible_any(it, min_price):
     """a deal card that carries rating + reviews is judged by the full credible() gates (no quality drop); only a card with
     no rating/review data at all falls back to credible_deal()."""
-    if it and it.get("rating") and it.get("reviews"):
-        return credible(it, MIN_PCT, min_price)
-    return credible_deal(it, min_price)
+    return credible(it, MIN_PCT, min_price)          # unrated cards (no rating/reviews) are never accepted
 
 
 def fetch_deals(am):
