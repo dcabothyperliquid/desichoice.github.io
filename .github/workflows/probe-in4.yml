@@ -1,0 +1,22 @@
+name: Probe deals browser (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -q playwright && python -m playwright install --with-deps chromium
+      - run: python tools/probe_in4.py
+      - name: Commit result
+        run: |
+          git config user.name "india-scan-bot"; git config user.email "india-scan-bot@users.noreply.github.com"
+          git add guides/probe6.json
+          git commit -qm "probe4: deals browser" || exit 0
+          for i in 1 2 3; do git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep 5; done
