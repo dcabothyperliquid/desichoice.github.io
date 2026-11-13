@@ -1,9 +1,10 @@
 """Card Reel (1080x1920): the same deal cards as the Facebook photo post, as a swipe-style carousel video.
 Env PAYLOAD = {"label": "Daily Essentials", "items": [{asin,title,price,list_price,pct,rating,reviews,image}]}.
-Intro slide -> one slide per product (photo, % OFF, price, struck list price, stars + ratings) -> outro. Slide-left transitions + music bed.
+Hook slide (price/theme hook in the first second) -> one slide per product (photo, % OFF, short title, price, struck list price,
+stars + ratings, "links COMMENT me" pill) -> outro (comment CTA + affiliate disclosure). Fast slide-left transitions + music bed.
 Output: out/reel.mp4 + out/meta.json ({"asins": [...]}: products that really made it into the video)."""
 import io, json, math, os, re, subprocess, sys, urllib.request
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageEnhance
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 W, H = 1080, 1920
@@ -13,7 +14,7 @@ FONTS = [HIND, "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/sha
 MUSIC = os.environ.get("REEL_MUSIC", os.path.join(HERE, "music", "bed.m4a"))
 MUSIC_VOL = float(os.environ.get("REEL_MUSIC_VOL", "0.55"))
 ACCENT = "#e53935"
-T_INTRO, T_ITEM, T_OUTRO, T_X = 2.6, 4.2, 2.8, 0.45
+T_INTRO, T_ITEM, T_OUTRO, T_X = 1.7, 2.7, 2.3, 0.25          # ~12s for 3 products: fast cuts hold retention
 
 
 def font(size):
@@ -28,9 +29,9 @@ def font(size):
 
 def inr(v):
     try:
-        return "Rs " + f"{float(v):,.0f}"
+        return "₹" + f"{float(v):,.0f}"
     except Exception:
-        return "Rs -"
+        return "₹-"
 
 
 def fetch(url):
@@ -58,10 +59,77 @@ def wrap(d, text, f, maxw, maxlines):
     return lines
 
 
+def hires(url):
+    """Amazon image urls carry a size token (._SX300_.jpg); ask for a big one so the photo stays sharp when enlarged."""
+    return re.sub(r"\._[A-Za-z0-9,_\-]+_\.(jpe?g|png|webp)$", r"._SL1200_.\1", str(url or ""), flags=re.I)
+
+
+def autocrop(im, thr=244, pad=0.03):
+    """Trim the white margins of a product photo so the product fills the card instead of floating in empty space."""
+    g = im.convert("L").point(lambda v: 255 if v < thr else 0)
+    bb = g.getbbox()
+    if not bb:
+        return im
+    x0, y0, x1, y1 = bb
+    w, h = im.size
+    if (x1 - x0) * (y1 - y0) < 0.04 * w * h:          # almost nothing found -> do not risk cropping a real photo
+        return im
+    px, py = int((x1 - x0) * pad) + 4, int((y1 - y0) * pad) + 4
+    return im.crop((max(0, x0 - px), max(0, y0 - py), min(w, x1 + px), min(h, y1 + py)))
+
+
+_STOP = {"for", "with", "and", "&", "of", "in", "to", "the", "a", "by", "-", "|"}
+
+
+def short_title(title, max_words=5, max_chars=32):
+    """Amazon titles are 150 chars of keyword soup. Keep the punchy front: cut at | , - ( and trailing filler words."""
+    t = re.sub(r"\s+", " ", str(title or "")).strip()
+    t = re.split(r"\s[|\-–—]\s|[|,(]", t)[0].strip() or t
+    t = re.split(r"\s(?:for|with|suitable|compatible)\s", t, maxsplit=1, flags=re.I)[0].strip() or t      # 'X for Women ...' -> 'X'
+    words = t.split()[:max_words]
+    while len(words) > 2 and " ".join(words).__len__() > max_chars:
+        words.pop()
+    while len(words) > 1 and words[-1].lower().strip(",.") in _STOP:
+        words.pop()
+    return " ".join(words)
+
+
+def nice_ceil(v):
+    step = 50 if v < 1000 else 100 if v < 5000 else 500
+    return int(math.ceil(v / step) * step)
+
+
+def hook_text(items):
+    """First-second hook, from the real data: 'Teeno ₹650 ke andar' when prices sit close together, else '₹649 se shuru'."""
+    pr = []
+    for i in items:
+        try:
+            pr.append(float(i.get("price")))
+        except Exception:
+            pass
+    if not pr:
+        return "Aaj ki best deals"
+    mn, mx = min(pr), max(pr)
+    n = len(pr)
+    if n >= 2 and mx <= 1.6 * mn:
+        word = {2: "Dono", 3: "Teeno"}.get(n, f"Sab {n}")
+        return f"{word} {inr(nice_ceil(mx))} ke andar"
+    return f"{inr(mn)} se shuru!"
+
+
 def blurred_bg(photo):
-    bg = photo.copy().resize((W, H), Image.LANCZOS).filter(ImageFilter.GaussianBlur(40))
-    ov = Image.new("RGB", (W, H), (20, 20, 30))
-    return Image.blend(bg, ov, 0.62)
+    """Vivid purple->magenta gradient with a tinted, saturated blur of the product photo (the old dark grey looked dull)."""
+    mask = Image.linear_gradient("L").resize((W, H), Image.BILINEAR)
+    grad = Image.composite(Image.new("RGB", (W, H), (150, 28, 120)), Image.new("RGB", (W, H), (30, 10, 70)), mask)
+    blur = photo.copy().resize((W, H), Image.BILINEAR).filter(ImageFilter.GaussianBlur(60))
+    blur = ImageEnhance.Color(blur).enhance(1.8)
+    return Image.blend(grad, blur, 0.22)
+
+
+def cta_pill(d, y=205):
+    """Always-on 'links in comments' pill (the viewer should know from second 1 where the links are)."""
+    d.rounded_rectangle((250, y, W - 250, y + 62), 31, fill="#ffeb3b")
+    d.text((W // 2, y + 31), "Links COMMENT me hain", font=font(38), fill="#111111", anchor="mm")
 
 
 def star(d, cx, cy, r, fill):
@@ -78,39 +146,41 @@ def fmt_n(n):
 
 
 def header(d, label, idx=None, total=None):
-    d.rounded_rectangle((50, 110, W - 50, 220), 50, fill=(255, 255, 255, 235))
-    d.text((100, 165), "DESI CHOICE", font=font(46), fill="#f97316", anchor="lm")
-    d.text((W - 100, 165), label if idx is None else f"{idx}/{total}", font=font(44), fill="#111111", anchor="rm")
+    d.rounded_rectangle((50, 90, W - 50, 190), 50, fill=(255, 255, 255, 235))
+    d.text((100, 140), "DESI CHOICE", font=font(46), fill="#f97316", anchor="lm")
+    d.text((W - 100, 140), label if idx is None else f"{idx}/{total}", font=font(44), fill="#111111", anchor="rm")
 
 
 def product_slide(it, photo, label, idx, total, path):
     img = blurred_bg(photo).convert("RGBA")
     d = ImageDraw.Draw(img, "RGBA")
     header(d, label, idx, total)
-    d.rounded_rectangle((50, 270, W - 50, 1090), 56, fill=(255, 255, 255, 255))
-    p = photo.copy()
-    p.thumbnail((W - 200, 720))
-    img.paste(p, ((W - p.width) // 2, 270 + (820 - p.height) // 2))
+    cta_pill(d)
+    d.rounded_rectangle((50, 290, W - 50, 1150), 56, fill=(255, 255, 255, 255))
+    p = autocrop(photo)
+    sc = min(880 / p.width, 740 / p.height, 2.5)                      # enlarge small photos too, not only shrink
+    p = p.resize((max(1, int(p.width * sc)), max(1, int(p.height * sc))), Image.LANCZOS)
+    img.paste(p, ((W - p.width) // 2, 290 + (860 - p.height) // 2))
     pct = int(it.get("pct") or 0)
     if pct:
-        d.rounded_rectangle((80, 300, 420, 400), 28, fill=ACCENT)
-        d.text((250, 350), f"{pct}% OFF", font=font(58), fill="white", anchor="mm")
-    # title
-    f = font(50)
-    lines = wrap(d, re.sub(r"\s+", " ", str(it.get("title") or "")).strip(), f, W - 160, 2)
-    d.rounded_rectangle((50, 1120, W - 50, 1290), 40, fill=(0, 0, 0, 200))
-    ys = [1205] if len(lines) == 1 else [1178, 1236]
+        d.rounded_rectangle((80, 320, 420, 420), 28, fill=ACCENT)
+        d.text((250, 370), f"{pct}% OFF", font=font(58), fill="white", anchor="mm")
+    # short punchy title (never cut mid-sentence)
+    f = font(58)
+    lines = wrap(d, short_title(it.get("title")), f, W - 160, 2)
+    d.rounded_rectangle((50, 1180, W - 50, 1340), 40, fill=(0, 0, 0, 200))
+    ys = [1260] if len(lines) == 1 else [1235, 1295]
     for ln, y in zip(lines, ys):
         d.text((W // 2, y), ln, font=f, fill="#ffeb3b", anchor="mm")
     # price strip (kept clear of the Reels UI at the bottom)
-    d.rounded_rectangle((50, 1330, W - 50, 1640), 44, fill=(255, 255, 255, 240))
+    d.rounded_rectangle((50, 1370, W - 50, 1650), 44, fill=(255, 255, 255, 240))
     price, lp = it.get("price"), it.get("list_price")
-    d.text((100, 1440), inr(price), font=font(124), fill="#111111", anchor="lm")
+    d.text((100, 1470), inr(price), font=font(124), fill="#111111", anchor="lm")
     if lp:
         x0 = 100 + d.textlength(inr(price), font=font(124)) + 30
         t = inr(lp)
-        d.text((x0, 1452), t, font=font(56), fill="#888888", anchor="lm")
-        d.line((x0, 1447, x0 + d.textlength(t, font=font(56)), 1447), fill="#888888", width=5)
+        d.text((x0, 1482), t, font=font(56), fill="#888888", anchor="lm")
+        d.line((x0, 1477, x0 + d.textlength(t, font=font(56)), 1477), fill="#888888", width=5)
     try:
         rating, n = float(it.get("rating") or 0), int(float(it.get("reviews") or 0))
     except Exception:
@@ -118,43 +188,53 @@ def product_slide(it, photo, label, idx, total, path):
     if rating >= 1:
         gap = 66
         for k in range(5):
-            star(d, 130 + k * gap, 1565, 28, "#f59e0b" if rating >= k + 0.75 else ("#fbcf72" if rating >= k + 0.25 else "#d4d4d4"))
+            star(d, 130 + k * gap, 1585, 28, "#f59e0b" if rating >= k + 0.75 else ("#fbcf72" if rating >= k + 0.25 else "#d4d4d4"))
         lab = f"{rating:.1f}" + (f"  ({fmt_n(n)} ratings)" if n else "")
-        d.text((130 + 5 * gap + 8, 1566), lab, font=font(46), fill="#333333", anchor="lm")
+        d.text((130 + 5 * gap + 8, 1586), lab, font=font(46), fill="#333333", anchor="lm")
     img.convert("RGB").save(path)
 
 
 def intro_slide(items, photos, label, path):
+    """Hook slide: the first second must already say why to stay (price hook + biggest discount + 'last one is best')."""
     img = blurred_bg(photos[0]).convert("RGBA")
     d = ImageDraw.Draw(img, "RGBA")
     header(d, label)
+    cta_pill(d)
     best = max([int(i.get("pct") or 0) for i in items] + [0])
-    d.text((W // 2, 520), label.upper(), font=font(92), fill="#ffeb3b", anchor="mm")
-    d.text((W // 2, 660), f"{len(items)} sasti deals aaj ki", font=font(64), fill="white", anchor="mm")
+    d.text((W // 2, 470), label.upper(), font=font(60), fill="white", anchor="mm")
+    hook = hook_text(items)
+    hf = font(150)
+    while d.textlength(hook, font=hf) > W - 100 and hf.size > 80:
+        hf = font(hf.size - 8)
+    d.text((W // 2, 640), hook, font=hf, fill="#ffeb3b", anchor="mm")
     if best:
-        d.rounded_rectangle((W // 2 - 260, 740, W // 2 + 260, 870), 40, fill=ACCENT)
-        d.text((W // 2, 805), f"upto {best}% OFF", font=font(66), fill="white", anchor="mm")
+        d.rounded_rectangle((W // 2 - 280, 770, W // 2 + 280, 900), 40, fill=ACCENT)
+        d.text((W // 2, 835), f"upto {best}% OFF", font=font(72), fill="white", anchor="mm")
     n = len(photos)
     cw = 290
     x = (W - (n * cw + (n - 1) * 30)) // 2
     for p in photos:
         d.rounded_rectangle((x, 1000, x + cw, 1000 + cw), 36, fill=(255, 255, 255, 255))
-        q = p.copy(); q.thumbnail((cw - 40, cw - 40))
+        q = autocrop(p); q.thumbnail((cw - 40, cw - 40))
         img.paste(q, (x + (cw - q.width) // 2, 1000 + (cw - q.height) // 2))
         x += cw + 30
-    d.text((W // 2, 1480), "Swipe karke dekho  >>>", font=font(54), fill="white", anchor="mm")
+    if n >= 2:
+        d.text((W // 2, 1450), "Aakhri deal sabse best!", font=font(60), fill="white", anchor="mm")
     img.convert("RGB").save(path)
 
 
-def outro_slide(photo, label, path):
+def outro_slide(photo, label, n, path):
     img = blurred_bg(photo).convert("RGBA")
     d = ImageDraw.Draw(img, "RGBA")
     header(d, label)
-    d.text((W // 2, 700), "Saare links", font=font(110), fill="#ffeb3b", anchor="mm")
-    d.text((W // 2, 840), "COMMENT me hain", font=font(110), fill="#ffeb3b", anchor="mm")
-    d.polygon([(W // 2 - 90, 1000), (W // 2 + 90, 1000), (W // 2, 1130)], fill="white")
-    d.text((W // 2, 1300), "Follow karo Desi Choice", font=font(58), fill="white", anchor="mm")
-    d.text((W // 2, 1390), "roz ki best Amazon deals", font=font(46), fill=(255, 255, 255, 200), anchor="mm")
+    d.text((W // 2, 600), "Saare links", font=font(110), fill="#ffeb3b", anchor="mm")
+    d.text((W // 2, 740), "COMMENT me hain", font=font(110), fill="#ffeb3b", anchor="mm")
+    d.polygon([(W // 2 - 90, 880), (W // 2 + 90, 880), (W // 2, 1010)], fill="white")
+    pick = "1, 2 ya 3" if n == 3 else ("1 ya 2" if n == 2 else "number")
+    d.text((W // 2, 1150), f"Kaunsi leni hai? {pick} likho", font=font(60), fill="white", anchor="mm")
+    d.text((W // 2, 1290), "Follow karo Desi Choice", font=font(58), fill="white", anchor="mm")
+    d.text((W // 2, 1375), "roz ki best Amazon deals", font=font(46), fill=(255, 255, 255, 200), anchor="mm")
+    d.text((W // 2, 1520), "Affiliate links  •  As an Amazon Associate I earn from qualifying purchases", font=font(30), fill=(255, 255, 255, 170), anchor="mm")
     img.convert("RGB").save(path)
 
 
@@ -197,7 +277,12 @@ def main():
     good, photos = [], []
     for it in pl.get("items") or []:
         try:
-            im = Image.open(io.BytesIO(fetch(it["image"]))).convert("RGB")
+            try:
+                im = Image.open(io.BytesIO(fetch(hires(it["image"])))).convert("RGB")
+                if im.width < 300:
+                    raise ValueError("tiny")
+            except Exception:
+                im = Image.open(io.BytesIO(fetch(it["image"]))).convert("RGB")
             good.append(it); photos.append(im)
         except Exception as e:
             print("photo failed for", it.get("asin"), e, file=sys.stderr)
@@ -207,7 +292,7 @@ def main():
     p = os.path.join(TMP, "s_intro.png"); intro_slide(good, photos, label, p); slides.append(p); durs.append(T_INTRO)
     for i, (it, ph) in enumerate(zip(good, photos), 1):
         p = os.path.join(TMP, f"s_{i}.png"); product_slide(it, ph, label, i, len(good), p); slides.append(p); durs.append(T_ITEM)
-    p = os.path.join(TMP, "s_outro.png"); outro_slide(photos[-1], label, p); slides.append(p); durs.append(T_OUTRO)
+    p = os.path.join(TMP, "s_outro.png"); outro_slide(photos[-1], label, len(good), p); slides.append(p); durs.append(T_OUTRO)
     assemble(slides, durs, os.path.join(OUT, "reel.mp4"))
     json.dump({"asins": [i.get("asin") for i in good], "kind": "cards"}, open(os.path.join(OUT, "meta.json"), "w"))
 
