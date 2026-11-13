@@ -853,6 +853,18 @@ def fetch_deals(am):
     return items
 
 
+def _dedupe_names(items, n=40):
+    """same product in several colours/sizes (different asin, same title) is listed once."""
+    seen, out = set(), []
+    for i in items:
+        k = re.sub(r"[^a-z0-9]+", " ", str(i.get("name") or "").lower())[:n].strip()
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(i)
+    return out
+
+
 def run_direct(am):
     """deals pool -> offers.json (re-filed by title, per category) + hot.json (ess / hot / trend). -> True if anything written."""
     pool = fetch_deals(am)
@@ -888,11 +900,27 @@ def run_direct(am):
     old = read_json(HOT_PATH, {})
     used, trend = set(), []
     themes = active_themes()
+    # Top offers + Trending are also fed from the fresh, already-credible (rated) items in offers.json, so they do not empty out
+    # when the deals pages only carry 30 cards; Daily Essentials stays deal-pool only (its keyword rules are too loose for that).
+    seen_a = {i["asin"] for i in pool}
+    extra = []
+    for lst in cats.values():
+        for o in lst or []:
+            try:
+                if o["asin"] in seen_a or not o.get("rating") or (time.time() - float(o.get("t") or 0)) > FRESH_H * 3600:
+                    continue
+                d = {k: v for k, v in o.items() if k not in ("cat", "label", "icon", "tier", "unrated")}
+                d["_price"] = float(d["now"])
+                seen_a.add(o["asin"])
+                extra.append(d)
+            except Exception:
+                continue
+    pool_ht = pool + extra
     per = {}
     for key, label, icon, kws in themes:
         rx = re.compile("|".join(re.escape(k.lower()) for k in kws))
-        lst = [clean(i, theme=key, label=label, icon=icon) for i in pool if credible_any(i, MIN_PRICE_ESS) and rx.search(i["name"].lower())]
-        lst.sort(key=lambda x: -x["pct"])
+        lst = [clean(i, theme=key, label=label, icon=icon) for i in pool_ht if credible_any(i, MIN_PRICE_ESS) and rx.search(i["name"].lower())]
+        lst = _dedupe_names(sorted(lst, key=lambda x: -x["pct"]))
         if lst:
             per[key] = lst[:PER_THEME]
     trend = round_robin(per, MAX_TREND)
@@ -906,8 +934,8 @@ def run_direct(am):
             groups[key] = [clean(i, cat=key, label=label, icon=icon, **({"unrated": True} if not i["rating"] else {})) for i in good[:4]]
     ess = round_robin(groups, MAX_ESS)
     used |= {i["asin"] for i in ess}
-    hot = sorted([clean(i, **({"unrated": True} if not i["rating"] else {})) for i in pool if credible_any(i, MIN_PRICE_HOT) and i["asin"] not in used],
-                 key=lambda x: -x["pct"])[:MAX_HOT]
+    hot = _dedupe_names(sorted([clean(i, **({"unrated": True} if not i["rating"] else {})) for i in pool_ht if credible_any(i, MIN_PRICE_HOT) and i["asin"] not in used],
+                               key=lambda x: -x["pct"]))[:MAX_HOT]
 
     def keep(new, key):
         if new:
