@@ -1,0 +1,97 @@
+{
+ "time": "2026-11-13T07:02:43Z",
+ "routes": {
+  "deals": {
+   "http": 200,
+   "len": 516427,
+   "title": "Amazon.in - Deals",
+   "search_cards": 0,
+   "asins": 162,
+   "pct_off": 30,
+   "challenge": false,
+   "captcha": false
+  },
+  "goldbox": {
+   "http": 200,
+   "len": 519726,
+   "title": "Amazon.in - Deals",
+   "search_cards": 0,
+   "asins": 162,
+   "pct_off": 30,
+   "challenge": false,
+   "captcha": false
+  },
+  "dp": {
+   "http": 200,
+   "len": 3793,
+   "title": "Amazon.in",
+   "search_cards": 0,
+   "asins": 0,
+   "pct_off": 0,
+   "challenge": false,
+   "captcha": true
+  },
+  "mobile_search": {
+   "http": 200,
+   "len": 2380,
+   "title": "&nbsp;",
+   "search_cards": 0,
+   "asins": 0,
+   "pct_off": 0,
+   "challenge": true,
+   "captcha": false
+  },
+  "movers": {
+   "http": 200,
+   "len": 340681,
+   "title": "Amazon.in Movers and Shakers: The biggest gainers in Home &amp; Kitchen sales rank over the past 24 ",
+   "search_cards": 0,
+   "asins": 0,
+   "pct_off": 0,
+   "challenge": false,
+   "captcha": false
+  },
+  "bs_women_clothing": {
+   "http": 200,
+   "len": 449586,
+   "title": "Amazon.in Bestsellers: The most popular items in Clothing &amp; Accessories",
+   "search_cards": 0,
+   "asins": 30,
+   "pct_off": 0,
+   "challenge": false,
+   "captcha": false
+  },
+  "newrel": {
+   "http": 200,
+   "len": 454746,
+   "title": "Amazon.in Hot New Releases: The bestselling new and future releases in Home &amp; Kitchen",
+   "search_cards": 0,
+   "asins": 30,
+   "pct_off": 0,
+   "challenge": false,
+   "captcha": false
+  },
+  "pw_search": {
+   "http": 200,
+   "final": "https://www.amazon.in/s?k=kitchen+tools&rh=p_8%3A25-",
+   "len": 1348,
+   "title": "503 - Service Unavailable Error",
+   "search_cards": 0,
+   "asins": 0,
+   "pct_off": 0,
+   "challenge": false,
+   "captcha": false
+  },
+  "pw_deals": {
+   "http": 200,
+   "final": "https://www.amazon.in/deals",
+   "len": 725328,
+   "title": "Amazon.in - Deals",
+   "search_cards": 0,
+   "asins": 10,
+   "pct_off": 40,
+   "challenge": false,
+   "captcha": false
+  }
+ }
+}
