@@ -731,8 +731,49 @@ def selftest(am):
 DEAL_URLS = [BASE + "/deals", BASE + "/gp/goldbox"]
 
 
+def parse_deal_json(html):
+    """2026-11 markup: the deals page ships its cards as JSON ("productSearchResponse":{"products":[...]}) incl. rating + review count
+    (the old .dcl-product DOM is gone from the live page). -> raw cards like parse_cards()."""
+    out, seen = [], set()
+    dec = json.JSONDecoder()
+    for m in re.finditer(r'"productSearchResponse"\s*:\s*(?=\{)', html):
+        try:
+            obj, _ = dec.raw_decode(html, m.end())
+        except ValueError:
+            continue
+        for p in (obj.get("products") if isinstance(obj, dict) else None) or []:
+            try:
+                asin = str(p.get("asin") or "").strip().upper()
+                if not re.fullmatch(r"[A-Z0-9]{10}", asin) or asin in seen:
+                    continue
+                pr = p.get("price") or {}
+                price = (pr.get("priceToPay") or {}).get("price")
+                was = (pr.get("basisPrice") or {}).get("price")
+                im = p.get("image") or {}
+                low = im.get("lowRes") or im.get("hiRes") or {}
+                img = (low.get("baseUrl") + "." + (low.get("extension") or "jpg")) if low.get("baseUrl") else ""
+                cr = p.get("customerReviews") or {}
+                rs = ((cr.get("rating") or {}).get("shortDisplayString")) or ""
+                rv = (cr.get("count") or {}).get("value") or 0
+                db = p.get("dealBadge") or {}
+                frags = []
+                for part in (db.get("label"), db.get("messaging")):
+                    frags += [str(f.get("text") or "") for f in (((part or {}).get("content") or {}).get("fragments") or [])]
+                seen.add(asin)
+                out.append({"asin": asin, "title": str(p.get("title") or im.get("altText") or "").strip(), "img": img,
+                            "price": str(price or ""), "was": str(was or ""),
+                            "rating": (rs + " out of 5 stars") if rs else "", "reviews": str(rv or ""),
+                            "text": " ".join(f for f in frags if f)})
+            except Exception:
+                continue
+    return out
+
+
 def parse_deal_cards(html):
-    """deal page html -> raw cards (asin,title,img,price,was,rating,reviews,text) like parse_cards()."""
+    """deal page html -> raw cards (asin,title,img,price,was,rating,reviews,text) like parse_cards(). JSON blob first, old DOM second."""
+    got = parse_deal_json(html)
+    if got:
+        return got
     from bs4 import BeautifulSoup
     try:
         soup = BeautifulSoup(html, "lxml")
@@ -772,6 +813,14 @@ def credible_deal(it, min_price):
     if it["rating"] and it["rating"] < MIN_RATING:
         return False
     return True
+
+
+def credible_any(it, min_price):
+    """a deal card that carries rating + reviews is judged by the full credible() gates (no quality drop); only a card with
+    no rating/review data at all falls back to credible_deal()."""
+    if it and it.get("rating") and it.get("reviews"):
+        return credible(it, MIN_PCT, min_price)
+    return credible_deal(it, min_price)
 
 
 def fetch_deals(am):
@@ -817,11 +866,12 @@ def run_direct(am):
     cats = dict(data.get("cats") or {})
     swept = dict(data.get("swept") or {})
     for it in pool:
-        if credible_deal(it, MIN_PRICE_OFFER):
+        if credible_any(it, MIN_PRICE_OFFER):
             cats.setdefault("home_kitchen", [])
-    flat_new = [clean(it, tier=None) for it in pool if credible_deal(it, MIN_PRICE_OFFER)]
+    flat_new = [clean(it, tier=None) for it in pool if credible_any(it, MIN_PRICE_OFFER)]
     for o in flat_new:
-        o["unrated"] = True
+        if not o.get("rating"):
+            o["unrated"] = True
     # file every new item under the category its title points to (regroup() does the title classification)
     staged = {c: list(l) for c, l in cats.items()}
     for o in flat_new:
@@ -843,7 +893,7 @@ def run_direct(am):
     per = {}
     for key, label, icon, kws in themes:
         rx = re.compile("|".join(re.escape(k.lower()) for k in kws))
-        lst = [clean(i, theme=key, label=label, icon=icon) for i in pool if credible_deal(i, MIN_PRICE_ESS) and rx.search(i["name"].lower())]
+        lst = [clean(i, theme=key, label=label, icon=icon) for i in pool if credible_any(i, MIN_PRICE_ESS) and rx.search(i["name"].lower())]
         lst.sort(key=lambda x: -x["pct"])
         if lst:
             per[key] = lst[:PER_THEME]
@@ -851,14 +901,14 @@ def run_direct(am):
     used |= {i["asin"] for i in trend}
     groups = {}
     for key, label, icon, kw, rx in ESS:
-        good = [i for i in pool if credible_deal(i, MIN_PRICE_ESS) and re.search(rx, i["name"], re.I)
+        good = [i for i in pool if credible_any(i, MIN_PRICE_ESS) and re.search(rx, i["name"], re.I)
                 and not ACCESSORY.search(i["name"]) and i["asin"] not in used]
         good.sort(key=lambda x: -x["pct"])
         if good:
-            groups[key] = [clean(i, cat=key, label=label, icon=icon, unrated=True) for i in good[:4]]
+            groups[key] = [clean(i, cat=key, label=label, icon=icon, **({"unrated": True} if not i["rating"] else {})) for i in good[:4]]
     ess = round_robin(groups, MAX_ESS)
     used |= {i["asin"] for i in ess}
-    hot = sorted([clean(i, unrated=True) for i in pool if credible_deal(i, MIN_PRICE_HOT) and i["asin"] not in used],
+    hot = sorted([clean(i, **({"unrated": True} if not i["rating"] else {})) for i in pool if credible_any(i, MIN_PRICE_HOT) and i["asin"] not in used],
                  key=lambda x: -x["pct"])[:MAX_HOT]
 
     def keep(new, key):

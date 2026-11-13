@@ -126,6 +126,24 @@ class TitleClassify(unittest.TestCase):
         self.assertEqual(out["accessories"][0]["label"], "Accessories")
         self.assertEqual(out["laptops"], [])
 
+    def test_deal_json_cards(self):
+        """live amazon.in/deals page (2026-11) ships cards as JSON with rating + reviews; rated cards face the full gates."""
+        import json
+        prod = {"asin": "B07CXFJT8Q", "title": "Pampers Baby Pants Large 64 Count", "link": "/x/dp/B07CXFJT8Q",
+                "image": {"lowRes": {"baseUrl": "https://m.media-amazon.com/images/I/51Dwtv+b49L", "extension": "jpg"}},
+                "price": {"priceToPay": {"price": "860.0"}, "basisPrice": {"price": "1500.0"}},
+                "dealBadge": {"label": {"content": {"fragments": [{"text": "14% off"}]}},
+                              "messaging": {"content": {"fragments": [{"text": "Limited time deal"}]}}},
+                "customerReviews": {"count": {"value": 221792}, "rating": {"shortDisplayString": "4.2"}}}
+        low = dict(prod, asin="B0LOWRATE1", customerReviews={"count": {"value": 900}, "rating": {"shortDisplayString": "3.5"}})
+        html = '<script>{"productSearchResponse":' + json.dumps({"products": [prod, low]}) + ',"x":1}</script>'
+        cards = S.parse_deal_cards(html)
+        self.assertEqual([c["asin"] for c in cards], ["B07CXFJT8Q", "B0LOWRATE1"])
+        its = [S.card_to_item(c) for c in cards]
+        self.assertEqual((its[0]["pct"], its[0]["rating"], its[0]["reviews"]), (43, 4.2, 221792))
+        self.assertTrue(S.credible_any(its[0], 49))
+        self.assertFalse(S.credible_any(its[1], 49))      # rating 3.5 is rejected - rated deal cards are NOT downgraded to "unrated"
+
 
 if __name__ == "__main__":
     unittest.main()
