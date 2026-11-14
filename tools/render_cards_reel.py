@@ -14,6 +14,27 @@ FONTS = [HIND, "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/sha
 MUSIC = os.environ.get("REEL_MUSIC", os.path.join(HERE, "music", "bed.m4a"))
 MUSIC_VOL = float(os.environ.get("REEL_MUSIC_VOL", "0.8"))          # final loudness is set by loudnorm (-14 LUFS), this just balances bed vs sfx
 ACCENT = "#e53935"
+# Colour themes: every reel gets ONE of these (picked from the job id, so consecutive reels differ), used for the background gradient,
+# the % OFF badge / pill and the highlight text. Dark-ish backgrounds so white + highlight text always stays readable.
+THEMES = [
+    {"name": "magenta", "top": (30, 10, 70),  "bot": (150, 28, 120), "accent": "#e53935", "hl": "#ffeb3b"},
+    {"name": "ocean",   "top": (4, 28, 70),   "bot": (0, 125, 160),  "accent": "#ff5722", "hl": "#fff176"},
+    {"name": "emerald", "top": (4, 42, 34),   "bot": (22, 145, 95),  "accent": "#ff6d00", "hl": "#ffee58"},
+    {"name": "sunset",  "top": (75, 8, 28),   "bot": (225, 85, 35),  "accent": "#7b1fa2", "hl": "#fff59d"},
+    {"name": "royal",   "top": (10, 14, 72),  "bot": (45, 95, 205),  "accent": "#ff1744", "hl": "#ffd740"},
+    {"name": "crimson", "top": (48, 4, 14),   "bot": (175, 25, 50),  "accent": "#f57c00", "hl": "#ffd54f"},
+    {"name": "violet",  "top": (28, 8, 64),   "bot": (110, 60, 200), "accent": "#00bfa5", "hl": "#ffeb3b"},
+]
+THEME = THEMES[0]
+
+
+def pick_theme(seed):
+    """A theme name from the payload, else deterministic per job id (md5): a re-run of the same job looks the same."""
+    import hashlib
+    for t in THEMES:                      # Xbot sends the theme NAME (rotation, never the same twice in a row); anything else is hashed
+        if str(seed) == t["name"]:
+            return t
+    return THEMES[int(hashlib.md5(str(seed or "").encode()).hexdigest(), 16) % len(THEMES)]
 T_INTRO, T_ITEM, T_OUTRO, T_X = 2.0, 4.2, 3.0, 0.25          # 4.2s per product = time to actually read it; 5 products ~26s, 3 products ~18s
 
 
@@ -120,7 +141,7 @@ def hook_text(items):
 def blurred_bg(photo):
     """Vivid purple->magenta gradient with a tinted, saturated blur of the product photo (the old dark grey looked dull)."""
     mask = Image.linear_gradient("L").resize((W, H), Image.BILINEAR)
-    grad = Image.composite(Image.new("RGB", (W, H), (150, 28, 120)), Image.new("RGB", (W, H), (30, 10, 70)), mask)
+    grad = Image.composite(Image.new("RGB", (W, H), THEME["bot"]), Image.new("RGB", (W, H), THEME["top"]), mask)
     blur = photo.copy().resize((W, H), Image.BILINEAR).filter(ImageFilter.GaussianBlur(60))
     blur = ImageEnhance.Color(blur).enhance(1.8)
     return Image.blend(grad, blur, 0.22)
@@ -214,7 +235,7 @@ class ProductSlide:
         if pct:
             self.badge = layer((340, 100))
             bd = ImageDraw.Draw(self.badge)
-            bd.rounded_rectangle((0, 0, 339, 99), 28, fill=ACCENT)
+            bd.rounded_rectangle((0, 0, 339, 99), 28, fill=THEME["accent"])
             bd.text((170, 50), f"{pct}% OFF", font=font(58), fill="white", anchor="mm")
         f = font(58)
         lines = wrap(ImageDraw.Draw(layer((4, 4))), short_title(it.get("title")), f, W - 160, 2)
@@ -222,7 +243,7 @@ class ProductSlide:
         td = ImageDraw.Draw(self.title)
         td.rounded_rectangle((0, 0, W - 101, 159), 40, fill=(0, 0, 0, 200))
         for ln, y in zip(lines, [80] if len(lines) == 1 else [55, 115]):
-            td.text(((W - 100) // 2, y), ln, font=f, fill="#ffeb3b", anchor="mm")
+            td.text(((W - 100) // 2, y), ln, font=f, fill=THEME["hl"], anchor="mm")
         self.price_base = layer((W - 100, 280))
         ImageDraw.Draw(self.price_base).rounded_rectangle((0, 0, W - 101, 279), 44, fill=(255, 255, 255, 240))
         try:
@@ -304,12 +325,12 @@ class HookSlide:
         hf = font(150)
         while ImageDraw.Draw(layer((4, 4))).textlength(hook, font=hf) > 930 and hf.size > 80:      # 930 * 1.1 pop scale still fits 1080
             hf = font(hf.size - 8)
-        self.hook = text_layer(hook, hf, "#ffeb3b", pad=20)
+        self.hook = text_layer(hook, hf, THEME["hl"], pad=20)
         self.pill = None
         if best:
             self.pill = layer((560, 130))
             pd = ImageDraw.Draw(self.pill)
-            pd.rounded_rectangle((0, 0, 559, 129), 40, fill=ACCENT)
+            pd.rounded_rectangle((0, 0, 559, 129), 40, fill=THEME["accent"])
             pd.text((280, 65), f"upto {best}% OFF", font=font(72), fill="white", anchor="mm")
         self.thumbs = []
         n = len(photos)
@@ -349,8 +370,8 @@ class OutroSlide:
         self.static = layer((W, H))
         header(ImageDraw.Draw(self.static, "RGBA"), label)
         pick = {2: "1 ya 2", 3: "1, 2 ya 3"}.get(n, f"1 se {n} tak number")
-        self.l1 = text_layer("Saare links", font(110), "#ffeb3b")
-        self.l2 = text_layer("COMMENT me hain", font(110), "#ffeb3b")
+        self.l1 = text_layer("Saare links", font(110), THEME["hl"])
+        self.l2 = text_layer("COMMENT me hain", font(110), THEME["hl"])
         self.arrow = layer((200, 140))
         ImageDraw.Draw(self.arrow).polygon([(10, 5), (190, 5), (100, 135)], fill="white")
         self.ask = text_layer(f"Kaunsi leni hai? {pick} likho", font(60), "white")
@@ -456,8 +477,9 @@ def assemble(slides, durs, out_path):
 
 
 def main():
-    global MUSIC
+    global MUSIC, THEME
     pl = json.loads(os.environ["PAYLOAD"])
+    THEME = pick_theme(pl.get("theme") or os.environ.get("JOB_ID"))
     label = str(pl.get("label") or "Daily Essentials")
     os.makedirs(OUT, exist_ok=True); os.makedirs(TMP, exist_ok=True)
     credit = mid = None
@@ -498,7 +520,7 @@ def main():
         jobs[0][0].frame(None).convert("RGB").save(os.path.join(OUT, "cover.jpg"), "JPEG", quality=92)
     except Exception as e:
         print("cover.jpg skipped:", e, file=sys.stderr)
-    json.dump({"asins": [i.get("asin") for i in good], "kind": "cards", "music_credit": credit, "music_id": mid}, open(os.path.join(OUT, "meta.json"), "w"))
+    json.dump({"asins": [i.get("asin") for i in good], "kind": "cards", "music_credit": credit, "music_id": mid, "theme": THEME["name"]}, open(os.path.join(OUT, "meta.json"), "w"))
 
 
 if __name__ == "__main__":
