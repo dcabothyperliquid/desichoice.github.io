@@ -494,6 +494,10 @@ def main():
         if os.environ.get("REEL_KEEP_PNG"):
             sl.frame(None).save(os.path.join(TMP, f"clip_{k}.png"))
     assemble(slides, durs, os.path.join(OUT, "reel.mp4"))
+    try:        # Facebook shows this as the reel's first impression (Xbot uploads it as the preferred thumbnail): the fully built hook banner
+        jobs[0][0].frame(None).convert("RGB").save(os.path.join(OUT, "cover.jpg"), "JPEG", quality=92)
+    except Exception as e:
+        print("cover.jpg skipped:", e, file=sys.stderr)
     json.dump({"asins": [i.get("asin") for i in good], "kind": "cards", "music_credit": credit, "music_id": mid}, open(os.path.join(OUT, "meta.json"), "w"))
 
 

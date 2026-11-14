@@ -45,7 +45,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           JOB_ID: ${{ github.event.inputs.job_id }}
         run: |
-          gh release create "cardreel-${JOB_ID}" "out/reel.mp4#reel.mp4" "out/meta.json#meta.json" \
+          COVER=""; [ -f out/cover.jpg ] && COVER="out/cover.jpg#cover.jpg"
+          gh release create "cardreel-${JOB_ID}" "out/reel.mp4#reel.mp4" "out/meta.json#meta.json" $COVER \
             --title "cardreel-${JOB_ID}" --notes "auto-rendered card reel" --repo "${GITHUB_REPOSITORY}"
 
       - name: Record music used (no-repeat window)
