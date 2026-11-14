@@ -1,5 +1,5 @@
 {
- "time": "2026-11-14T02:46:40Z",
+ "time": "2026-11-14T09:01:16Z",
  "mode": "auto",
  "captcha_streak": 0,
  "pages_loaded": 3,
@@ -7,14 +7,14 @@
   {
    "url": "https://www.amazon.in/deals",
    "http": 200,
-   "html_len": 522207,
+   "html_len": 543391,
    "cards": 30,
    "marks": []
   },
   {
    "url": "https://www.amazon.in/gp/goldbox",
    "http": 200,
-   "html_len": 473877,
+   "html_len": 505700,
    "cards": 30,
    "marks": []
   },
