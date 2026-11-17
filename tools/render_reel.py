@@ -393,7 +393,7 @@ def flow(text):
     t = re.sub(r"[;:\u2013\u2014\u2012]+", " ", t)
     t = re.sub(r"(?<=\S)-(?=\S)", " ", t)
     t = re.sub(r"\s*\.\.\.+\s*", " ", t)
-    t = re.sub(r"[!?](?=\s*\S)", "।", t)           # vakya ke beech ka ! ya ? -> chhota viram; aakhri wala intonation ke liye rehta hai
+    t = re.sub(r"!(?=\s*\S)", "।", t)           # vakya ke beech ka ! ya ? -> chhota viram; aakhri wala intonation ke liye rehta hai
     t = re.sub(r"\s{2,}", " ", t).strip()
     return t
 
