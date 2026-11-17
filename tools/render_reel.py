@@ -21,15 +21,15 @@ except Exception as _e:
 W, H = 1080, 1920
 OUT, TMP = os.environ.get("REEL_OUT", "out"), os.environ.get("REEL_TMP", "tmp")
 VOICE = os.environ.get("REEL_VOICE", "hi-IN-SwaraNeural")        # female Hindi neural voice
-RATE = os.environ.get("REEL_RATE", "+6%")                           # edge-tts me zyada rate = bhaari/male + toot-toot awaaz; speed ffmpeg atempo se (SPEEDUP)
-PITCH = os.environ.get("REEL_PITCH", "+4Hz")                         # halka upar = saaf female sur
-SPEEDUP = float(os.environ.get("REEL_SPEEDUP", "1.16"))           # pitch-preserving tez bolna (atempo)
+RATE = os.environ.get("REEL_RATE", "+0%")                           # edge-tts me zyada rate = bhaari/male + toot-toot awaaz; speed ffmpeg atempo se (SPEEDUP)
+PITCH = os.environ.get("REEL_PITCH", "+2Hz")                         # halka upar = saaf female sur
+SPEEDUP = float(os.environ.get("REEL_SPEEDUP", "1.06"))           # pitch-preserving tez bolna (atempo)
 FALLBACK_VOICES = ["en-US-AvaMultilingualNeural", "en-US-EmmaMultilingualNeural"]   # sirf female fallbacks
 VOICE_USED = [None]
 PRODUCT_MIN = float(os.environ.get("REEL_PRODUCT_MIN", "8"))       # har product kam se kam itne sec
 MIN_TOTAL = float(os.environ.get("REEL_MIN_TOTAL", "36"))          # reel ki lambai 36-44 sec ke beech rakho
-MAX_TOTAL = float(os.environ.get("REEL_MAX_TOTAL", "46"))
-MAX_EXTRA_SPEED = float(os.environ.get("REEL_MAX_EXTRA_SPEED", "1.14"))   # lambi script ho to awaaz max itni aur tez (SPEEDUP ke upar)
+MAX_TOTAL = float(os.environ.get("REEL_MAX_TOTAL", "52"))
+MAX_EXTRA_SPEED = float(os.environ.get("REEL_MAX_EXTRA_SPEED", "1.05"))   # lambi script ho to awaaz max itni aur tez (SPEEDUP ke upar)
 FONTS = ["/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/dejavu/DejaVuSans-Bold.ttf"]
 HIND = os.path.join(os.path.dirname(os.path.abspath(__file__)), "fonts", "Hind-Bold.ttf")   # Devanagari + Latin
 ACCENT = "#e53935"
@@ -305,6 +305,19 @@ def rs_short(v):
     return rs_voice(int(round(v / 100.0) * 100) if v >= 1000 else int(round(v)))
 
 
+def _save_round(v):
+    """Bachat bolne ke liye gol: 9001 -> 9000 (karib), 27109 -> 27000 (karib); chhoti raqam exact. -> (rounded, approx?)"""
+    v = float(v)
+    step = 1000 if v >= 10000 else 100 if v >= 1000 else 10 if v >= 100 else 1
+    r = int(round(v / step) * step)
+    return r, r != int(v)
+
+
+def rs_save(v):
+    r, ap = _save_round(v)
+    return ("करीब " if ap else "") + rs_voice(r)
+
+
 def rating_voice(it):
     """'चार पॉइंट तीन स्टार रेटिंग।' -- sirf jab rating >= 4.0 (kam rating bolke trust nahi banta)."""
     rt = _rating(it)
@@ -340,14 +353,11 @@ def default_script(it, n_items):
 
 # ───────────────────────── tts / ffmpeg ─────────────────────────
 def _style(text, lively=False):
-    """Har line ki rate/pitch thodi alag (text-hash se, taaki same text par same awaaz) -> ek hi flat sur wali robotic feel nahi.
-    REEL_RATE / REEL_PITCH env set ho to wahi chalega. lively=True (hook): thodi energetic."""
+    """Poori reel me ek hi awaaz-style (pehle har line ki rate/pitch random alag thi -> line-line me awaaz badalti thi).
+    Sirf hook thoda zyada josh wala. REEL_RATE / REEL_PITCH env set ho to wahi chalega."""
     if os.environ.get("REEL_RATE") or os.environ.get("REEL_PITCH"):
         return RATE, PITCH
-    h = sum(ord(c) for c in text)
-    rate = 8 if lively else (4, 6, 8, 5, 7)[h % 5]
-    pitch = 7 if lively else (3, 4, 5, 4, 3)[(h // 5) % 5]
-    return f"{rate:+d}%", f"{pitch:+d}Hz"
+    return ("+4%", "+4Hz") if lively else (RATE, PITCH)
 
 
 async def _tts(text, path, lively=False):
@@ -725,7 +735,7 @@ def fill(text, items):
             price, lp, pct = float(it["price"]), float(it.get("list_price") or 0), int(it.get("pct") or 0)
             save = int(lp - price) if lp > price else 0
             return {"P": rs_voice(price), "p": inr(price), "L": rs_voice(lp or price), "l": inr(lp or price),
-                    "S": rs_voice(save or price), "s": inr(save or price), "D": hindi_num(pct) + " परसेंट", "d": f"{pct}%"}[ch]
+                    "S": rs_save(save or price), "s": inr(save or price), "D": hindi_num(pct) + " परसेंट", "d": f"{pct}%"}[ch]
         except Exception:
             return ""
     out = re.sub(r"\{(PMIN|pmin|DMAX|dmax|[PLSDplsd])(\d?)\}", val, text)
@@ -832,6 +842,8 @@ def build_cap_map(items):
         except Exception:
             continue
         save = int(lp - price) if lp > price else 0
+        _r, _ap = _save_round(save or price)
+        _CAP_MAP[rs_save(save or price)] = ("~" if _ap else "") + inr(_r)
         for v in (price, lp or price, save or price):
             _CAP_MAP[rs_voice(v)] = inr(v)
             _CAP_MAP[rs_short(v)] = inr(v)
@@ -948,10 +960,8 @@ def build_multi(payload, items, shots, meta_items):
         if k == 0:
             hook_v = with_stop(str((payload.get("hook") or {}).get("voice") or "").strip())
             intro = (given.get("intro") or "").strip() or price_first(it)    # AI intro (bol-chal); na ho to template
-            intro = (intro + " " + rating_voice(it)).strip() if len(items) > 1 else intro
         else:
             intro = (given.get("intro") or "").strip()                        # AI intro me jod (transition) pehle se hota hai
-            intro = (intro + " " + rating_voice(it)).strip() if intro else intro
             if not intro:                                                     # fallback: har baar alag jod, phir product
                 intro = f"{CONNECT[(k - 1) % len(CONNECT)] if k < n - 1 else CONNECT_LAST} {spoken_name(it.get('title'))}, सिर्फ़ {rs_short(it['price'])} में।"
         # ---- shot H (sirf pehle product par): hook line = AI head/sub screen pe + hook voice, clip/photo ke upar
@@ -1068,7 +1078,7 @@ def _set_secs(shots):
     """Shot ki lambai = poori awaaz + chhota tail (awaaz kabhi kaati nahi jaati); har product kam se kam PRODUCT_MIN sec."""
     for s_ in shots:
         a = s_.get("audio")
-        s_["secs"] = max(dur(a) + s_.get("tail", 0.25), s_["min"]) if a else s_["min"]
+        s_["secs"] = max(dur(a) + s_.get("tail", 0.15), s_["min"]) if a else s_["min"]
     by = {}
     for s_ in shots:
         if s_.get("pk") is not None:
