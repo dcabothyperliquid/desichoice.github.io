@@ -1,23 +1,20 @@
 {
- "time": "2026-11-22T00:39:56Z",
+ "time": "2026-11-22T01:27:46Z",
  "mode": "auto",
  "captcha_streak": 0,
  "pages_loaded": 3,
  "pages": [
   {
    "url": "https://www.amazon.in/deals",
-   "http": 503,
-   "html_len": 1283,
-   "cards": 0,
-   "marks": [
-    "To discuss automated access",
-    "api-services-support@amazon.com"
-   ]
+   "http": 200,
+   "html_len": 485446,
+   "cards": 30,
+   "marks": []
   },
   {
    "url": "https://www.amazon.in/gp/goldbox",
    "http": 200,
-   "html_len": 503297,
+   "html_len": 465986,
    "cards": 30,
    "marks": []
   },
