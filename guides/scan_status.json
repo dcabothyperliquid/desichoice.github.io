@@ -1,5 +1,5 @@
 {
- "time": "2026-11-23T01:52:16Z",
+ "time": "2026-11-23T02:38:51Z",
  "mode": "auto",
  "captcha_streak": 0,
  "pages_loaded": 3,
@@ -7,14 +7,14 @@
   {
    "url": "https://www.amazon.in/deals",
    "http": 200,
-   "html_len": 513179,
+   "html_len": 523327,
    "cards": 30,
    "marks": []
   },
   {
    "url": "https://www.amazon.in/gp/goldbox",
    "http": 200,
-   "html_len": 514377,
+   "html_len": 506952,
    "cards": 30,
    "marks": []
   },
@@ -27,8 +27,26 @@
   {
    "url": "deals-api:all",
    "page": 1,
-   "http": 503,
-   "products": 0
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:all",
+   "page": 2,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:all",
+   "page": 3,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:all",
+   "page": 4,
+   "http": 200,
+   "products": 30
   },
   {
    "url": "deals-api:grocery",
@@ -225,24 +243,6 @@
   {
    "url": "deals-api:home_improvement",
    "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_improvement",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_improvement",
-   "page": 4,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:clothing",
-   "page": 0,
    "http": 200,
    "products": 30
   }
