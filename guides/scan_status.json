@@ -1,20 +1,20 @@
 {
- "time": "2026-11-23T01:08:02Z",
+ "time": "2026-11-23T01:52:16Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 5,
+ "pages_loaded": 3,
  "pages": [
   {
    "url": "https://www.amazon.in/deals",
    "http": 200,
-   "html_len": 526546,
+   "html_len": 513179,
    "cards": 30,
    "marks": []
   },
   {
    "url": "https://www.amazon.in/gp/goldbox",
    "http": 200,
-   "html_len": 517796,
+   "html_len": 514377,
    "cards": 30,
    "marks": []
   },
@@ -27,26 +27,8 @@
   {
    "url": "deals-api:all",
    "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:all",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:all",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:all",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:grocery",
@@ -147,8 +129,26 @@
   {
    "url": "deals-api:baby",
    "page": 1,
-   "http": 503,
-   "products": 0
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:baby",
+   "page": 2,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:baby",
+   "page": 3,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:baby",
+   "page": 4,
+   "http": 200,
+   "products": 30
   },
   {
    "url": "deals-api:home_kitchen",
@@ -165,8 +165,20 @@
   {
    "url": "deals-api:home_kitchen",
    "page": 2,
-   "http": 503,
-   "products": 0
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:home_kitchen",
+   "page": 3,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:home_kitchen",
+   "page": 4,
+   "http": 200,
+   "products": 30
   },
   {
    "url": "deals-api:pets",
@@ -231,18 +243,6 @@
   {
    "url": "deals-api:clothing",
    "page": 0,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:clothing",
-   "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:clothing",
-   "page": 2,
    "http": 200,
    "products": 30
   }
