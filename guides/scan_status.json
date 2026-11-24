@@ -1,5 +1,5 @@
 {
- "time": "2026-11-24T04:58:59Z",
+ "time": "2026-11-24T05:24:20Z",
  "mode": "auto",
  "captcha_streak": 0,
  "pages_loaded": 3,
@@ -17,7 +17,7 @@
   {
    "url": "https://www.amazon.in/gp/goldbox",
    "http": 200,
-   "html_len": 482328,
+   "html_len": 491423,
    "cards": 30,
    "marks": []
   },
@@ -30,26 +30,8 @@
   {
    "url": "deals-api:all",
    "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:all",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:all",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:all",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:grocery",
@@ -72,14 +54,8 @@
   {
    "url": "deals-api:grocery",
    "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:grocery",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:health",
@@ -162,44 +138,14 @@
   {
    "url": "deals-api:baby",
    "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:baby",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:home_kitchen",
    "page": 0,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_kitchen",
-   "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_kitchen",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_kitchen",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_kitchen",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:pets",
@@ -216,20 +162,8 @@
   {
    "url": "deals-api:pets",
    "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:home_improvement",
@@ -246,6 +180,72 @@
   {
    "url": "deals-api:home_improvement",
    "page": 2,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:home_improvement",
+   "page": 3,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:home_improvement",
+   "page": 4,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 0,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 1,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 2,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 3,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 4,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:shoes",
+   "page": 0,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:shoes",
+   "page": 1,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:jewellery",
+   "page": 0,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:jewellery",
+   "page": 1,
    "http": 200,
    "products": 30
   }
