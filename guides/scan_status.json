@@ -1,20 +1,20 @@
 {
- "time": "2026-11-24T12:31:42Z",
+ "time": "2026-11-24T23:30:44Z",
  "mode": "auto",
  "captcha_streak": 0,
- "pages_loaded": 3,
+ "pages_loaded": 5,
  "pages": [
   {
    "url": "https://www.amazon.in/deals",
    "http": 200,
-   "html_len": 499391,
+   "html_len": 548969,
    "cards": 30,
    "marks": []
   },
   {
    "url": "https://www.amazon.in/gp/goldbox",
    "http": 200,
-   "html_len": 481215,
+   "html_len": 559688,
    "cards": 30,
    "marks": []
   },
@@ -51,32 +51,8 @@
   {
    "url": "deals-api:grocery",
    "page": 0,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:grocery",
-   "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:grocery",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:grocery",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:grocery",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:health",
@@ -87,26 +63,8 @@
   {
    "url": "deals-api:health",
    "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:health",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:health",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:health",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:beauty",
@@ -135,8 +93,8 @@
   {
    "url": "deals-api:beauty",
    "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:baby",
@@ -177,74 +135,118 @@
   {
    "url": "deals-api:home_kitchen",
    "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_kitchen",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_kitchen",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_kitchen",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:pets",
    "page": 0,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:home_improvement",
    "page": 0,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 0,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:shoes",
+   "page": 0,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:jewellery",
+   "page": 0,
    "http": 200,
    "products": 30
   },
   {
-   "url": "deals-api:home_improvement",
+   "url": "deals-api:jewellery",
    "page": 1,
    "http": 200,
    "products": 30
   },
   {
-   "url": "deals-api:home_improvement",
+   "url": "deals-api:jewellery",
    "page": 2,
    "http": 200,
    "products": 30
+  },
+  {
+   "url": "deals-api:jewellery",
+   "page": 3,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:jewellery",
+   "page": 4,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:electronics",
+   "page": 0,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:toys",
+   "page": 0,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:sports",
+   "page": 0,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:sports",
+   "page": 1,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:sports",
+   "page": 2,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:sports",
+   "page": 3,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:sports",
+   "page": 4,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:car_bike",
+   "page": 0,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "https://www-amazon-in.translate.goog/s?k=kitchen+tools&_x_tr_sl=auto&_x_tr_tl=en&_x_tr_hl=en",
+   "http": 200,
+   "html_len": 1797547,
+   "has_results": true,
+   "marks": [],
+   "cards": 48
   }
  ]
 }
