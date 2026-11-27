@@ -1,5 +1,5 @@
 {
- "time": "2026-11-27T04:39:37Z",
+ "time": "2026-11-27T10:53:23Z",
  "mode": "auto",
  "captcha_streak": 0,
  "pages_loaded": 3,
@@ -7,14 +7,14 @@
   {
    "url": "https://www.amazon.in/deals",
    "http": 200,
-   "html_len": 1340525,
+   "html_len": 1273342,
    "cards": 30,
    "marks": []
   },
   {
    "url": "https://www.amazon.in/gp/goldbox",
    "http": 200,
-   "html_len": 1351033,
+   "html_len": 1379035,
    "cards": 30,
    "marks": []
   },
@@ -117,26 +117,8 @@
   {
    "url": "deals-api:beauty",
    "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:beauty",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:beauty",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:beauty",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:baby",
@@ -189,44 +171,14 @@
   {
    "url": "deals-api:home_kitchen",
    "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:home_kitchen",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:pets",
    "page": 0,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 1,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 2,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 3,
-   "http": 200,
-   "products": 30
-  },
-  {
-   "url": "deals-api:pets",
-   "page": 4,
-   "http": 200,
-   "products": 30
+   "http": 503,
+   "products": 0
   },
   {
    "url": "deals-api:home_improvement",
@@ -243,6 +195,54 @@
   {
    "url": "deals-api:home_improvement",
    "page": 2,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 0,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 1,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 2,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:clothing",
+   "page": 3,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:shoes",
+   "page": 0,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:shoes",
+   "page": 1,
+   "http": 200,
+   "products": 30
+  },
+  {
+   "url": "deals-api:shoes",
+   "page": 2,
+   "http": 503,
+   "products": 0
+  },
+  {
+   "url": "deals-api:jewellery",
+   "page": 0,
    "http": 200,
    "products": 30
   }
